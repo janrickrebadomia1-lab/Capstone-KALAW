@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import FlashScreen from "./pages/FlashScreen";
-import AdminDashboard from "./admin/AdminDashboard";
 
 function ChatWithFlash() {
   const [showFlash, setShowFlash] = useState(true);
@@ -23,7 +22,7 @@ function App() {
 
         <Route path="/" element={<ChatWithFlash />} />
 
-        <Route path="/admin" element={<AdminDashboard />} />
+
 
       </Routes>
     </Router>
