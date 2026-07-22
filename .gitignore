@@ -1,0 +1,18 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# ChromaDB
+chroma_db/
+
+# Node
+node_modules/
+dist/
+
+# Environment files
+.env
+
+# Python cache
+.pytest_cache/

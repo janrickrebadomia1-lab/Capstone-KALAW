@@ -1,0 +1,47 @@
+.admin-main-content{
+  flex:1;
+  padding:30px;
+  background:#f5f5f0;
+}
+
+.admin-sidebar{
+  width:250px;
+  background:#e4e8dc;
+  border-right:1px solid #ddd;
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+}
+
+.admin-menu p{
+  padding:8px;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.admin-menu p:hover{
+  background:#d8e3d1;
+}
+
+.admin-card{
+  background:white;
+  padding:25px;
+  border-radius:10px;
+  width:350px;
+  margin-top:20px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.upload-btn{
+  margin-top:10px;
+  padding:8px 15px;
+  background:#2e7d32;
+  color:white;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.upload-btn:hover{
+  background:#1b5e20;
+}

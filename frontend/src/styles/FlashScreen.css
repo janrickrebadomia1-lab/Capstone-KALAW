@@ -1,0 +1,44 @@
+.flash-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background: #eaf2e7; /* soft green background */
+  text-align: center;
+  animation: fadeIn 0.8s ease forwards;
+}
+
+.flash-logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
+  object-fit: cover;
+  animation: pulse 1.5s infinite;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.flash-title {
+  margin-top: 1rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #3a6936;
+}
+
+.flash-subtitle {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #488243;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
