@@ -256,60 +256,102 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
       ...prev,
     ]);
 
-    try {
-      const response = await fetch("http://127.0.0.1:5000/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, session_id: sessionIdRef.current }),
-        signal: abortCtrlRef.current.signal,
-      });
-
-      if (!response.ok) throw new Error(`Server error: ${response.status}`);
-
-      const reader  = response.body.getReader();
-      const decoder = new TextDecoder();
-      let accumulated = "";
-      let buffer = "";          // carry-over for partial SSE lines
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-
-        // Process complete SSE events (split on double newline)
-        const parts  = buffer.split("\n\n");
-        buffer = parts.pop() ?? "";   // keep incomplete tail
-
-        const tokens = parseSSELines(parts.join("\n\n"));
-        if (tokens.length) {
-          accumulated += tokens.join("");
-          updateBotMessage(chatId, accumulated, setMessages);
-        }
-      }
-
-      // Flush any remaining buffer
-      if (buffer.trim()) {
-        const tokens = parseSSELines(buffer);
-        if (tokens.length) {
-          accumulated += tokens.join("");
-          updateBotMessage(chatId, accumulated, setMessages);
-        }
-      }
-
-    } catch (err) {
-      if (err.name === "AbortError") return;   // user triggered new chat — silent
-      const errMsg = "❌ Could not connect to KALAW. Please check if the server is running.";
-      setMessages(prev => {
-        const updated = [...prev];
-        const lastBot = updated.map(m => m.sender).lastIndexOf("bot");
-        if (lastBot !== -1) updated[lastBot] = { ...updated[lastBot], content: errMsg };
-        return updated;
-      });
-    } finally {
-      setLoading(false);
-      loadingRef.current = false;
+try {
+  const response = await fetch(
+    "https://pdt-fighter-broker-phys.trycloudflare.com/api/chat",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question,
+        session_id: sessionIdRef.current,
+      }),
+      signal: abortCtrlRef.current.signal,
     }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Server error: ${response.status}`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+
+  let accumulated = "";
+  let buffer = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+
+    if (done) {
+      break;
+    }
+
+    buffer += decoder.decode(value, { stream: true });
+
+    // Process complete SSE events
+    const parts = buffer.split("\n\n");
+
+    // Keep incomplete data for the next chunk
+    buffer = parts.pop() ?? "";
+
+    const tokens = parseSSELines(parts.join("\n\n"));
+
+    if (tokens.length) {
+      accumulated += tokens.join("");
+
+      updateBotMessage(
+        chatId,
+        accumulated,
+        setMessages
+      );
+    }
+  }
+
+  // Process remaining buffer
+  if (buffer.trim()) {
+    const tokens = parseSSELines(buffer);
+
+    if (tokens.length) {
+      accumulated += tokens.join("");
+
+      updateBotMessage(
+        chatId,
+        accumulated,
+        setMessages
+      );
+    }
+  }
+} catch (err) {
+  if (err.name === "AbortError") {
+    return;
+  }
+
+  const errMsg =
+    "❌ Could not connect to KALAW. Please check if the server is running.";
+
+  setMessages(prev => {
+    const updated = [...prev];
+
+    const lastBot = updated
+      .map(m => m.sender)
+      .lastIndexOf("bot");
+
+    if (lastBot !== -1) {
+      updated[lastBot] = {
+        ...updated[lastBot],
+        content: errMsg,
+      };
+    }
+
+    return updated;
+  });
+} finally {
+  setLoading(false);
+  loadingRef.current = false;
+}
   };
 
   const doSendRef = useRef(doSend);

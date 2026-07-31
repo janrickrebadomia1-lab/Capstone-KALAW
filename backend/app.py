@@ -17,9 +17,6 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings, OllamaLLM
 from langchain_core.prompts import PromptTemplate
 
-# ─────────────────────────────────────────────────────────
-# SETUP
-# ─────────────────────────────────────────────────────────
 os.environ["ANONYMIZED_TELEMETRY"] = "False"
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -41,7 +38,6 @@ CHROMA_PATH = os.path.join(DATA_DIR, "chroma_db")
 HYBRID_PATH = os.path.join(DATA_DIR, "tfidf_embeddings.pkl")
 JSON_PATH   = os.path.join(DATA_DIR, "faculty_manual.json")
 
-# Tuning knobs
 JSON_SCORE_THRESHOLD   = 0.65   # min similarity for JSON match
 CHROMA_TOP_K           = 5      # final semantic chunks returned
 CHROMA_FETCH_K         = 12     # candidate pool for MMR
@@ -51,17 +47,13 @@ MAX_CHUNK_CHARS        = 1000   # truncate each chunk
 CACHE_MAX              = 150    # response cache size
 HISTORY_WINDOW         = 4      # last N messages kept per session
 
-# ─────────────────────────────────────────────────────────
-# LOAD JSON INTENTS  (pre-index for fast lookup)
-# ─────────────────────────────────────────────────────────
-
 if os.path.exists(JSON_PATH):
     with open(JSON_PATH, "r", encoding="utf-8") as f:
         INTENTS = json.load(f)
 else:
     INTENTS = []
 
-# Pre-tokenise every pattern once at startup
+
 _INTENT_INDEX: list[dict] = []
 for intent in INTENTS:
     for pattern in intent.get("patterns", []):
@@ -119,20 +111,15 @@ def greeting_match(query: str) -> str | None:
     q = re.sub(r"[^a-z0-9\s]", " ", query.lower()).strip()
     q = re.sub(r"\s+", " ", q)
 
-    # Exact match
     if q in _GREETING_TRIGGERS:
         return random.choice(_GREETING_RESPONSES)
 
-    # Starts-with match: "hello po", "hi kalaw", "good morning sir", etc.
     for trigger in _GREETING_TRIGGERS:
         if q.startswith(trigger + " ") or q == trigger:
             return random.choice(_GREETING_RESPONSES)
 
     return None
 
-# ─────────────────────────────────────────────────────────
-# JSON INTENT MATCH
-# ─────────────────────────────────────────────────────────
 
 def json_match(query: str) -> str | None:
     """
@@ -148,7 +135,7 @@ def json_match(query: str) -> str | None:
     best_response = None
 
     for entry in _INTENT_INDEX:
-        # Fast token overlap pre-filter
+    
         if q_tokens and entry["tokens"]:
             overlap = len(q_tokens & entry["tokens"]) / max(len(q_tokens), len(entry["tokens"]))
             if overlap < 0.20:
@@ -156,7 +143,6 @@ def json_match(query: str) -> str | None:
 
         score = SequenceMatcher(None, q_norm, entry["pattern"]).ratio()
 
-        # Bonus for substring containment
         if entry["pattern"] in q_norm or q_norm in entry["pattern"]:
             score += 0.25
 
@@ -166,9 +152,6 @@ def json_match(query: str) -> str | None:
 
     return best_response
 
-# ─────────────────────────────────────────────────────────
-# QUERY NORMALIZATION
-# ─────────────────────────────────────────────────────────
 
 def normalize_query(q: str) -> str:
     q = q.lower()
@@ -176,9 +159,7 @@ def normalize_query(q: str) -> str:
     q = re.sub(r"\s+", " ", q).strip()
     return q
 
-# ─────────────────────────────────────────────────────────
-# MODELS  (loaded once at import time)
-# ─────────────────────────────────────────────────────────
+
 
 embeddings = OllamaEmbeddings(model="mxbai-embed-large:latest")
 
@@ -203,9 +184,7 @@ if os.path.exists(HYBRID_PATH):
         hybrid_data = pickle.load(f)
     log.info("TF-IDF index loaded: %d documents", len(hybrid_data["texts"]))
 
-# ─────────────────────────────────────────────────────────
-# CACHE & SESSION MEMORY
-# ─────────────────────────────────────────────────────────
+
 
 session_store:   dict[str, list] = {}
 _response_cache: dict[str, str]  = {}
@@ -225,9 +204,6 @@ def get_or_embed(query: str) -> list[float]:
             _embed_cache.pop(next(iter(_embed_cache)))
     return _embed_cache[ck]
 
-# ─────────────────────────────────────────────────────────
-# PROMPT
-# ─────────────────────────────────────────────────────────
 
 PROMPT = PromptTemplate(
     input_variables=["context", "history", "question"],
@@ -251,9 +227,6 @@ QUESTION:
 ANSWER:"""
 )
 
-# ─────────────────────────────────────────────────────────
-# HYBRID SEARCH  (TF-IDF keyword layer)
-# ─────────────────────────────────────────────────────────
 
 def keyword_search(query: str, top_k: int = KEYWORD_TOP_K) -> list[dict]:
     if not hybrid_data:
@@ -273,9 +246,6 @@ def keyword_search(query: str, top_k: int = KEYWORD_TOP_K) -> list[dict]:
         if scores[i] > 0.01
     ]
 
-# ─────────────────────────────────────────────────────────
-# SEMANTIC SEARCH  (ChromaDB, uses cached embedding)
-# ─────────────────────────────────────────────────────────
 
 def semantic_search(query: str) -> list:
     """MMR re-ranking for diversity. Falls back to plain similarity search."""
@@ -289,9 +259,6 @@ def semantic_search(query: str) -> list:
     except Exception:
         return vector_db.similarity_search(query, k=CHROMA_TOP_K)
 
-# ─────────────────────────────────────────────────────────
-# RECIPROCAL RANK FUSION
-# ─────────────────────────────────────────────────────────
 
 def fuse(semantic_docs: list, keyword_docs: list[dict], k: int = 60) -> list[dict]:
     """Combines semantic and keyword results without score normalisation."""
@@ -315,9 +282,6 @@ def fuse(semantic_docs: list, keyword_docs: list[dict], k: int = 60) -> list[dic
         reverse=True,
     )
 
-# ─────────────────────────────────────────────────────────
-# CONTEXT CLEANING
-# ─────────────────────────────────────────────────────────
 
 _BAD_KEYWORDS = {"table of contents", "index", "copyright", "acknowledgement"}
 
@@ -348,9 +312,6 @@ def format_context(docs: list[dict], max_chunks: int = MAX_CONTEXT_CHUNKS) -> st
 
     return "\n\n---\n\n".join(out)
 
-# ─────────────────────────────────────────────────────────
-# CHAT ENDPOINT
-# ─────────────────────────────────────────────────────────
 
 @app.post("/api/chat")
 async def chat(request: Request):
@@ -361,12 +322,12 @@ async def chat(request: Request):
     if not question:
         return {"error": "Empty question"}
 
-    # ── Session memory ───────────────────────────────────
+
     if session_id not in session_store:
         session_store[session_id] = []
     history = session_store[session_id]
 
-    # ── Layer 0: Greeting fast path ──────────────────────
+
     greeting = greeting_match(question)
     if greeting:
         log.info("Greeting hit for: %s", question[:60])
@@ -376,7 +337,7 @@ async def chat(request: Request):
 
         return StreamingResponse(greeting_stream(), media_type="text/event-stream")
 
-    # ── Layer 1: JSON fast lookup ────────────────────────
+  
     json_answer = json_match(question)
     if json_answer:
         log.info("JSON hit for: %s", question[:60])
@@ -386,7 +347,7 @@ async def chat(request: Request):
 
         return StreamingResponse(fast_stream(), media_type="text/event-stream")
 
-    # ── Layer 2a: Response cache ─────────────────────────
+
     ck = cache_key(question)
     if ck in _response_cache:
         log.info("Cache hit for: %s", question[:60])
@@ -397,7 +358,6 @@ async def chat(request: Request):
 
         return StreamingResponse(cached_stream(), media_type="text/event-stream")
 
-    # ── Layer 2b: ChromaDB + TF-IDF retrieval ────────────
     clean_query = normalize_query(question)
     log.info("ChromaDB retrieval for: %s", clean_query[:60])
 
@@ -424,7 +384,6 @@ async def chat(request: Request):
         question=question,
     )
 
-    # ── Layer 3: Stream LLM response ─────────────────────
     async def stream():
         full = ""
 
@@ -445,9 +404,6 @@ async def chat(request: Request):
 
     return StreamingResponse(stream(), media_type="text/event-stream")
 
-# ─────────────────────────────────────────────────────────
-# HEALTH
-# ─────────────────────────────────────────────────────────
 
 @app.get("/api/health")
 def health():
