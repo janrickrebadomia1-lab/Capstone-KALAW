@@ -258,19 +258,19 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
 
 try {
   const response = await fetch(
-    "https://pdt-fighter-broker-phys.trycloudflare.com/api/chat",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        question,
-        session_id: sessionIdRef.current,
-      }),
-      signal: abortCtrlRef.current.signal,
-    }
-  );
+  "https://laundry-technical-enterprises-presidential.trycloudflare.com/api/chat",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      question,
+      session_id: sessionIdRef.current,
+    }),
+    signal: abortCtrlRef.current.signal,
+  }
+);
 
   if (!response.ok) {
     throw new Error(`Server error: ${response.status}`);
