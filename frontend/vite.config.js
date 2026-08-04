@@ -20,7 +20,7 @@ export default defineConfig({
           "AI-powered knowledge-based chatbot for the CPSU Faculty Manual",
 
         theme_color: "#488243",
-        background_color: "#ffffff",
+        background_color: "#488243",
 
         display: "standalone",
         orientation: "portrait",
