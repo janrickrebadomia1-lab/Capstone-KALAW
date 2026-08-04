@@ -258,7 +258,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
 
 try {
   const response = await fetch(
-  "https://speech-powered-pets-metric.trycloudflare.com  /api/chat",
+  "https://discovery-refers-findings-queen.trycloudflare.com/api/chat",
   {
     method: "POST",
     headers: {
