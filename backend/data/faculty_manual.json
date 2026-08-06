@@ -1,630 +1,2359 @@
-[
-  {
-    "intent": "university_identity",
-    "patterns": [
-      "what is cpsu",
-      "what does cpsu stand for",
-      "about cpsu university",
-      "central philippines state university",
-      "cpsu info",
-      "tell me about cpsu",
-      "where is cpsu located",
-      "cpsu history"
-    ],
-    "response": "Central Philippines State University (CPSU) is a state university established by Republic Act 10228 approved on October 19, 2012. It is located in a 4,653.7-hectare land reservation, 19 kilometers from Kabankalan City, Negros Occidental and 17 kilometers from Mabinay, Negros Oriental. It originated as the Negros Occidental National Agricultural School (NONAS) created by Republic Act No. 43 on October 2, 1946, making it one of the oldest agricultural institutions in the Philippines."
-  },
-
-  {
-    "intent": "university_vision",
-    "patterns": [
-      "cpsu vision",
-      "what is the vision of cpsu",
-      "university vision cpsu",
-      "vision statement cpsu"
-    ],
-    "response": "CPSU's vision is to be a leading technology-driven multi-disciplinary University by 2030."
-  },
-
-  {
-    "intent": "university_mission",
-    "patterns": [
-      "cpsu mission",
-      "what is the mission of cpsu",
-      "mission statement cpsu",
-      "university mission cpsu"
-    ],
-    "response": "CPSU is committed to producing competent graduates and generating relevant technologies for community development through higher education, research, extension, and production services."
-  },
-
-  {
-    "intent": "university_philosophy",
-    "patterns": [
-      "cpsu philosophy",
-      "university philosophy cpsu",
-      "philosophy statement cpsu"
-    ],
-    "response": "The University Philosophy of CPSU is: 'Decent, affordable education for sustainable productivity and global competitiveness under an atmosphere of academic freedom.'"
-  },
-
-  {
-    "intent": "core_values",
-    "patterns": [
-      "cpsu core values",
-      "what are the core values of cpsu",
-      "values of cpsu",
-      "cpsu C P S U values"
-    ],
-    "response": "CPSU's core values (Board Resolution No. 46, s. 2019) stand for: C – Creative, P – Productive, S – Sensitive, U – Unselfish service."
-  },
-
-  {
-    "intent": "faculty_manual_objectives",
-    "patterns": [
-      "objectives of faculty manual",
-      "purpose of faculty manual",
-      "why is there a faculty manual",
-      "goal of faculty manual cpsu"
-    ],
-    "response": "The objectives of the CPSU Faculty Manual are: (1) To establish sound and fair procedure for recruitment, appointment, and promotion; (2) To create and provide equal opportunities for career advancement; (3) To develop highly competent and motivated professionals; (4) To provide a guide for speedy and fair resolution of complaints and grievances; and (5) To provide a framework for personal discipline."
-  },
-
-  {
-    "intent": "faculty_definition",
-    "patterns": [
-      "what is faculty",
-      "define faculty members",
-      "who are faculty in cpsu",
-      "meaning of faculty",
-      "faculty definition university"
-    ],
-    "response": "Faculty refers to the academic group of personnel of the university appointed to a faculty rank who are directly or indirectly engaged in teaching, research, extension, and production services. (Section III, Definition of Terms, CPSU Faculty Manual 2020)"
-  },
-
-  {
-    "intent": "faculty_ranks_table",
-    "patterns": [
-      "faculty ranks cpsu",
-      "academic ranks",
-      "professor levels",
-      "ranks of teachers university",
-      "instructor assistant associate professor",
-      "salary grade faculty",
-      "qce point bracket faculty",
-      "what are the faculty positions cpsu"
-    ],
-    "response": "The CPSU Faculty ranks and their salary grades are as follows:\n\nInstructor I – SG 12 (QCE: 65 and below)\nInstructor II – SG 13 (QCE: 66-76)\nInstructor III – SG 14 (QCE: 77-87)\n\nAssistant Professor I – SG 15 (QCE: 88-96)\nAssistant Professor II – SG 16 (QCE: 97-105)\nAssistant Professor III – SG 17 (QCE: 106-114)\nAssistant Professor IV – SG 18 (QCE: 115-123)\n\nAssociate Professor I – SG 19 (QCE: 124-130)\nAssociate Professor II – SG 20 (QCE: 131-137)\nAssociate Professor III – SG 21 (QCE: 138-144)\nAssociate Professor IV – SG 22 (QCE: 145-151)\nAssociate Professor V – SG 23 (QCE: 152-158)\n\nProfessor I – SG 24 (QCE: 159-164)\nProfessor II – SG 25 (QCE: 165-170)\nProfessor III – SG 26 (QCE: 171-176)\nProfessor IV – SG 27 (QCE: 177-182)\nProfessor V – SG 28 (QCE: 183-188)\nProfessor VI – SG 29 (QCE: 189-194)\n\nCollege/University Professor – SG 30 (QCE: 195-200)\n\nNote: Subject to change based on the revised NBC 461 Guidelines."
-  },
-
-  {
-    "intent": "minimum_qualification",
-    "patterns": [
-      "minimum qualification for faculty",
-      "requirements to become faculty cpsu",
-      "can i teach in cpsu requirements",
-      "teaching qualification cpsu",
-      "faculty requirements university",
-      "what degree needed to teach cpsu"
-    ],
-    "response": "Pursuant to Memorandum Circular No. 10, series of 2012, the minimum education requirement for faculty positions in State Universities and Colleges including CPSU is a Master's degree in the applicant's area of specialization."
-  },
-
-  {
-    "intent": "recruitment_appointment",
-    "patterns": [
-      "how to apply faculty cpsu",
-      "recruitment process cpsu",
-      "appointment process faculty",
-      "how does cpsu hire faculty",
-      "hrmpsb cpsu",
-      "selection board faculty"
-    ],
-    "response": "CPSU recruits faculty through the Human Resource Merit Promotion and Selection Board (HRMPSB). The process is:\n1. The HRMPSB assists the SUC President in objective selection based on the CPSU Merit Selection Plan (MSP).\n2. The HRMPSB submits the top five (5) most qualified candidates to the SUC President.\n3. Appointment for academic rank is based on NBC 461 covering: educational attainment, experience and length of service, and professional development achievement and honors.\n\nHRMPSB Members: VP for Academic Affairs (Chairman), Dean, Campus Administrator, accredited employee association representative, SUC President's representative, and HRM Officer."
-  },
-
-  {
-    "intent": "duties_responsibilities",
-    "patterns": [
-      "duties of faculty",
-      "responsibilities of faculty cpsu",
-      "what should faculty do",
-      "faculty obligations cpsu",
-      "what are the duties of a teacher cpsu"
-    ],
-    "response": "Every faculty member of CPSU shall:\n1. Perform duties in accordance with the philosophy, goals, and objectives of the school.\n2. Be accountable for the efficient attainment of specified learning outcomes.\n3. Render regular reports on student performance with suggestions for improvement.\n4. Maintain and sustain professional growth and advancement.\n5. Refrain from making deductions in students' scholastic ratings for acts not clearly a manifestation of poor scholarship.\n6. Participate as an agent of social, economic, moral, intellectual, cultural, and political change in school and community."
-  },
-
-  {
-    "intent": "promotion_policies",
-    "patterns": [
-      "faculty promotion requirements",
-      "how to get promoted cpsu",
-      "promotion criteria university",
-      "requirements for promotion teacher",
-      "academic promotion rules",
-      "promotion policies cpsu"
-    ],
-    "response": "Promotion policies at CPSU (Section IV-C):\n1. Primary basis is established policies of CSC, DBM, and/or PASUC.\n2. Upgrading/reclassification of rank is done not more than once a year.\n3. A faculty must have at least Very Satisfactory ratings during the last two (2) rating periods.\n4. Criteria for promotion include:\n   - Performance (at least Very Satisfactory in the last two rating periods)\n   - Educational Qualification (based on NBC 461 and MC No. 10, s. 2012)\n   - Professional Development, Achievement, and Honors (published works, consultancy, research awards, training)\n   - Psycho-Social Attributes and Personality Traits\n   - Potential to perform higher responsibilities\n5. Filing of an administrative complaint alone does not disqualify a faculty from promotion.\n6. Faculty who served CPSU longer with tangible accomplishments are given priority for vacant items."
-  },
-
-  {
-    "intent": "promotion_procedure",
-    "patterns": [
-      "steps for promotion cpsu",
-      "promotion process faculty",
-      "how to apply for promotion cpsu",
-      "promotion application procedure"
-    ],
-    "response": "Procedure for Promotion at CPSU:\n1. The HRMO announces university-wide all vacant positions upon clearance from the President.\n2. The HRMO submits candidates' credentials to the FRASC for evaluation.\n3. The Faculty Recruitment and Selection Committee reviews before recommendation to the President.\n\nProcedure for Upgrading/Reclassification:\n1. HRMO advises all concerned to update their records and NBC documents.\n2. CCE rules and procedures for reclassification are followed.\n3. Upgrading is once every two-school year if performance is at least Very Satisfactory.\n4. All promotional appointments are posted in three conspicuous spaces for 15 days to allow interested parties to file a request."
-  },
-
-  {
-    "intent": "performance_evaluation",
-    "patterns": [
-      "how faculty are evaluated",
-      "spms evaluation cpsu",
-      "performance rating system",
-      "faculty evaluation criteria",
-      "how teachers are rated",
-      "performance evaluation system cpsu"
-    ],
-    "response": "CPSU uses the Strategic Performance-Based Management System (SPMS) for faculty evaluation. Performance is rated based on three dimensions:\n- Effectiveness/Quality: The extent actual performance compares with targeted performance and whether objectives are achieved.\n- Efficiency: The extent to which time or resources are used for the intended task with minimum waste.\n- Timeliness: Whether the deliverable was done on time based on requirements of law and/or clients/stakeholders."
-  },
-
-  {
-    "intent": "rating_scale",
-    "patterns": [
-      "performance rating scale",
-      "1 to 5 rating meaning cpsu",
-      "what is outstanding rating",
-      "evaluation score meaning",
-      "faculty rating system",
-      "what is satisfactory rating",
-      "poor fair satisfactory very satisfactory outstanding"
-    ],
-    "response": "CPSU uses a five-point rating scale (approved by CSC RO-VI, January 27, 2015):\n\n5 – Outstanding: Extraordinary level of achievement; exceeds targets by 30% and above; submitted 5-10 days earlier.\n\n4 – Very Satisfactory: Exceeds targets by 15% to 29%; submitted 1-4 days earlier.\n\n3 – Satisfactory: Meets expectations; performance of 100% to 114% of planned targets; submitted on deadline.\n\n2 – Fair: Fails to meet expectations; performance of 51% to 99% of planned targets; submission delayed by 1-4 days.\n\n1 – Poor: Consistently below expectations; performance failing targets by 50% or below; submission delayed beyond 4 days."
-  },
-
-  {
-    "intent": "training_development_policies",
-    "patterns": [
-      "faculty training cpsu",
-      "seminars for teachers",
-      "professional development programs",
-      "faculty workshops cpsu",
-      "training opportunities university",
-      "training and development policies"
-    ],
-    "response": "CPSU Training and Development Policies (Section IV-E):\n1. The University shall develop and implement a continuing program for the training and development of faculty.\n2. Faculty are encouraged to pursue relevant local and foreign-assisted training, seminars, conferences, workshops, and HRD courses.\n3. Selection of participants depends on actual needs for specialization and enhancement of competence.\n4. Priority is given to candidates with permanent appointments who are below 60 years old, at least once a year."
-  },
-
-  {
-    "intent": "training_development_procedure",
-    "patterns": [
-      "training committee cpsu",
-      "fastdcc cpsu",
-      "how to apply for training",
-      "who selects training participants",
-      "training selection process"
-    ],
-    "response": "Each campus has a Faculty Training and Development Campus Committee (FASTDCC) composed of:\n- VP for Academic Affairs (Chairman)\n- Training Services Director (Vice-Chairman)\n- Campus Administrator, Dean, Curricular Program Coordinators (Members)\n- Human Resource Management Officer\n\nThe FASTDCC selects and recommends who should receive scholarship grants and attend specific training programs conducted by the University or other government agencies or accredited NGOs, whether local or foreign. The Campus Head submits an annual training plan through the FASTDCC."
-  },
-
-  {
-    "intent": "suggestion_incentive_award",
-    "patterns": [
-      "suggestion award cpsu",
-      "incentive award faculty",
-      "sias cpsu",
-      "siac cpsu",
-      "award for ideas cpsu",
-      "faculty recognition program"
-    ],
-    "response": "The Suggestion and Incentive Award System (SIAS) at CPSU encourages creativity, innovativeness, efficiency, and integrity by recognizing and rewarding faculty for suggestions, inventions, and superior accomplishments.\n\nKey details:\n- All deserving faculty with regular plantilla items who meet the criteria are entitled to the award.\n- Any idea or accomplishment meeting the criteria is awarded only once per idea or accomplishment.\n- A Suggestion and Incentive Award Committee (SIAC) is headed by the Performance Management Team (PMT).\n- Any faculty member may nominate a colleague for available awards at any time of the year.\n- Awards may be given during appropriate occasions, preferably during University Charter Day or Civil Service Week.\n- Any award or honor received is entered into the personnel file by the Campus Personnel Officer."
-  },
-
-  {
-    "intent": "grievance_policies",
-    "patterns": [
-      "grievance procedure cpsu",
-      "how to file complaint",
-      "faculty complaint process",
-      "report issue university",
-      "grievance system cpsu",
-      "complaint policy faculty"
-    ],
-    "response": "CPSU Complaints and Grievance Policies (Section IV-H):\n- Complaint: A written or spoken dissatisfaction related to work conditions, superior-subordinate relations, or interpersonal relations brought to the immediate supervisor's attention.\n- Grievance: A complaint that has been ignored, overridden, or dropped without due consideration.\n\nGrounds for grievance include: working conditions, work assignment, tools or equipment, unsatisfactory work processes, improper placement, arbitrary transfer, abuse of discretion, oppressive rules, and other matters causing faculty demoralization.\n\nFaculty who express grievances are assured freedom from any form of reprisal or discrimination. A complainant has the right to appeal to higher authorities."
-  },
-
-  {
-    "intent": "grievance_procedure",
-    "patterns": [
-      "steps to file grievance cpsu",
-      "how long grievance takes",
-      "complaint resolution time",
-      "grievance committee cpsu",
-      "cfcgc cpsu"
-    ],
-    "response": "Grievance Procedure at CPSU:\n1. A faculty member may air a complaint orally to his/her immediate supervisor, who hears both sides and holds a dialogue.\n2. If unresolved, the complaint is elevated to the Campus Faculty Complaints and Grievance Committee (CFCGC).\n3. The CFCGC is composed of: a ranking officer chosen by the President (Chairman), Administrative Officer, Director of the department where the complaint arose, a representative of the complainant, and the President of the Management Office (ex-officio Secretary).\n4. The CFCGC must resolve any complaint within thirty (30) working days.\n5. If still unresolved, the dispute may be referred to the Board of Trustees who shall resolve it within thirty (30) working days."
-  },
-
-  {
-    "intent": "regular_teaching_load",
-    "patterns": [
-      "teaching load cpsu",
-      "faculty workload units",
-      "how many units teaching load",
-      "regular teaching load faculty",
-      "teaching hours university professor",
-      "how many units should a faculty teach"
-    ],
-    "response": "Regular Teaching Load for Permanent Faculty (CPSU Faculty Workload Guidelines):\n\n- Faculty with 1 preparation: 24 units\n- Faculty with 2 preparations: 21 units\n- Faculty with 3–4 preparations: 18 units\n\nAdditional rules:\n- 1 unit = 1 contact hour/week for lecture; Laboratory = 0.75 units per contact hour/week.\n- Load assignments are limited to three (3) preparations.\n- Every additional subject preparation is equivalent to one 3-unit subject load.\n- For undergraduate thesis advising: 0.05 ETU per student, maximum of five (5) advisees only."
-  },
-
-  {
-    "intent": "part_time_teaching_load",
-    "patterns": [
-      "part time faculty load cpsu",
-      "part time teaching load",
-      "how many units part time faculty",
-      "part time lecturer cpsu"
-    ],
-    "response": "Part-time Faculty Teaching Load at CPSU:\n- Teaching load: 30 units\n- Total compensation shall not exceed the existing salary rate of an Instructor I.\n- Pay rates based on qualifications (Approved by Administrative and Academic Council, 2019):\n  - Full-fledged Masters/Ph.D.: ₱160.00/unit\n  - CAR (Masters): ₱150.00/unit\n  - With a License or 50% units or more (Masters): ₱140.00/unit\n  - Bachelor's Degree: ₱130.00/unit"
-  },
-
-  {
-    "intent": "overload_policy",
-    "patterns": [
-      "overload teaching",
-      "extra teaching units",
-      "can faculty teach overload",
-      "additional teaching load cpsu",
-      "extra classes faculty",
-      "overload rules cpsu"
-    ],
-    "response": "Overload Policy at CPSU:\n1. A maximum of ten (10) hours per week of extra teaching is allowed, provided the faculty member maintains a Very Satisfactory rating during the last two consecutive semesters.\n2. Overload time should be outside the regular official load hours.\n3. Payment of honoraria (service credit or remuneration) for overload teaching shall be based on the current academic rank of the faculty concerned.\n4. Faculty with administrative designation may render overload after office hours including Saturday for a maximum of 6 workload hours."
-  },
-
-  {
-    "intent": "outside_teaching_load",
-    "patterns": [
-      "can faculty teach outside",
-      "outside teaching permission",
-      "moonlighting policy cpsu",
-      "external teaching approval",
-      "teach in other schools cpsu faculty"
-    ],
-    "response": "Outside Teaching Load Policy at CPSU:\n1. Outside teaching refers to academic instruction in other colleges or universities. Schedule must be outside regular official and overload teaching time.\n2. Faculty must secure permission each semester from the Department Chair/Program Chair, Dean/Campus Director, and the University President.\n3. Maximum allowed: not more than nine (9) units for lecture and five (5) units for laboratory.\n4. Outside teaching must not conflict with faculty duties at CPSU; CPSU commitment is always first priority.\n5. Faculty on study leave with pay or on scholarship are NOT allowed to render outside teaching loads in any university including the CPSU Graduate School.\n6. Faculty are NOT allowed to work as full-time employees of other public or private universities or agencies. Those found guilty shall be administratively liable."
-  },
-
-  {
-    "intent": "deloading_scheme",
-    "patterns": [
-      "deloading cpsu",
-      "load reduction designation cpsu",
-      "equivalent workload administrative",
-      "deload units designation",
-      "how many units deload for dean",
-      "deloading scheme cpsu"
-    ],
-    "response": "Deloading Scheme – Equivalent Workload Units for Administrative Designations at CPSU:\n\nUniversity-Wide:\n- Vice President: 3 units\n- Dean / QA / Research & Extension / Planning Officer: 6 units\n- Director (by category): 9–12 units\n- Campus Administrator: 6 units\n- Coordinator: 12–15 units\n- Internal Lead Auditor: 9–12 units\n- ISO/ISA Secretariat: 12–15 units\n- Faculty Regent: 15–18 units\n- Editor-in-Chief/Managing Editor: 12–15 units\n\nCampus/College Level:\n- Program Chair / Department Chair / Department Head: 16 units\n- Collecting and Disbursing Officer: 12–15 units\n- Library Services/Librarian: 12 units\n- Campus Registrar: 12–15 units\n- Network Administrator/MIS In-charge: 18–21 units\n- Data Privacy Act Officer: 18 units\n- Guidance and Counseling/Health Services: 12 units\n- Property Custodian/Supply Officer/Records Officer/Campus-HR: 18–21 units\n- OSSA Coordinator: 12 units\n- NBC Local Evaluator: 18 units\n- Coordinator, Research/Extension: 15 units\n- Coordinator, Landscaping and Beautification: 18 units\n- Coordinator, Sports and Cultural: 18 units\n- Adviser, Student Organization (FLP/SSG): 15 units\n- Adviser, School Publication/Journal: 15 units\n- Laboratory/AVR In-charge: 21 units\n- Yearbook In-charge: 18 units\n- Sports and Cultural Coach (Varsity): 18 units\n- Project In-charge: 18 units\n- Faculty with approved Research/Extension/Production proposal: 18 units\n- Executive Assistant: 12 units\n- Campus OJT Coordinator: 21 units\n- Purok Adviser: 21 units\n- Scholarship Coordinator: 21 units\n- Assessment In-charge: 21 units\n- Security Officer: 21 units\n- Budget Officer: 21 units\n\nNote: A faculty with two or more designations shall claim the highest equivalent workload unit only."
-  },
-
-  {
-    "intent": "class_size",
-    "patterns": [
-      "class size cpsu",
-      "minimum students to open class",
-      "how many students per class",
-      "required enrollment to open class cpsu"
-    ],
-    "response": "Minimum class size requirements to open a class at CPSU (Undergraduate Courses):\n- Lecture/Discussion: 10–35 students\n- Laboratory: 10–25 students\n\nA class below the minimum may be permitted if:\n1. At least one (1) student is graduating.\n2. The enrolled students comprise the total population of the program.\n3. The subject is a regular course offering.\n4. Special class request for off-semester subjects upon approval of the University President. Students in special classes pay per-hour rate based on the academic rank of the requested faculty."
-  },
-
-  {
-    "intent": "flexi_time",
-    "patterns": [
-      "flexi time cpsu",
-      "flexible schedule faculty",
-      "adjusted work schedule faculty",
-      "who can avail flexi time cpsu"
-    ],
-    "response": "Flexi-time at CPSU (per CSC No. 14, Series of 1989) may be allowed upon recommendation of the VP for Academic Affairs to the CPSU President for:\n1. Faculty pursuing further studies who need adjusted work schedules to fit their class hours.\n2. Faculty residing outside the CPSU campus at a distance of not less than twenty (20) kilometers."
-  },
-
-  {
-    "intent": "vacation_sick_leave",
-    "patterns": [
-      "vacation leave cpsu",
-      "sick leave cpsu",
-      "leave credits faculty",
-      "how many leave days",
-      "annual leave teachers",
-      "vacation sick leave policy faculty"
-    ],
-    "response": "Leave Privileges for CPSU Teaching Personnel:\n- Annual Vacation Leave: 15 days with full pay (exclusive of Saturdays, Sundays, and public holidays)\n- Annual Sick Leave: 15 days with full pay\n- Both vacation and sick leave are cumulative; unused leave carries over to succeeding years.\n- Sick leave is granted only for illness of the faculty member or immediate family.\n- Upon voluntary resignation or separation not due to fault of the faculty, accumulated leave credits are commuted."
-  },
-
-  {
-    "intent": "proportional_vacation_pay",
-    "patterns": [
-      "proportional vacation pay cpsu",
-      "vacation pay teachers cpsu",
-      "teacher vacation pay summer",
-      "summer vacation pay faculty"
-    ],
-    "response": "Proportional Vacation Pay at CPSU:\n- Granted to full-time teaching personnel who do not normally perform administrative functions.\n- A teacher automatically goes on vacation leave with pay during school vacations.\n- If a teacher chooses to teach during summer and his/her services are needed, he/she is entitled to honorarium or service credits in addition to vacation pay.\n- No member of the teaching personnel shall be required to teach for more than two consecutive summers.\n- Teaching personnel also enjoy vacation leave with pay during the Christmas break."
-  },
-
-  {
-    "intent": "sabbatical_leave",
-    "patterns": [
-      "sabbatical leave cpsu",
-      "study leave faculty",
-      "long leave academic staff",
-      "faculty sabbatical policy",
-      "leave for graduate studies cpsu"
-    ],
-    "response": "Sabbatical Leave at CPSU:\n- Teachers may apply for sabbatical leave with pay after continuously serving the University for seven (7) years.\n- Authorized only for study purposes: earning other degrees, completing academic deficiency, attaining a higher degree, enhancing teaching/professional practice skills, or conducting research.\n- Duration: Two (2) semesters and two (2) summers only."
-  },
-
-  {
-    "intent": "cumulative_leave",
-    "patterns": [
-      "cumulative leave cpsu",
-      "leave for faculty with admin duties",
-      "research extension leave cpsu"
-    ],
-    "response": "Cumulative Leave at CPSU:\n- Granted to regular teaching personnel who regularly perform administrative functions.\n- Also available to faculty engaged in research or other assignments that prevent them from enjoying teacher's vacation leave (certified by the Dean or Director).\n- Both vacation and sick leave shall be cumulative; unused leave is carried over to succeeding years."
-  },
-
-  {
-    "intent": "maternity_leave",
-    "patterns": [
-      "maternity leave cpsu",
-      "pregnancy leave policy",
-      "female faculty leave",
-      "maternity benefits university",
-      "how many days maternity leave cpsu",
-      "expanded maternity leave cpsu"
-    ],
-    "response": "Maternity Leave at CPSU (Republic Act 11210 – 105-Day Expanded Maternity Leave Law):\n- 105 days paid maternity leave for live childbirth, regardless of mode of delivery.\n- An additional 15 days paid leave if the female worker qualifies as a solo parent under RA 8972.\n- 60 days paid leave for miscarriage or emergency termination of pregnancy.\n- Option to extend for an additional 30 days without pay in case of live childbirth.\n- Granted regardless of employment status and length of service."
-  },
-
-  {
-    "intent": "paternity_leave",
-    "patterns": [
-      "paternity leave cpsu",
-      "leave for fathers",
-      "male faculty leave",
-      "father leave policy university",
-      "how many days paternity leave"
-    ],
-    "response": "Paternity Leave at CPSU (Republic Act 8187 – Paternity Leave Act of 1996 and RA 11210):\n- 7 days paternity leave for the first four (4) deliveries or miscarriages of the legitimate spouse with whom the male faculty is cohabiting.\n- Purpose: to enable him to care for and support his wife and newborn before, during, and after childbirth.\n- An additional 7 days may be allocated from the 105-day maternity leave of his spouse with full pay under RA 11210."
-  },
-
-  {
-    "intent": "leave_without_pay",
-    "patterns": [
-      "leave without pay cpsu",
-      "unpaid leave faculty",
-      "lwop cpsu",
-      "how to apply leave without pay"
-    ],
-    "response": "Leave Without Pay (LWOP) at CPSU:\n- Leave without pay not exceeding one (1) year may be granted for good cause.\n- Application must be filed at least five (5) days before the effectivity of such leave.\n- Must not interfere with the work of the university and must not be contrary to existing Civil Service Laws.\n- For unauthorized absence of at least sixty (60) days beyond the expiration of the approved leave, the faculty may be dropped from service after due notice and investigation."
-  },
-
-  {
-    "intent": "adoption_leave",
-    "patterns": [
-      "adoption leave cpsu",
-      "leave for adoptive parents cpsu",
-      "adopted child leave"
-    ],
-    "response": "Adoption Leave at CPSU:\n- For legally adopting a child below seven (7) years of age as of the date the child is placed with them.\n- Married individuals (both in government): 30 calendar days for adoptive mother, 7 calendar days for adoptive father.\n- Solo parents (any gender or civil status): 30 calendar days.\n- Leave commences from the date the child is placed with the adoptive parents.\n- Adoption leave is non-commutative and non-cumulative."
-  },
-
-  {
-    "intent": "solo_parent_leave",
-    "patterns": [
-      "solo parent leave cpsu",
-      "parental leave solo parent",
-      "single parent leave faculty cpsu"
-    ],
-    "response": "Parental Leave for Solo Parents at CPSU:\n- In addition to existing leave privileges, solo parent faculty are entitled to not more than seven (7) working days of parental leave every year.\n- Available until the child reaches the age of eighteen (18) years.\n- Faculty must have rendered at least one (1) year of service.\n- Parental leave is non-commutative and non-cumulative."
-  },
-
-  {
-    "intent": "rehabilitation_leave",
-    "patterns": [
-      "rehabilitation leave cpsu",
-      "injury leave faculty cpsu",
-      "accident leave policy faculty"
-    ],
-    "response": "Rehabilitation Privilege at CPSU:\n- Faculty injured while performing official duties are entitled to rehabilitation leave.\n- Maximum of six (6) months for physical reasons.\n- Maximum of one (1) year for psychological reasons.\n- Based on recommendation of a licensed health professional.\n- Faculty on rehabilitation leave shall receive their full salaries and regular benefits such as PERA, year-end bonus, and cash gift."
-  },
-
-  {
-    "intent": "secondment",
-    "patterns": [
-      "secondment cpsu",
-      "special service leave cpsu",
-      "temporary government position faculty"
-    ],
-    "response": "Secondment (Special Service Leave) at CPSU:\n- Not exceeding four (4) years, granted to faculty who accept temporary government positions that are primarily confidential, policy-determining, or highly technical.\n- Faculty on secondment are entitled to leave of absence from the University co-terminus with the government assignment.\n- They may continue serving the University as professional lecturers or consultants as needed."
-  },
-
-  {
-    "intent": "study_privileges",
-    "patterns": [
-      "study privilege cpsu",
-      "can faculty enroll cpsu",
-      "free tuition faculty cpsu",
-      "faculty study benefit",
-      "faculty enroll graduate school"
-    ],
-    "response": "Study Privileges for CPSU Faculty:\n- Regular teaching personnel may enroll in graduate and undergraduate programs of the University for not more than nine (9) units per semester.\n- Enrollment must be in courses beneficial to the University, subject to approval of the University President.\n- Permission is granted only to faculty with Very Satisfactory performance in the preceding period.\n\nTuition Privileges:\n- Undergraduate courses: Permanent faculty are entitled to free tuition for a maximum of 9 units.\n- Graduate courses: Any regular employee (permanent and temporary) enrolled in the CPSU Graduate School is entitled to 100% free tuition.\n- Non-plantilla personnel with at least one year of service and Very Satisfactory performance are also entitled to 100% free tuition in the CPSU Graduate School."
-  },
-
-  {
-    "intent": "tuition_for_dependents",
-    "patterns": [
-      "tuition privilege children cpsu",
-      "dependents tuition free cpsu",
-      "children of faculty free tuition",
-      "spouse free tuition cpsu"
-    ],
-    "response": "Tuition Privileges for Dependents of CPSU Faculty:\n- Legal spouse and children (or first-degree affinity – nephew/niece for those without children) for a maximum of five (5) dependents shall be entitled to full tuition privileges at any campus of the University.\n- Applicable to permanent faculty with at least five (5) years of continuous service.\n- The dependent must pass at least twelve (12) units or three-fourths (3/4) of total units enrolled in the last registration to maintain the privilege.\n- In the event the dependent fails to meet the required passing rate, he/she shall be enrolled in any non-board degree program within the 5% absorptive capacity set for each campus."
-  },
-
-  {
-    "intent": "housing_privilege",
-    "patterns": [
-      "housing benefit cpsu faculty",
-      "can faculty live in campus",
-      "housing privilege faculty cpsu",
-      "land use faculty cpsu"
-    ],
-    "response": "Housing and Land Privilege at CPSU:\n- A bonafide employee may, upon permission of the University President, build a residential house at his/her own expense at a designated campus area based on the Comprehensive Land Use Plan.\n- Priority in housing is afforded to permanent employees.\n- Governed by Board Resolution No. 51, s. 2019 and RA 11396 (SUCs Land Use Development and Infrastructure Plan Act)."
-  },
-
-  {
-    "intent": "service_loyalty_award",
-    "patterns": [
-      "service award cpsu",
-      "loyalty award faculty",
-      "long service recognition",
-      "teacher awards university",
-      "retirement award cpsu",
-      "award for years of service cpsu"
-    ],
-    "response": "Merits and Awards at CPSU:\n- Service Award: Given at the time of retirement for meritorious service of at least fifteen (15) years.\n- Loyalty Award: Given after ten (10) years of service and every five (5) years thereafter.\n- A committee on awards administers the merit and awards system."
-  },
-
-  {
-    "intent": "service_credit",
-    "patterns": [
-      "service credit cpsu",
-      "how to earn service credit faculty",
-      "service credit research extension cpsu",
-      "service credit summer cpsu"
-    ],
-    "response": "Service Credits at CPSU:\n- Faculty involved in research, extension, and production activities during summer and Christmas vacation are entitled to overload pay (subject to availability of funds) and/or service credits.\n- A faculty on Teacher's Leave status who teaches during summer shall be compensated.\n- Faculty on Teacher's Leave who attend seminars/workshops during summer on official business shall be granted service credits equivalent to 1 day for every 8 hours of attendance."
-  },
-
-  {
-    "intent": "scholarship_program",
-    "patterns": [
-      "faculty scholarship cpsu",
-      "study grant teachers",
-      "education assistance faculty",
-      "scholarship program university",
-      "cpsu scholarship requirements",
-      "how to avail scholarship cpsu"
-    ],
-    "response": "CPSU Faculty Development Program – Scholarship Requirements:\n\nEntry Requirements:\n1. At least two (2) years of continuous service in the University.\n2. Permanent/Regular status.\n3. At least Very Satisfactory (VS) performance rating for the past two (2) years.\n4. Good health and moral character with no pending administrative or criminal case.\n5. Must not have any current foreign or local scholarship grant.\n6. Age must not be more than 50 years old for Post Graduate, MA/MS, Ph.D., Ed.D., and Study Grant.\n\nTypes of Scholarship:\n- Full Scholarship: Completion of a higher degree with full benefits from the University or external agency.\n- Partial Scholarship: Completion of a higher degree with partial benefits.\n- Training Grant: Upgrading of not less than one (1) month.\n- Study Grant: Study leave on official time for thesis/dissertation writing stage."
-  },
-
-  {
-    "intent": "scholarship_benefits",
-    "patterns": [
-      "scholarship benefits cpsu",
-      "what does cpsu scholarship cover",
-      "stipend for faculty scholar cpsu",
-      "book allowance scholar cpsu"
-    ],
-    "response": "CPSU Full Scholarship Benefits:\n1. Payment of salaries.\n2. Tuition and other school fees (except tutorial services).\n3. Monthly stipend of ₱5,000.00.\n4. Book allowance of ₱2,000.00 per semester (liquidated by official receipts).\n5. Two-way travel expenses (transportation to and from the enrolling institution before and after the scholarship period).\n\nPartial Scholarship Benefits:\n1. Payment of salaries and other benefits.\n2. Training fees and other school fees.\n3. Stipend and other expenses per accounting and auditing rules.\n\nThesis/Dissertation Aid:\n- 50% upon submission of approved title; another 50% after the pre-oral defense."
-  },
-
-  {
-    "intent": "scholarship_obligations",
-    "patterns": [
-      "return service scholar cpsu",
-      "obligation after scholarship cpsu",
-      "service obligation faculty scholar",
-      "contract scholarship cpsu"
-    ],
-    "response": "Service Obligations After CPSU Scholarship:\n- 1-year leave = 2 years of service obligation.\n- 6 months leave = 1 year of service obligation.\n- After completion: Serve the University for two (2) years for every year (or fraction thereof) for Ph.D./Ed.D. level and Master's level; one (1) year for partial scholarship and training grants of more than one (1) month.\n\nRequired submissions after scholarship:\n1. Photocopy of diploma and transcript of records (certified true copy).\n2. Two (2) copies of thesis/dissertation book for University Library and Campus Library.\n3. Terminal Report.\n4. Re-entry Plan."
-  },
-
-  {
-    "intent": "scholarship_duration_standards",
-    "patterns": [
-      "how long is master scholarship cpsu",
-      "phd scholarship duration cpsu",
-      "gpa requirement scholar cpsu",
-      "academic requirement scholarship cpsu"
-    ],
-    "response": "CPSU Scholarship Duration and Academic Standards:\n\nDuration:\n- MS/MA: 2 school years with a 1-semester extension as approved by the BOR.\n- Ph.D./Ed.D.: 4 school years with a 1-semester extension as approved by the BOR.\n\nGPA Requirements:\n- MS/MA: 2.0\n- Ph.D./Ed.D.: 2.0\n\nProhibitions during scholarship:\n- Cannot enjoy another grant simultaneously (choose the one with better benefits).\n- Cannot engage in any work or lecture for pay.\n- Cannot attend seminars/conferences on official business unless funded by the sponsoring agency.\n- Cannot render part-time service to the University while on full scholarship (except as required by proper authorities)."
-  },
-
-  {
-    "intent": "scholarship_committee",
-    "patterns": [
-      "ufdc cpsu",
-      "university faculty development committee",
-      "who approves scholarship cpsu",
-      "scholarship committee cpsu"
-    ],
-    "response": "University Faculty Development Committee (UFDC) – Scholarship Committee at CPSU:\n\nComposition:\n- Chairman: Vice President for Academic Affairs\n- Members: Deans, University Faculty Association President, HRM Officer, Campus Administrator, Planning Officer\n- Secretary: Faculty Association Secretary\n\nFunctions:\n1. Prepares university-wide priorities based on department plans.\n2. Disseminates scholarship opportunities.\n3. Conducts screening of all applications for scholarship and grants.\n4. Monitors status of scholars.\n5. Recommends actions on requests pertaining to scholarship.\n6. Recommends budget for the University scholarship program.\n\nApplication should be forwarded to the University President through the Scholarship Committee. Local scholarship applications are filed one (1) semester before the scholarship; foreign grants are filed as available."
-  },
-
-  {
-    "intent": "scholarship_termination",
-    "patterns": [
-      "scholarship cancellation cpsu",
-      "when can scholarship be terminated cpsu",
-      "grounds for termination scholarship"
-    ],
-    "response": "Grounds for Termination of CPSU Scholarship:\n1. Failure to meet the academic standards set by the University.\n2. Willful failure to enroll in or drop from the course without University approval.\n3. Violation of terms and conditions of the scholarship contract.\n4. Falsification of records (the scholar shall also be dealt with administratively).\n5. Violation of provisions stipulated in the scholarship guidelines."
-  },
-
-  {
-    "intent": "personnel_welfare",
-    "patterns": [
-      "welfare services faculty cpsu",
-      "employee welfare cpsu",
-      "faculty welfare programs cpsu",
-      "health services faculty cpsu"
-    ],
-    "response": "CPSU Personnel Relations and Welfare Services (Section IV-G):\nThe University shall:\n- Create an atmosphere conducive to management-faculty relations for health, welfare, counseling, recreation, legal services, canteen, cooperatives, and transportation.\n- Arrange annual medical and dental services for faculty.\n- Provide a handbook informing faculty of their rights, privileges, and obligations.\n- Facilitate dissemination of information and encourage participation in developing plans, policies, and procedures.\n- Encourage voluntary athletic, social, recreational, or financial activities conducive to faculty well-being.\n- Encourage faculty to form, join, or assist employee organizations for the protection and furtherance of their interests."
-  },
-
-  {
-    "intent": "underload_policy",
-    "patterns": [
-      "underload faculty cpsu",
-      "what if faculty has no enough load",
-      "less than required units faculty cpsu"
-    ],
-    "response": "Guidelines for Underloaded Faculty at CPSU:\n1. The faculty shall be given a load in any college/department within the University, approved by the VP for Academic Affairs.\n2. The faculty may be given a load in any extension campus without extra pay, approved by the President.\n3. Faculty on Teacher's Leave Basis shall be given commensurate service credits for assisting during enrollment, graduation, and other activities per Service Credit Guidelines.\n4. Regardless of workload units during summer, the faculty is automatically entitled to vacation/sick leave basis.\n5. Holders of non-academic rank who are qualified to teach may be tapped outside their official time and paid per existing guidelines."
-  },
-
-  {
-    "intent": "workload_definition",
-    "patterns": [
-      "what is faculty workload",
-      "define workload cpsu",
-      "faculty duties workload",
-      "teaching and non teaching duties",
-      "workload meaning university faculty"
-    ],
-    "response": "Workload at CPSU refers to units earned by teaching or a combination of teaching and other activities in connection with research, extension, administrative works, assistance, and advising to students.\n\nKey rules:\n1. All university personnel with academic rank must teach.\n2. Permanent faculty, if qualified, should be given priority in load assignments across colleges or departments."
-  },
-
-  {
-    "intent": "research_extension_load",
-    "patterns": [
-      "research load faculty cpsu",
-      "extension activity load cpsu",
-      "etl research cpsu",
-      "equivalent teaching load research"
-    ],
-    "response": "Research and Extension Activities (REA) Workload at CPSU:\n\nResearch Activities:\n- Faculty from any college or office may get involved in research and development programs.\n- Involvement must be approved by the head of the mother unit to earn legitimate Equivalent Teaching Load (ETL).\n- Appropriate designation shall be issued to each faculty.\n\nExtension Activities:\n- Faculty must pass a project proposal to the Extension Director for approval by the University President.\n- Approved extension projects shall be given a credit of 1 subject load equivalent to three (3) units teaching load."
-  },
-
-  {
-    "intent": "fallback",
-    "patterns": [],
-    "response": "I couldn't find a specific answer in the CPSU Faculty Manual (Board Resolution No. 101, s. 2020). Please try rephrasing your question or consult the HR Office or VP for Academic Affairs for further assistance."
-  }
-]
+{
+  "intents": [
+    {
+      "intent": "university_identity",
+      "category": "University Information",
+      "patterns": [
+        "what is cpsu",
+        "what does cpsu stand for",
+        "about cpsu university",
+        "central philippines state university",
+        "cpsu info",
+        "tell me about cpsu",
+        "where is cpsu located",
+        "cpsu history",
+        "what is the CPSU information",
+        "what are the rules for CPSU information",
+        "what are the requirements for CPSU information",
+        "how does CPSU information work",
+        "how does CPSU handle CPSU information",
+        "can you explain CPSU information",
+        "please explain CPSU information",
+        "tell me about CPSU information",
+        "i want to know about CPSU information",
+        "what should faculty know about CPSU information",
+        "what does the faculty manual say about CPSU information",
+        "what is CPSU policy on CPSU information",
+        "what is the CPSU rule for CPSU information",
+        "what are the guidelines for CPSU information",
+        "where can I find the policy on CPSU information",
+        "does CPSU allow CPSU information",
+        "is there a CPSU policy for CPSU information"
+      ],
+      "keywords": [
+        "CPSU",
+        "Central Philippines State University",
+        "university history",
+        "university information"
+      ],
+      "aliases": [
+        "CPSU information",
+        "about CPSU",
+        "CPSU background"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "University Information"
+      },
+      "response": "Central Philippines State University (CPSU) is a state university established by Republic Act 10228 approved on October 19, 2012. It is located in a 4,653.7-hectare land reservation, 19 kilometers from Kabankalan City, Negros Occidental and 17 kilometers from Mabinay, Negros Oriental. It originated as the Negros Occidental National Agricultural School (NONAS) created by Republic Act No. 43 on October 2, 1946, making it one of the oldest agricultural institutions in the Philippines."
+    },
+    {
+      "intent": "university_vision",
+      "category": "University Information",
+      "patterns": [
+        "cpsu vision",
+        "what is the vision of cpsu",
+        "university vision cpsu",
+        "vision statement cpsu",
+        "what is CPSU's vision",
+        "what is the CPSU vision",
+        "tell me CPSU's vision",
+        "give me the CPSU vision",
+        "what does CPSU say about its vision"
+      ],
+      "keywords": [
+        "CPSU",
+        "vision",
+        "vision statement",
+        "2030"
+      ],
+      "aliases": [
+        "CPSU vision",
+        "university vision"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "University Information"
+      },
+      "response": "CPSU's vision is to be a leading technology-driven multi-disciplinary University by 2030."
+    },
+    {
+      "intent": "university_mission",
+      "category": "University Information",
+      "patterns": [
+        "cpsu mission",
+        "what is the mission of cpsu",
+        "mission statement cpsu",
+        "university mission cpsu",
+        "what is CPSU's mission",
+        "what is the CPSU mission",
+        "tell me CPSU's mission",
+        "give me the CPSU mission",
+        "what does CPSU say about its mission"
+      ],
+      "keywords": [
+        "CPSU",
+        "mission",
+        "mission statement"
+      ],
+      "aliases": [
+        "CPSU mission",
+        "university mission"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "University Information"
+      },
+      "response": "CPSU is committed to producing competent graduates and generating relevant technologies for community development through higher education, research, extension, and production services."
+    },
+    {
+      "intent": "university_philosophy",
+      "category": "University Information",
+      "patterns": [
+        "cpsu philosophy",
+        "university philosophy cpsu",
+        "philosophy statement cpsu",
+        "what is CPSU's philosophy",
+        "what is the CPSU philosophy",
+        "tell me CPSU's philosophy",
+        "give me the CPSU philosophy",
+        "what does CPSU say about its philosophy"
+      ],
+      "keywords": [
+        "CPSU",
+        "philosophy",
+        "academic freedom"
+      ],
+      "aliases": [
+        "CPSU philosophy",
+        "university philosophy"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "University Information"
+      },
+      "response": "The University Philosophy of CPSU is: 'Decent, affordable education for sustainable productivity and global competitiveness under an atmosphere of academic freedom.'"
+    },
+    {
+      "intent": "core_values",
+      "category": "University Information",
+      "patterns": [
+        "cpsu core values",
+        "what are the core values of cpsu",
+        "values of cpsu",
+        "cpsu C P S U values",
+        "what is CPSU's values",
+        "what is the CPSU values",
+        "tell me CPSU's values",
+        "give me the CPSU values",
+        "what does CPSU say about its values"
+      ],
+      "keywords": [
+        "CPSU",
+        "core values",
+        "Creative",
+        "Productive",
+        "Sensitive",
+        "Unselfish"
+      ],
+      "aliases": [
+        "CPSU values",
+        "CPSU C P S U values"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "University Information"
+      },
+      "response": "CPSU's core values (Board Resolution No. 46, s. 2019) stand for: C – Creative, P – Productive, S – Sensitive, U – Unselfish service."
+    },
+    {
+      "intent": "faculty_manual_objectives",
+      "category": "Faculty Manual",
+      "patterns": [
+        "objectives of faculty manual",
+        "purpose of faculty manual",
+        "why is there a faculty manual",
+        "goal of faculty manual cpsu",
+        "what is the purpose of faculty manual",
+        "what are the rules for purpose of faculty manual",
+        "what are the requirements for purpose of faculty manual",
+        "how does purpose of faculty manual work",
+        "how does CPSU handle purpose of faculty manual",
+        "can you explain purpose of faculty manual",
+        "please explain purpose of faculty manual",
+        "tell me about purpose of faculty manual",
+        "i want to know about purpose of faculty manual",
+        "what should faculty know about purpose of faculty manual",
+        "what does the faculty manual say about purpose of faculty manual",
+        "what is CPSU policy on purpose of faculty manual",
+        "what is the CPSU rule for purpose of faculty manual",
+        "what are the guidelines for purpose of faculty manual",
+        "where can I find the policy on purpose of faculty manual",
+        "does CPSU allow purpose of faculty manual",
+        "is there a CPSU policy for purpose of faculty manual"
+      ],
+      "keywords": [
+        "faculty manual",
+        "objectives",
+        "purpose",
+        "recruitment",
+        "promotion",
+        "grievance"
+      ],
+      "aliases": [
+        "purpose of faculty manual",
+        "faculty manual objectives"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Manual"
+      },
+      "response": "The objectives of the CPSU Faculty Manual are: (1) To establish sound and fair procedure for recruitment, appointment, and promotion; (2) To create and provide equal opportunities for career advancement; (3) To develop highly competent and motivated professionals; (4) To provide a guide for speedy and fair resolution of complaints and grievances; and (5) To provide a framework for personal discipline."
+    },
+    {
+      "intent": "faculty_definition",
+      "category": "Faculty",
+      "patterns": [
+        "what is faculty",
+        "define faculty members",
+        "who are faculty in cpsu",
+        "meaning of faculty",
+        "faculty definition university",
+        "what is the faculty member",
+        "what are the rules for faculty member",
+        "what are the requirements for faculty member",
+        "how does faculty member work",
+        "how does CPSU handle faculty member",
+        "can you explain faculty member",
+        "please explain faculty member",
+        "tell me about faculty member",
+        "i want to know about faculty member",
+        "what should faculty know about faculty member",
+        "what does the faculty manual say about faculty member",
+        "what is CPSU policy on faculty member",
+        "what is the CPSU rule for faculty member",
+        "what are the guidelines for faculty member",
+        "where can I find the policy on faculty member",
+        "does CPSU allow faculty member",
+        "is there a CPSU policy for faculty member"
+      ],
+      "keywords": [
+        "faculty",
+        "faculty member",
+        "teaching",
+        "research",
+        "extension",
+        "production"
+      ],
+      "aliases": [
+        "faculty member",
+        "faculty personnel"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty"
+      },
+      "response": "Faculty refers to the academic group of personnel of the university appointed to a faculty rank who are directly or indirectly engaged in teaching, research, extension, and production services. (Section III, Definition of Terms, CPSU Faculty Manual 2020)"
+    },
+    {
+      "intent": "faculty_ranks_table",
+      "category": "Faculty Appointment and Ranks",
+      "patterns": [
+        "faculty ranks cpsu",
+        "academic ranks",
+        "professor levels",
+        "ranks of teachers university",
+        "instructor assistant associate professor",
+        "salary grade faculty",
+        "qce point bracket faculty",
+        "what are the faculty positions cpsu",
+        "what is the academic ranks",
+        "what are the rules for academic ranks",
+        "what are the requirements for academic ranks",
+        "how does academic ranks work",
+        "how does CPSU handle academic ranks",
+        "can you explain academic ranks",
+        "please explain academic ranks",
+        "tell me about academic ranks",
+        "i want to know about academic ranks",
+        "what should faculty know about academic ranks",
+        "what does the faculty manual say about academic ranks",
+        "what is CPSU policy on academic ranks",
+        "what is the CPSU rule for academic ranks",
+        "what are the guidelines for academic ranks",
+        "where can I find the policy on academic ranks",
+        "does CPSU allow academic ranks",
+        "is there a CPSU policy for academic ranks"
+      ],
+      "keywords": [
+        "faculty ranks",
+        "Instructor",
+        "Assistant Professor",
+        "Associate Professor",
+        "Professor",
+        "salary grade",
+        "QCE",
+        "NBC 461"
+      ],
+      "aliases": [
+        "academic ranks",
+        "faculty positions"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Appointment and Ranks"
+      },
+      "response": "The CPSU Faculty ranks and their salary grades are as follows:\n\nInstructor I – SG 12 (QCE: 65 and below)\nInstructor II – SG 13 (QCE: 66-76)\nInstructor III – SG 14 (QCE: 77-87)\n\nAssistant Professor I – SG 15 (QCE: 88-96)\nAssistant Professor II – SG 16 (QCE: 97-105)\nAssistant Professor III – SG 17 (QCE: 106-114)\nAssistant Professor IV – SG 18 (QCE: 115-123)\n\nAssociate Professor I – SG 19 (QCE: 124-130)\nAssociate Professor II – SG 20 (QCE: 131-137)\nAssociate Professor III – SG 21 (QCE: 138-144)\nAssociate Professor IV – SG 22 (QCE: 145-151)\nAssociate Professor V – SG 23 (QCE: 152-158)\n\nProfessor I – SG 24 (QCE: 159-164)\nProfessor II – SG 25 (QCE: 165-170)\nProfessor III – SG 26 (QCE: 171-176)\nProfessor IV – SG 27 (QCE: 177-182)\nProfessor V – SG 28 (QCE: 183-188)\nProfessor VI – SG 29 (QCE: 189-194)\n\nCollege/University Professor – SG 30 (QCE: 195-200)\n\nNote: Subject to change based on the revised NBC 461 Guidelines."
+    },
+    {
+      "intent": "minimum_qualification",
+      "category": "Faculty Appointment and Ranks",
+      "patterns": [
+        "minimum qualification for faculty",
+        "requirements to become faculty cpsu",
+        "can i teach in cpsu requirements",
+        "teaching qualification cpsu",
+        "faculty requirements university",
+        "what degree needed to teach cpsu",
+        "what is the faculty qualification",
+        "what are the rules for faculty qualification",
+        "what are the requirements for faculty qualification",
+        "how does faculty qualification work",
+        "how does CPSU handle faculty qualification",
+        "can you explain faculty qualification",
+        "please explain faculty qualification",
+        "tell me about faculty qualification",
+        "i want to know about faculty qualification",
+        "what should faculty know about faculty qualification",
+        "what does the faculty manual say about faculty qualification",
+        "what is CPSU policy on faculty qualification",
+        "what is the CPSU rule for faculty qualification",
+        "what are the guidelines for faculty qualification",
+        "where can I find the policy on faculty qualification",
+        "does CPSU allow faculty qualification",
+        "is there a CPSU policy for faculty qualification"
+      ],
+      "keywords": [
+        "minimum qualification",
+        "Master's degree",
+        "faculty requirement",
+        "teaching qualification"
+      ],
+      "aliases": [
+        "faculty qualification",
+        "minimum education requirement"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Appointment and Ranks"
+      },
+      "response": "Pursuant to Memorandum Circular No. 10, series of 2012, the minimum education requirement for faculty positions in State Universities and Colleges including CPSU is a Master's degree in the applicant's area of specialization."
+    },
+    {
+      "intent": "recruitment_appointment",
+      "category": "Recruitment and Appointment",
+      "patterns": [
+        "how to apply faculty cpsu",
+        "recruitment process cpsu",
+        "appointment process faculty",
+        "how does cpsu hire faculty",
+        "hrmpsb cpsu",
+        "selection board faculty",
+        "what is the faculty recruitment",
+        "what are the rules for faculty recruitment",
+        "what are the requirements for faculty recruitment",
+        "how does faculty recruitment work",
+        "how does CPSU handle faculty recruitment",
+        "can you explain faculty recruitment",
+        "please explain faculty recruitment",
+        "tell me about faculty recruitment",
+        "i want to know about faculty recruitment",
+        "what should faculty know about faculty recruitment",
+        "what does the faculty manual say about faculty recruitment",
+        "what is CPSU policy on faculty recruitment",
+        "what is the CPSU rule for faculty recruitment",
+        "what are the guidelines for faculty recruitment",
+        "where can I find the policy on faculty recruitment",
+        "does CPSU allow faculty recruitment",
+        "is there a CPSU policy for faculty recruitment"
+      ],
+      "keywords": [
+        "HRMPSB",
+        "recruitment",
+        "appointment",
+        "selection",
+        "Merit Selection Plan",
+        "NBC 461"
+      ],
+      "aliases": [
+        "faculty recruitment",
+        "faculty appointment process"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Recruitment and Appointment"
+      },
+      "response": "CPSU recruits faculty through the Human Resource Merit Promotion and Selection Board (HRMPSB). The process is:\n1. The HRMPSB assists the SUC President in objective selection based on the CPSU Merit Selection Plan (MSP).\n2. The HRMPSB submits the top five (5) most qualified candidates to the SUC President.\n3. Appointment for academic rank is based on NBC 461 covering: educational attainment, experience and length of service, and professional development achievement and honors.\n\nHRMPSB Members: VP for Academic Affairs (Chairman), Dean, Campus Administrator, accredited employee association representative, SUC President's representative, and HRM Officer."
+    },
+    {
+      "intent": "duties_responsibilities",
+      "category": "Faculty Duties and Responsibilities",
+      "patterns": [
+        "duties of faculty",
+        "responsibilities of faculty cpsu",
+        "what should faculty do",
+        "faculty obligations cpsu",
+        "what are the duties of a teacher cpsu",
+        "what is the faculty duties",
+        "what are the rules for faculty duties",
+        "what are the requirements for faculty duties",
+        "how does faculty duties work",
+        "how does CPSU handle faculty duties",
+        "can you explain faculty duties",
+        "please explain faculty duties",
+        "tell me about faculty duties",
+        "i want to know about faculty duties",
+        "what should faculty know about faculty duties",
+        "what does the faculty manual say about faculty duties",
+        "what is CPSU policy on faculty duties",
+        "what is the CPSU rule for faculty duties",
+        "what are the guidelines for faculty duties",
+        "where can I find the policy on faculty duties",
+        "does CPSU allow faculty duties",
+        "is there a CPSU policy for faculty duties"
+      ],
+      "keywords": [
+        "faculty duties",
+        "faculty responsibilities",
+        "learning outcomes",
+        "professional growth"
+      ],
+      "aliases": [
+        "faculty duties",
+        "teacher responsibilities"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Duties and Responsibilities"
+      },
+      "response": "Every faculty member of CPSU shall:\n1. Perform duties in accordance with the philosophy, goals, and objectives of the school.\n2. Be accountable for the efficient attainment of specified learning outcomes.\n3. Render regular reports on student performance with suggestions for improvement.\n4. Maintain and sustain professional growth and advancement.\n5. Refrain from making deductions in students' scholastic ratings for acts not clearly a manifestation of poor scholarship.\n6. Participate as an agent of social, economic, moral, intellectual, cultural, and political change in school and community."
+    },
+    {
+      "intent": "promotion_policies",
+      "category": "Promotion and Reclassification",
+      "patterns": [
+        "faculty promotion requirements",
+        "how to get promoted cpsu",
+        "promotion criteria university",
+        "requirements for promotion teacher",
+        "academic promotion rules",
+        "promotion policies cpsu",
+        "what is the promotion requirements",
+        "what are the rules for promotion requirements",
+        "what are the requirements for promotion requirements",
+        "how does promotion requirements work",
+        "how does CPSU handle promotion requirements",
+        "can you explain promotion requirements",
+        "please explain promotion requirements",
+        "tell me about promotion requirements",
+        "i want to know about promotion requirements",
+        "what should faculty know about promotion requirements",
+        "what does the faculty manual say about promotion requirements",
+        "what is CPSU policy on promotion requirements",
+        "what is the CPSU rule for promotion requirements",
+        "what are the guidelines for promotion requirements",
+        "where can I find the policy on promotion requirements",
+        "does CPSU allow promotion requirements",
+        "is there a CPSU policy for promotion requirements"
+      ],
+      "keywords": [
+        "promotion",
+        "reclassification",
+        "Very Satisfactory",
+        "NBC 461",
+        "performance",
+        "professional development"
+      ],
+      "aliases": [
+        "promotion requirements",
+        "promotion criteria"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Promotion and Reclassification"
+      },
+      "response": "Promotion policies at CPSU (Section IV-C):\n1. Primary basis is established policies of CSC, DBM, and/or PASUC.\n2. Upgrading/reclassification of rank is done not more than once a year.\n3. A faculty must have at least Very Satisfactory ratings during the last two (2) rating periods.\n4. Criteria for promotion include:\n   - Performance (at least Very Satisfactory in the last two rating periods)\n   - Educational Qualification (based on NBC 461 and MC No. 10, s. 2012)\n   - Professional Development, Achievement, and Honors (published works, consultancy, research awards, training)\n   - Psycho-Social Attributes and Personality Traits\n   - Potential to perform higher responsibilities\n5. Filing of an administrative complaint alone does not disqualify a faculty from promotion.\n6. Faculty who served CPSU longer with tangible accomplishments are given priority for vacant items."
+    },
+    {
+      "intent": "promotion_procedure",
+      "category": "Promotion and Reclassification",
+      "patterns": [
+        "steps for promotion cpsu",
+        "promotion process faculty",
+        "how to apply for promotion cpsu",
+        "promotion application procedure",
+        "what is the promotion process",
+        "what are the rules for promotion process",
+        "what are the requirements for promotion process",
+        "how does promotion process work",
+        "how does CPSU handle promotion process",
+        "can you explain promotion process",
+        "please explain promotion process",
+        "tell me about promotion process",
+        "i want to know about promotion process",
+        "what should faculty know about promotion process",
+        "what does the faculty manual say about promotion process",
+        "what is CPSU policy on promotion process",
+        "what is the CPSU rule for promotion process",
+        "what are the guidelines for promotion process",
+        "where can I find the policy on promotion process",
+        "does CPSU allow promotion process",
+        "is there a CPSU policy for promotion process"
+      ],
+      "keywords": [
+        "promotion procedure",
+        "HRMO",
+        "FRASC",
+        "reclassification",
+        "posting"
+      ],
+      "aliases": [
+        "promotion process",
+        "promotion application"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Promotion and Reclassification"
+      },
+      "response": "Procedure for Promotion at CPSU:\n1. The HRMO announces university-wide all vacant positions upon clearance from the President.\n2. The HRMO submits candidates' credentials to the FRASC for evaluation.\n3. The Faculty Recruitment and Selection Committee reviews before recommendation to the President.\n\nProcedure for Upgrading/Reclassification:\n1. HRMO advises all concerned to update their records and NBC documents.\n2. CCE rules and procedures for reclassification are followed.\n3. Upgrading is once every two-school year if performance is at least Very Satisfactory.\n4. All promotional appointments are posted in three conspicuous spaces for 15 days to allow interested parties to file a request."
+    },
+    {
+      "intent": "performance_evaluation",
+      "category": "Performance Evaluation",
+      "patterns": [
+        "how faculty are evaluated",
+        "spms evaluation cpsu",
+        "performance rating system",
+        "faculty evaluation criteria",
+        "how teachers are rated",
+        "performance evaluation system cpsu",
+        "what is the faculty evaluation",
+        "what are the rules for faculty evaluation",
+        "what are the requirements for faculty evaluation",
+        "how does faculty evaluation work",
+        "how does CPSU handle faculty evaluation",
+        "can you explain faculty evaluation",
+        "please explain faculty evaluation",
+        "tell me about faculty evaluation",
+        "i want to know about faculty evaluation",
+        "what should faculty know about faculty evaluation",
+        "what does the faculty manual say about faculty evaluation",
+        "what is CPSU policy on faculty evaluation",
+        "what is the CPSU rule for faculty evaluation",
+        "what are the guidelines for faculty evaluation",
+        "where can I find the policy on faculty evaluation",
+        "does CPSU allow faculty evaluation",
+        "is there a CPSU policy for faculty evaluation"
+      ],
+      "keywords": [
+        "SPMS",
+        "performance evaluation",
+        "effectiveness",
+        "efficiency",
+        "timeliness"
+      ],
+      "aliases": [
+        "faculty evaluation",
+        "performance rating"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Performance Evaluation"
+      },
+      "response": "CPSU uses the Strategic Performance-Based Management System (SPMS) for faculty evaluation. Performance is rated based on three dimensions:\n- Effectiveness/Quality: The extent actual performance compares with targeted performance and whether objectives are achieved.\n- Efficiency: The extent to which time or resources are used for the intended task with minimum waste.\n- Timeliness: Whether the deliverable was done on time based on requirements of law and/or clients/stakeholders."
+    },
+    {
+      "intent": "rating_scale",
+      "category": "Performance Evaluation",
+      "patterns": [
+        "performance rating scale",
+        "1 to 5 rating meaning cpsu",
+        "what is outstanding rating",
+        "evaluation score meaning",
+        "faculty rating system",
+        "what is satisfactory rating",
+        "poor fair satisfactory very satisfactory outstanding",
+        "what is the performance rating scale",
+        "what are the rules for performance rating scale",
+        "what are the requirements for performance rating scale",
+        "how does performance rating scale work",
+        "how does CPSU handle performance rating scale",
+        "can you explain performance rating scale",
+        "please explain performance rating scale",
+        "tell me about performance rating scale",
+        "i want to know about performance rating scale",
+        "what should faculty know about performance rating scale",
+        "what does the faculty manual say about performance rating scale",
+        "what is CPSU policy on performance rating scale",
+        "what is the CPSU rule for performance rating scale",
+        "what are the guidelines for performance rating scale",
+        "where can I find the policy on performance rating scale",
+        "does CPSU allow performance rating scale",
+        "is there a CPSU policy for performance rating scale"
+      ],
+      "keywords": [
+        "rating scale",
+        "Outstanding",
+        "Very Satisfactory",
+        "Satisfactory",
+        "Fair",
+        "Poor",
+        "SPMS"
+      ],
+      "aliases": [
+        "performance rating scale",
+        "faculty rating"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Performance Evaluation"
+      },
+      "response": "CPSU uses a five-point rating scale (approved by CSC RO-VI, January 27, 2015):\n\n5 – Outstanding: Extraordinary level of achievement; exceeds targets by 30% and above; submitted 5-10 days earlier.\n\n4 – Very Satisfactory: Exceeds targets by 15% to 29%; submitted 1-4 days earlier.\n\n3 – Satisfactory: Meets expectations; performance of 100% to 114% of planned targets; submitted on deadline.\n\n2 – Fair: Fails to meet expectations; performance of 51% to 99% of planned targets; submission delayed by 1-4 days.\n\n1 – Poor: Consistently below expectations; performance failing targets by 50% or below; submission delayed beyond 4 days."
+    },
+    {
+      "intent": "training_development_policies",
+      "category": "Training and Development",
+      "patterns": [
+        "faculty training cpsu",
+        "seminars for teachers",
+        "professional development programs",
+        "faculty workshops cpsu",
+        "training opportunities university",
+        "training and development policies",
+        "what is the faculty training",
+        "what are the rules for faculty training",
+        "what are the requirements for faculty training",
+        "how does faculty training work",
+        "how does CPSU handle faculty training",
+        "can you explain faculty training",
+        "please explain faculty training",
+        "tell me about faculty training",
+        "i want to know about faculty training",
+        "what should faculty know about faculty training",
+        "what does the faculty manual say about faculty training",
+        "what is CPSU policy on faculty training",
+        "what is the CPSU rule for faculty training",
+        "what are the guidelines for faculty training",
+        "where can I find the policy on faculty training",
+        "does CPSU allow faculty training",
+        "is there a CPSU policy for faculty training"
+      ],
+      "keywords": [
+        "training",
+        "seminar",
+        "workshop",
+        "professional development",
+        "HRD"
+      ],
+      "aliases": [
+        "faculty training",
+        "professional development"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Training and Development"
+      },
+      "response": "CPSU Training and Development Policies (Section IV-E):\n1. The University shall develop and implement a continuing program for the training and development of faculty.\n2. Faculty are encouraged to pursue relevant local and foreign-assisted training, seminars, conferences, workshops, and HRD courses.\n3. Selection of participants depends on actual needs for specialization and enhancement of competence.\n4. Priority is given to candidates with permanent appointments who are below 60 years old, at least once a year."
+    },
+    {
+      "intent": "training_development_procedure",
+      "category": "Training and Development",
+      "patterns": [
+        "training committee cpsu",
+        "fastdcc cpsu",
+        "how to apply for training",
+        "who selects training participants",
+        "training selection process",
+        "what is the training selection",
+        "what are the rules for training selection",
+        "what are the requirements for training selection",
+        "how does training selection work",
+        "how does CPSU handle training selection",
+        "can you explain training selection",
+        "please explain training selection",
+        "tell me about training selection",
+        "i want to know about training selection",
+        "what should faculty know about training selection",
+        "what does the faculty manual say about training selection",
+        "what is CPSU policy on training selection",
+        "what is the CPSU rule for training selection",
+        "what are the guidelines for training selection",
+        "where can I find the policy on training selection",
+        "does CPSU allow training selection",
+        "is there a CPSU policy for training selection"
+      ],
+      "keywords": [
+        "FASTDCC",
+        "training committee",
+        "training participants",
+        "scholarship grants"
+      ],
+      "aliases": [
+        "training selection",
+        "training application"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Training and Development"
+      },
+      "response": "Each campus has a Faculty Training and Development Campus Committee (FASTDCC) composed of:\n- VP for Academic Affairs (Chairman)\n- Training Services Director (Vice-Chairman)\n- Campus Administrator, Dean, Curricular Program Coordinators (Members)\n- Human Resource Management Officer\n\nThe FASTDCC selects and recommends who should receive scholarship grants and attend specific training programs conducted by the University or other government agencies or accredited NGOs, whether local or foreign. The Campus Head submits an annual training plan through the FASTDCC."
+    },
+    {
+      "intent": "suggestion_incentive_award",
+      "category": "Awards and Incentives",
+      "patterns": [
+        "suggestion award cpsu",
+        "incentive award faculty",
+        "sias cpsu",
+        "siac cpsu",
+        "award for ideas cpsu",
+        "faculty recognition program",
+        "what is the suggestion award",
+        "what are the rules for suggestion award",
+        "what are the requirements for suggestion award",
+        "how does suggestion award work",
+        "how does CPSU handle suggestion award",
+        "can you explain suggestion award",
+        "please explain suggestion award",
+        "tell me about suggestion award",
+        "i want to know about suggestion award",
+        "what should faculty know about suggestion award",
+        "what does the faculty manual say about suggestion award",
+        "what is CPSU policy on suggestion award",
+        "what is the CPSU rule for suggestion award",
+        "what are the guidelines for suggestion award",
+        "where can I find the policy on suggestion award",
+        "does CPSU allow suggestion award",
+        "is there a CPSU policy for suggestion award"
+      ],
+      "keywords": [
+        "SIAS",
+        "SIAC",
+        "suggestion",
+        "incentive",
+        "award",
+        "recognition"
+      ],
+      "aliases": [
+        "suggestion award",
+        "faculty incentive"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Awards and Incentives"
+      },
+      "response": "The Suggestion and Incentive Award System (SIAS) at CPSU encourages creativity, innovativeness, efficiency, and integrity by recognizing and rewarding faculty for suggestions, inventions, and superior accomplishments.\n\nKey details:\n- All deserving faculty with regular plantilla items who meet the criteria are entitled to the award.\n- Any idea or accomplishment meeting the criteria is awarded only once per idea or accomplishment.\n- A Suggestion and Incentive Award Committee (SIAC) is headed by the Performance Management Team (PMT).\n- Any faculty member may nominate a colleague for available awards at any time of the year.\n- Awards may be given during appropriate occasions, preferably during University Charter Day or Civil Service Week.\n- Any award or honor received is entered into the personnel file by the Campus Personnel Officer."
+    },
+    {
+      "intent": "grievance_policies",
+      "category": "Complaints and Grievances",
+      "patterns": [
+        "grievance procedure cpsu",
+        "how to file complaint",
+        "faculty complaint process",
+        "report issue university",
+        "grievance system cpsu",
+        "complaint policy faculty",
+        "what is the grievance policy",
+        "what are the rules for grievance policy",
+        "what are the requirements for grievance policy",
+        "how does grievance policy work",
+        "how does CPSU handle grievance policy",
+        "can you explain grievance policy",
+        "please explain grievance policy",
+        "tell me about grievance policy",
+        "i want to know about grievance policy",
+        "what should faculty know about grievance policy",
+        "what does the faculty manual say about grievance policy",
+        "what is CPSU policy on grievance policy",
+        "what is the CPSU rule for grievance policy",
+        "what are the guidelines for grievance policy",
+        "where can I find the policy on grievance policy",
+        "does CPSU allow grievance policy",
+        "is there a CPSU policy for grievance policy"
+      ],
+      "keywords": [
+        "complaint",
+        "grievance",
+        "reprisal",
+        "discrimination",
+        "work conditions"
+      ],
+      "aliases": [
+        "grievance policy",
+        "faculty complaint"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Complaints and Grievances"
+      },
+      "response": "CPSU Complaints and Grievance Policies (Section IV-H):\n- Complaint: A written or spoken dissatisfaction related to work conditions, superior-subordinate relations, or interpersonal relations brought to the immediate supervisor's attention.\n- Grievance: A complaint that has been ignored, overridden, or dropped without due consideration.\n\nGrounds for grievance include: working conditions, work assignment, tools or equipment, unsatisfactory work processes, improper placement, arbitrary transfer, abuse of discretion, oppressive rules, and other matters causing faculty demoralization.\n\nFaculty who express grievances are assured freedom from any form of reprisal or discrimination. A complainant has the right to appeal to higher authorities."
+    },
+    {
+      "intent": "grievance_procedure",
+      "category": "Complaints and Grievances",
+      "patterns": [
+        "steps to file grievance cpsu",
+        "how long grievance takes",
+        "complaint resolution time",
+        "grievance committee cpsu",
+        "cfcgc cpsu",
+        "what is the grievance process",
+        "what are the rules for grievance process",
+        "what are the requirements for grievance process",
+        "how does grievance process work",
+        "how does CPSU handle grievance process",
+        "can you explain grievance process",
+        "please explain grievance process",
+        "tell me about grievance process",
+        "i want to know about grievance process",
+        "what should faculty know about grievance process",
+        "what does the faculty manual say about grievance process",
+        "what is CPSU policy on grievance process",
+        "what is the CPSU rule for grievance process",
+        "what are the guidelines for grievance process",
+        "where can I find the policy on grievance process",
+        "does CPSU allow grievance process",
+        "is there a CPSU policy for grievance process"
+      ],
+      "keywords": [
+        "CFCGC",
+        "grievance procedure",
+        "30 working days",
+        "complaint",
+        "Board of Trustees"
+      ],
+      "aliases": [
+        "grievance process",
+        "complaint resolution"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Complaints and Grievances"
+      },
+      "response": "Grievance Procedure at CPSU:\n1. A faculty member may air a complaint orally to his/her immediate supervisor, who hears both sides and holds a dialogue.\n2. If unresolved, the complaint is elevated to the Campus Faculty Complaints and Grievance Committee (CFCGC).\n3. The CFCGC is composed of: a ranking officer chosen by the President (Chairman), Administrative Officer, Director of the department where the complaint arose, a representative of the complainant, and the President of the Management Office (ex-officio Secretary).\n4. The CFCGC must resolve any complaint within thirty (30) working days.\n5. If still unresolved, the dispute may be referred to the Board of Trustees who shall resolve it within thirty (30) working days."
+    },
+    {
+      "intent": "regular_teaching_load",
+      "category": "Faculty Workload",
+      "patterns": [
+        "teaching load cpsu",
+        "faculty workload units",
+        "how many units teaching load",
+        "regular teaching load faculty",
+        "teaching hours university professor",
+        "how many units should a faculty teach",
+        "what is the regular teaching load",
+        "what are the rules for regular teaching load",
+        "what are the requirements for regular teaching load",
+        "how does regular teaching load work",
+        "how does CPSU handle regular teaching load",
+        "can you explain regular teaching load",
+        "please explain regular teaching load",
+        "tell me about regular teaching load",
+        "i want to know about regular teaching load",
+        "what should faculty know about regular teaching load",
+        "what does the faculty manual say about regular teaching load",
+        "what is CPSU policy on regular teaching load",
+        "what is the CPSU rule for regular teaching load",
+        "what are the guidelines for regular teaching load",
+        "where can I find the policy on regular teaching load",
+        "does CPSU allow regular teaching load",
+        "is there a CPSU policy for regular teaching load"
+      ],
+      "keywords": [
+        "teaching load",
+        "faculty workload",
+        "units",
+        "preparations",
+        "ETU",
+        "lecture",
+        "laboratory"
+      ],
+      "aliases": [
+        "regular teaching load",
+        "normal faculty load"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Workload"
+      },
+      "response": "Regular Teaching Load for Permanent Faculty (CPSU Faculty Workload Guidelines):\n\n- Faculty with 1 preparation: 24 units\n- Faculty with 2 preparations: 21 units\n- Faculty with 3–4 preparations: 18 units\n\nAdditional rules:\n- 1 unit = 1 contact hour/week for lecture; Laboratory = 0.75 units per contact hour/week.\n- Load assignments are limited to three (3) preparations.\n- Every additional subject preparation is equivalent to one 3-unit subject load.\n- For undergraduate thesis advising: 0.05 ETU per student, maximum of five (5) advisees only."
+    },
+    {
+      "intent": "part_time_teaching_load",
+      "category": "Faculty Workload",
+      "patterns": [
+        "part time faculty load cpsu",
+        "part time teaching load",
+        "how many units part time faculty",
+        "part time lecturer cpsu",
+        "what is the part-time faculty load",
+        "what are the rules for part-time faculty load",
+        "what are the requirements for part-time faculty load",
+        "how does part-time faculty load work",
+        "how does CPSU handle part-time faculty load",
+        "can you explain part-time faculty load",
+        "please explain part-time faculty load",
+        "tell me about part-time faculty load",
+        "i want to know about part-time faculty load",
+        "what should faculty know about part-time faculty load",
+        "what does the faculty manual say about part-time faculty load",
+        "what is CPSU policy on part-time faculty load",
+        "what is the CPSU rule for part-time faculty load",
+        "what are the guidelines for part-time faculty load",
+        "where can I find the policy on part-time faculty load",
+        "does CPSU allow part-time faculty load",
+        "is there a CPSU policy for part-time faculty load"
+      ],
+      "keywords": [
+        "part-time",
+        "teaching load",
+        "30 units",
+        "Instructor I",
+        "pay rate",
+        "per unit"
+      ],
+      "aliases": [
+        "part-time faculty load",
+        "part-time lecturer load"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Workload"
+      },
+      "response": "Part-time Faculty Teaching Load at CPSU:\n- Teaching load: 30 units\n- Total compensation shall not exceed the existing salary rate of an Instructor I.\n- Pay rates based on qualifications (Approved by Administrative and Academic Council, 2019):\n  - Full-fledged Masters/Ph.D.: ₱160.00/unit\n  - CAR (Masters): ₱150.00/unit\n  - With a License or 50% units or more (Masters): ₱140.00/unit\n  - Bachelor's Degree: ₱130.00/unit"
+    },
+    {
+      "intent": "overload_policy",
+      "category": "Faculty Workload",
+      "patterns": [
+        "overload teaching",
+        "extra teaching units",
+        "can faculty teach overload",
+        "additional teaching load cpsu",
+        "extra classes faculty",
+        "overload rules cpsu",
+        "what is the overload teaching",
+        "what are the rules for overload teaching",
+        "what are the requirements for overload teaching",
+        "how does overload teaching work",
+        "how does CPSU handle overload teaching",
+        "can you explain overload teaching",
+        "please explain overload teaching",
+        "tell me about overload teaching",
+        "i want to know about overload teaching",
+        "what should faculty know about overload teaching",
+        "what does the faculty manual say about overload teaching",
+        "what is CPSU policy on overload teaching",
+        "what is the CPSU rule for overload teaching",
+        "what are the guidelines for overload teaching",
+        "where can I find the policy on overload teaching",
+        "does CPSU allow overload teaching",
+        "is there a CPSU policy for overload teaching"
+      ],
+      "keywords": [
+        "overload",
+        "extra teaching",
+        "10 hours",
+        "Very Satisfactory",
+        "honoraria"
+      ],
+      "aliases": [
+        "overload teaching",
+        "extra teaching load"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Workload"
+      },
+      "response": "Overload Policy at CPSU:\n1. A maximum of ten (10) hours per week of extra teaching is allowed, provided the faculty member maintains a Very Satisfactory rating during the last two consecutive semesters.\n2. Overload time should be outside the regular official load hours.\n3. Payment of honoraria (service credit or remuneration) for overload teaching shall be based on the current academic rank of the faculty concerned.\n4. Faculty with administrative designation may render overload after office hours including Saturday for a maximum of 6 workload hours."
+    },
+    {
+      "intent": "outside_teaching_load",
+      "category": "Faculty Workload",
+      "patterns": [
+        "can faculty teach outside",
+        "outside teaching permission",
+        "moonlighting policy cpsu",
+        "external teaching approval",
+        "teach in other schools cpsu faculty",
+        "what is the outside teaching",
+        "what are the rules for outside teaching",
+        "what are the requirements for outside teaching",
+        "how does outside teaching work",
+        "how does CPSU handle outside teaching",
+        "can you explain outside teaching",
+        "please explain outside teaching",
+        "tell me about outside teaching",
+        "i want to know about outside teaching",
+        "what should faculty know about outside teaching",
+        "what does the faculty manual say about outside teaching",
+        "what is CPSU policy on outside teaching",
+        "what is the CPSU rule for outside teaching",
+        "what are the guidelines for outside teaching",
+        "where can I find the policy on outside teaching",
+        "does CPSU allow outside teaching",
+        "is there a CPSU policy for outside teaching"
+      ],
+      "keywords": [
+        "outside teaching",
+        "other university",
+        "permission",
+        "9 units",
+        "5 units",
+        "study leave"
+      ],
+      "aliases": [
+        "outside teaching",
+        "external teaching"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Workload"
+      },
+      "response": "Outside Teaching Load Policy at CPSU:\n1. Outside teaching refers to academic instruction in other colleges or universities. Schedule must be outside regular official and overload teaching time.\n2. Faculty must secure permission each semester from the Department Chair/Program Chair, Dean/Campus Director, and the University President.\n3. Maximum allowed: not more than nine (9) units for lecture and five (5) units for laboratory.\n4. Outside teaching must not conflict with faculty duties at CPSU; CPSU commitment is always first priority.\n5. Faculty on study leave with pay or on scholarship are NOT allowed to render outside teaching loads in any university including the CPSU Graduate School.\n6. Faculty are NOT allowed to work as full-time employees of other public or private universities or agencies. Those found guilty shall be administratively liable."
+    },
+    {
+      "intent": "deloading_scheme",
+      "category": "Faculty Workload",
+      "patterns": [
+        "deloading cpsu",
+        "load reduction designation cpsu",
+        "equivalent workload administrative",
+        "deload units designation",
+        "how many units deload for dean",
+        "deloading scheme cpsu",
+        "what is the deloading scheme",
+        "what are the rules for deloading scheme",
+        "what are the requirements for deloading scheme",
+        "how does deloading scheme work",
+        "how does CPSU handle deloading scheme",
+        "can you explain deloading scheme",
+        "please explain deloading scheme",
+        "tell me about deloading scheme",
+        "i want to know about deloading scheme",
+        "what should faculty know about deloading scheme",
+        "what does the faculty manual say about deloading scheme",
+        "what is CPSU policy on deloading scheme",
+        "what is the CPSU rule for deloading scheme",
+        "what are the guidelines for deloading scheme",
+        "where can I find the policy on deloading scheme",
+        "does CPSU allow deloading scheme",
+        "is there a CPSU policy for deloading scheme"
+      ],
+      "keywords": [
+        "deloading",
+        "administrative designation",
+        "equivalent workload units",
+        "Dean",
+        "Coordinator"
+      ],
+      "aliases": [
+        "deloading scheme",
+        "administrative load reduction"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Workload"
+      },
+      "response": "Deloading Scheme – Equivalent Workload Units for Administrative Designations at CPSU:\n\nUniversity-Wide:\n- Vice President: 3 units\n- Dean / QA / Research & Extension / Planning Officer: 6 units\n- Director (by category): 9–12 units\n- Campus Administrator: 6 units\n- Coordinator: 12–15 units\n- Internal Lead Auditor: 9–12 units\n- ISO/ISA Secretariat: 12–15 units\n- Faculty Regent: 15–18 units\n- Editor-in-Chief/Managing Editor: 12–15 units\n\nCampus/College Level:\n- Program Chair / Department Chair / Department Head: 16 units\n- Collecting and Disbursing Officer: 12–15 units\n- Library Services/Librarian: 12 units\n- Campus Registrar: 12–15 units\n- Network Administrator/MIS In-charge: 18–21 units\n- Data Privacy Act Officer: 18 units\n- Guidance and Counseling/Health Services: 12 units\n- Property Custodian/Supply Officer/Records Officer/Campus-HR: 18–21 units\n- OSSA Coordinator: 12 units\n- NBC Local Evaluator: 18 units\n- Coordinator, Research/Extension: 15 units\n- Coordinator, Landscaping and Beautification: 18 units\n- Coordinator, Sports and Cultural: 18 units\n- Adviser, Student Organization (FLP/SSG): 15 units\n- Adviser, School Publication/Journal: 15 units\n- Laboratory/AVR In-charge: 21 units\n- Yearbook In-charge: 18 units\n- Sports and Cultural Coach (Varsity): 18 units\n- Project In-charge: 18 units\n- Faculty with approved Research/Extension/Production proposal: 18 units\n- Executive Assistant: 12 units\n- Campus OJT Coordinator: 21 units\n- Purok Adviser: 21 units\n- Scholarship Coordinator: 21 units\n- Assessment In-charge: 21 units\n- Security Officer: 21 units\n- Budget Officer: 21 units\n\nNote: A faculty with two or more designations shall claim the highest equivalent workload unit only."
+    },
+    {
+      "intent": "class_size",
+      "category": "Faculty Workload and Class Management",
+      "patterns": [
+        "class size cpsu",
+        "minimum students to open class",
+        "how many students per class",
+        "required enrollment to open class cpsu",
+        "what is the class size requirement",
+        "what are the rules for class size requirement",
+        "what are the requirements for class size requirement",
+        "how does class size requirement work",
+        "how does CPSU handle class size requirement",
+        "can you explain class size requirement",
+        "please explain class size requirement",
+        "tell me about class size requirement",
+        "i want to know about class size requirement",
+        "what should faculty know about class size requirement",
+        "what does the faculty manual say about class size requirement",
+        "what is CPSU policy on class size requirement",
+        "what is the CPSU rule for class size requirement",
+        "what are the guidelines for class size requirement",
+        "where can I find the policy on class size requirement",
+        "does CPSU allow class size requirement",
+        "is there a CPSU policy for class size requirement"
+      ],
+      "keywords": [
+        "class size",
+        "minimum students",
+        "lecture",
+        "laboratory",
+        "special class"
+      ],
+      "aliases": [
+        "class size requirement",
+        "minimum class enrollment"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Workload and Class Management"
+      },
+      "response": "Minimum class size requirements to open a class at CPSU (Undergraduate Courses):\n- Lecture/Discussion: 10–35 students\n- Laboratory: 10–25 students\n\nA class below the minimum may be permitted if:\n1. At least one (1) student is graduating.\n2. The enrolled students comprise the total population of the program.\n3. The subject is a regular course offering.\n4. Special class request for off-semester subjects upon approval of the University President. Students in special classes pay per-hour rate based on the academic rank of the requested faculty."
+    },
+    {
+      "intent": "flexi_time",
+      "category": "Work Schedule",
+      "patterns": [
+        "flexi time cpsu",
+        "flexible schedule faculty",
+        "adjusted work schedule faculty",
+        "who can avail flexi time cpsu",
+        "what is the flexi time",
+        "what are the rules for flexi time",
+        "what are the requirements for flexi time",
+        "how does flexi time work",
+        "how does CPSU handle flexi time",
+        "can you explain flexi time",
+        "please explain flexi time",
+        "tell me about flexi time",
+        "i want to know about flexi time",
+        "what should faculty know about flexi time",
+        "what does the faculty manual say about flexi time",
+        "what is CPSU policy on flexi time",
+        "what is the CPSU rule for flexi time",
+        "what are the guidelines for flexi time",
+        "where can I find the policy on flexi time",
+        "does CPSU allow flexi time",
+        "is there a CPSU policy for flexi time"
+      ],
+      "keywords": [
+        "flexi-time",
+        "flexible schedule",
+        "20 kilometers",
+        "further studies",
+        "CSC No. 14"
+      ],
+      "aliases": [
+        "flexi time",
+        "flexible work schedule"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Work Schedule"
+      },
+      "response": "Flexi-time at CPSU (per CSC No. 14, Series of 1989) may be allowed upon recommendation of the VP for Academic Affairs to the CPSU President for:\n1. Faculty pursuing further studies who need adjusted work schedules to fit their class hours.\n2. Faculty residing outside the CPSU campus at a distance of not less than twenty (20) kilometers."
+    },
+    {
+      "intent": "vacation_sick_leave",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "vacation leave cpsu",
+        "sick leave cpsu",
+        "leave credits faculty",
+        "how many leave days",
+        "annual leave teachers",
+        "vacation sick leave policy faculty",
+        "what is the vacation leave",
+        "what are the rules for vacation leave",
+        "what are the requirements for vacation leave",
+        "how does vacation leave work",
+        "how does CPSU handle vacation leave",
+        "can you explain vacation leave",
+        "please explain vacation leave",
+        "tell me about vacation leave",
+        "i want to know about vacation leave",
+        "what should faculty know about vacation leave",
+        "what does the faculty manual say about vacation leave",
+        "what is CPSU policy on vacation leave",
+        "what is the CPSU rule for vacation leave",
+        "what are the guidelines for vacation leave",
+        "where can I find the policy on vacation leave",
+        "does CPSU allow vacation leave",
+        "is there a CPSU policy for vacation leave"
+      ],
+      "keywords": [
+        "vacation leave",
+        "sick leave",
+        "15 days",
+        "leave credits",
+        "cumulative"
+      ],
+      "aliases": [
+        "vacation leave",
+        "sick leave"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Leave Privileges for CPSU Teaching Personnel:\n- Annual Vacation Leave: 15 days with full pay (exclusive of Saturdays, Sundays, and public holidays)\n- Annual Sick Leave: 15 days with full pay\n- Both vacation and sick leave are cumulative; unused leave carries over to succeeding years.\n- Sick leave is granted only for illness of the faculty member or immediate family.\n- Upon voluntary resignation or separation not due to fault of the faculty, accumulated leave credits are commuted."
+    },
+    {
+      "intent": "proportional_vacation_pay",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "proportional vacation pay cpsu",
+        "vacation pay teachers cpsu",
+        "teacher vacation pay summer",
+        "summer vacation pay faculty",
+        "what is the summer vacation pay",
+        "what are the rules for summer vacation pay",
+        "what are the requirements for summer vacation pay",
+        "how does summer vacation pay work",
+        "how does CPSU handle summer vacation pay",
+        "can you explain summer vacation pay",
+        "please explain summer vacation pay",
+        "tell me about summer vacation pay",
+        "i want to know about summer vacation pay",
+        "what should faculty know about summer vacation pay",
+        "what does the faculty manual say about summer vacation pay",
+        "what is CPSU policy on summer vacation pay",
+        "what is the CPSU rule for summer vacation pay",
+        "what are the guidelines for summer vacation pay",
+        "where can I find the policy on summer vacation pay",
+        "does CPSU allow summer vacation pay",
+        "is there a CPSU policy for summer vacation pay"
+      ],
+      "keywords": [
+        "proportional vacation pay",
+        "summer",
+        "vacation pay",
+        "honorarium",
+        "service credits"
+      ],
+      "aliases": [
+        "summer vacation pay",
+        "proportional vacation pay"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Proportional Vacation Pay at CPSU:\n- Granted to full-time teaching personnel who do not normally perform administrative functions.\n- A teacher automatically goes on vacation leave with pay during school vacations.\n- If a teacher chooses to teach during summer and his/her services are needed, he/she is entitled to honorarium or service credits in addition to vacation pay.\n- No member of the teaching personnel shall be required to teach for more than two consecutive summers.\n- Teaching personnel also enjoy vacation leave with pay during the Christmas break."
+    },
+    {
+      "intent": "sabbatical_leave",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "sabbatical leave cpsu",
+        "study leave faculty",
+        "long leave academic staff",
+        "faculty sabbatical policy",
+        "leave for graduate studies cpsu",
+        "what is the sabbatical leave",
+        "what are the rules for sabbatical leave",
+        "what are the requirements for sabbatical leave",
+        "how does sabbatical leave work",
+        "how does CPSU handle sabbatical leave",
+        "can you explain sabbatical leave",
+        "please explain sabbatical leave",
+        "tell me about sabbatical leave",
+        "i want to know about sabbatical leave",
+        "what should faculty know about sabbatical leave",
+        "what does the faculty manual say about sabbatical leave",
+        "what is CPSU policy on sabbatical leave",
+        "what is the CPSU rule for sabbatical leave",
+        "what are the guidelines for sabbatical leave",
+        "where can I find the policy on sabbatical leave",
+        "does CPSU allow sabbatical leave",
+        "is there a CPSU policy for sabbatical leave"
+      ],
+      "keywords": [
+        "sabbatical",
+        "study leave",
+        "7 years",
+        "two semesters",
+        "two summers"
+      ],
+      "aliases": [
+        "sabbatical leave",
+        "faculty study leave"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Sabbatical Leave at CPSU:\n- Teachers may apply for sabbatical leave with pay after continuously serving the University for seven (7) years.\n- Authorized only for study purposes: earning other degrees, completing academic deficiency, attaining a higher degree, enhancing teaching/professional practice skills, or conducting research.\n- Duration: Two (2) semesters and two (2) summers only."
+    },
+    {
+      "intent": "cumulative_leave",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "cumulative leave cpsu",
+        "leave for faculty with admin duties",
+        "research extension leave cpsu",
+        "what is the cumulative leave",
+        "what are the rules for cumulative leave",
+        "what are the requirements for cumulative leave",
+        "how does cumulative leave work",
+        "how does CPSU handle cumulative leave",
+        "can you explain cumulative leave",
+        "please explain cumulative leave",
+        "tell me about cumulative leave",
+        "i want to know about cumulative leave",
+        "what should faculty know about cumulative leave",
+        "what does the faculty manual say about cumulative leave",
+        "what is CPSU policy on cumulative leave",
+        "what is the CPSU rule for cumulative leave",
+        "what are the guidelines for cumulative leave",
+        "where can I find the policy on cumulative leave",
+        "does CPSU allow cumulative leave",
+        "is there a CPSU policy for cumulative leave"
+      ],
+      "keywords": [
+        "cumulative leave",
+        "administrative functions",
+        "research",
+        "extension",
+        "vacation leave"
+      ],
+      "aliases": [
+        "cumulative leave",
+        "faculty cumulative leave"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Cumulative Leave at CPSU:\n- Granted to regular teaching personnel who regularly perform administrative functions.\n- Also available to faculty engaged in research or other assignments that prevent them from enjoying teacher's vacation leave (certified by the Dean or Director).\n- Both vacation and sick leave shall be cumulative; unused leave is carried over to succeeding years."
+    },
+    {
+      "intent": "maternity_leave",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "maternity leave cpsu",
+        "pregnancy leave policy",
+        "female faculty leave",
+        "maternity benefits university",
+        "how many days maternity leave cpsu",
+        "expanded maternity leave cpsu",
+        "what is the maternity leave",
+        "what are the rules for maternity leave",
+        "what are the requirements for maternity leave",
+        "how does maternity leave work",
+        "how does CPSU handle maternity leave",
+        "can you explain maternity leave",
+        "please explain maternity leave",
+        "tell me about maternity leave",
+        "i want to know about maternity leave",
+        "what should faculty know about maternity leave",
+        "what does the faculty manual say about maternity leave",
+        "what is CPSU policy on maternity leave",
+        "what is the CPSU rule for maternity leave",
+        "what are the guidelines for maternity leave",
+        "where can I find the policy on maternity leave",
+        "does CPSU allow maternity leave",
+        "is there a CPSU policy for maternity leave"
+      ],
+      "keywords": [
+        "maternity leave",
+        "RA 11210",
+        "105 days",
+        "15 days",
+        "60 days",
+        "30 days"
+      ],
+      "aliases": [
+        "maternity leave",
+        "expanded maternity leave"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Maternity Leave at CPSU (Republic Act 11210 – 105-Day Expanded Maternity Leave Law):\n- 105 days paid maternity leave for live childbirth, regardless of mode of delivery.\n- An additional 15 days paid leave if the female worker qualifies as a solo parent under RA 8972.\n- 60 days paid leave for miscarriage or emergency termination of pregnancy.\n- Option to extend for an additional 30 days without pay in case of live childbirth.\n- Granted regardless of employment status and length of service."
+    },
+    {
+      "intent": "paternity_leave",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "paternity leave cpsu",
+        "leave for fathers",
+        "male faculty leave",
+        "father leave policy university",
+        "how many days paternity leave",
+        "what is the paternity leave",
+        "what are the rules for paternity leave",
+        "what are the requirements for paternity leave",
+        "how does paternity leave work",
+        "how does CPSU handle paternity leave",
+        "can you explain paternity leave",
+        "please explain paternity leave",
+        "tell me about paternity leave",
+        "i want to know about paternity leave",
+        "what should faculty know about paternity leave",
+        "what does the faculty manual say about paternity leave",
+        "what is CPSU policy on paternity leave",
+        "what is the CPSU rule for paternity leave",
+        "what are the guidelines for paternity leave",
+        "where can I find the policy on paternity leave",
+        "does CPSU allow paternity leave",
+        "is there a CPSU policy for paternity leave"
+      ],
+      "keywords": [
+        "paternity leave",
+        "RA 8187",
+        "7 days",
+        "maternity leave",
+        "father"
+      ],
+      "aliases": [
+        "paternity leave",
+        "leave for fathers"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Paternity Leave at CPSU (Republic Act 8187 – Paternity Leave Act of 1996 and RA 11210):\n- 7 days paternity leave for the first four (4) deliveries or miscarriages of the legitimate spouse with whom the male faculty is cohabiting.\n- Purpose: to enable him to care for and support his wife and newborn before, during, and after childbirth.\n- An additional 7 days may be allocated from the 105-day maternity leave of his spouse with full pay under RA 11210."
+    },
+    {
+      "intent": "leave_without_pay",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "leave without pay cpsu",
+        "unpaid leave faculty",
+        "lwop cpsu",
+        "how to apply leave without pay",
+        "what is the leave without pay",
+        "what are the rules for leave without pay",
+        "what are the requirements for leave without pay",
+        "how does leave without pay work",
+        "how does CPSU handle leave without pay",
+        "can you explain leave without pay",
+        "please explain leave without pay",
+        "tell me about leave without pay",
+        "i want to know about leave without pay",
+        "what should faculty know about leave without pay",
+        "what does the faculty manual say about leave without pay",
+        "what is CPSU policy on leave without pay",
+        "what is the CPSU rule for leave without pay",
+        "what are the guidelines for leave without pay",
+        "where can I find the policy on leave without pay",
+        "does CPSU allow leave without pay",
+        "is there a CPSU policy for leave without pay"
+      ],
+      "keywords": [
+        "LWOP",
+        "leave without pay",
+        "one year",
+        "5 days",
+        "60 days"
+      ],
+      "aliases": [
+        "leave without pay",
+        "LWOP"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Leave Without Pay (LWOP) at CPSU:\n- Leave without pay not exceeding one (1) year may be granted for good cause.\n- Application must be filed at least five (5) days before the effectivity of such leave.\n- Must not interfere with the work of the university and must not be contrary to existing Civil Service Laws.\n- For unauthorized absence of at least sixty (60) days beyond the expiration of the approved leave, the faculty may be dropped from service after due notice and investigation."
+    },
+    {
+      "intent": "adoption_leave",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "adoption leave cpsu",
+        "leave for adoptive parents cpsu",
+        "adopted child leave",
+        "what is the adoption leave",
+        "what are the rules for adoption leave",
+        "what are the requirements for adoption leave",
+        "how does adoption leave work",
+        "how does CPSU handle adoption leave",
+        "can you explain adoption leave",
+        "please explain adoption leave",
+        "tell me about adoption leave",
+        "i want to know about adoption leave",
+        "what should faculty know about adoption leave",
+        "what does the faculty manual say about adoption leave",
+        "what is CPSU policy on adoption leave",
+        "what is the CPSU rule for adoption leave",
+        "what are the guidelines for adoption leave",
+        "where can I find the policy on adoption leave",
+        "does CPSU allow adoption leave",
+        "is there a CPSU policy for adoption leave"
+      ],
+      "keywords": [
+        "adoption leave",
+        "adoptive parent",
+        "30 days",
+        "7 days",
+        "solo parent"
+      ],
+      "aliases": [
+        "adoption leave",
+        "adoptive parent leave"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Adoption Leave at CPSU:\n- For legally adopting a child below seven (7) years of age as of the date the child is placed with them.\n- Married individuals (both in government): 30 calendar days for adoptive mother, 7 calendar days for adoptive father.\n- Solo parents (any gender or civil status): 30 calendar days.\n- Leave commences from the date the child is placed with the adoptive parents.\n- Adoption leave is non-commutative and non-cumulative."
+    },
+    {
+      "intent": "solo_parent_leave",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "solo parent leave cpsu",
+        "parental leave solo parent",
+        "single parent leave faculty cpsu",
+        "what is the solo parent leave",
+        "what are the rules for solo parent leave",
+        "what are the requirements for solo parent leave",
+        "how does solo parent leave work",
+        "how does CPSU handle solo parent leave",
+        "can you explain solo parent leave",
+        "please explain solo parent leave",
+        "tell me about solo parent leave",
+        "i want to know about solo parent leave",
+        "what should faculty know about solo parent leave",
+        "what does the faculty manual say about solo parent leave",
+        "what is CPSU policy on solo parent leave",
+        "what is the CPSU rule for solo parent leave",
+        "what are the guidelines for solo parent leave",
+        "where can I find the policy on solo parent leave",
+        "does CPSU allow solo parent leave",
+        "is there a CPSU policy for solo parent leave"
+      ],
+      "keywords": [
+        "solo parent",
+        "parental leave",
+        "7 working days",
+        "18 years",
+        "one year service"
+      ],
+      "aliases": [
+        "solo parent leave",
+        "parental leave"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Parental Leave for Solo Parents at CPSU:\n- In addition to existing leave privileges, solo parent faculty are entitled to not more than seven (7) working days of parental leave every year.\n- Available until the child reaches the age of eighteen (18) years.\n- Faculty must have rendered at least one (1) year of service.\n- Parental leave is non-commutative and non-cumulative."
+    },
+    {
+      "intent": "rehabilitation_leave",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "rehabilitation leave cpsu",
+        "injury leave faculty cpsu",
+        "accident leave policy faculty",
+        "what is the rehabilitation leave",
+        "what are the rules for rehabilitation leave",
+        "what are the requirements for rehabilitation leave",
+        "how does rehabilitation leave work",
+        "how does CPSU handle rehabilitation leave",
+        "can you explain rehabilitation leave",
+        "please explain rehabilitation leave",
+        "tell me about rehabilitation leave",
+        "i want to know about rehabilitation leave",
+        "what should faculty know about rehabilitation leave",
+        "what does the faculty manual say about rehabilitation leave",
+        "what is CPSU policy on rehabilitation leave",
+        "what is the CPSU rule for rehabilitation leave",
+        "what are the guidelines for rehabilitation leave",
+        "where can I find the policy on rehabilitation leave",
+        "does CPSU allow rehabilitation leave",
+        "is there a CPSU policy for rehabilitation leave"
+      ],
+      "keywords": [
+        "rehabilitation leave",
+        "injury",
+        "official duties",
+        "6 months",
+        "one year",
+        "health professional"
+      ],
+      "aliases": [
+        "rehabilitation leave",
+        "injury leave"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Rehabilitation Privilege at CPSU:\n- Faculty injured while performing official duties are entitled to rehabilitation leave.\n- Maximum of six (6) months for physical reasons.\n- Maximum of one (1) year for psychological reasons.\n- Based on recommendation of a licensed health professional.\n- Faculty on rehabilitation leave shall receive their full salaries and regular benefits such as PERA, year-end bonus, and cash gift."
+    },
+    {
+      "intent": "secondment",
+      "category": "Leave and Benefits",
+      "patterns": [
+        "secondment cpsu",
+        "special service leave cpsu",
+        "temporary government position faculty",
+        "what is the secondment",
+        "what are the rules for secondment",
+        "what are the requirements for secondment",
+        "how does secondment work",
+        "how does CPSU handle secondment",
+        "can you explain secondment",
+        "please explain secondment",
+        "tell me about secondment",
+        "i want to know about secondment",
+        "what should faculty know about secondment",
+        "what does the faculty manual say about secondment",
+        "what is CPSU policy on secondment",
+        "what is the CPSU rule for secondment",
+        "what are the guidelines for secondment",
+        "where can I find the policy on secondment",
+        "does CPSU allow secondment",
+        "is there a CPSU policy for secondment"
+      ],
+      "keywords": [
+        "secondment",
+        "special service leave",
+        "4 years",
+        "temporary government position"
+      ],
+      "aliases": [
+        "secondment",
+        "special service leave"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Leave and Benefits"
+      },
+      "response": "Secondment (Special Service Leave) at CPSU:\n- Not exceeding four (4) years, granted to faculty who accept temporary government positions that are primarily confidential, policy-determining, or highly technical.\n- Faculty on secondment are entitled to leave of absence from the University co-terminus with the government assignment.\n- They may continue serving the University as professional lecturers or consultants as needed."
+    },
+    {
+      "intent": "study_privileges",
+      "category": "Faculty Benefits",
+      "patterns": [
+        "study privilege cpsu",
+        "can faculty enroll cpsu",
+        "free tuition faculty cpsu",
+        "faculty study benefit",
+        "faculty enroll graduate school",
+        "what is the faculty study privilege",
+        "what are the rules for faculty study privilege",
+        "what are the requirements for faculty study privilege",
+        "how does faculty study privilege work",
+        "how does CPSU handle faculty study privilege",
+        "can you explain faculty study privilege",
+        "please explain faculty study privilege",
+        "tell me about faculty study privilege",
+        "i want to know about faculty study privilege",
+        "what should faculty know about faculty study privilege",
+        "what does the faculty manual say about faculty study privilege",
+        "what is CPSU policy on faculty study privilege",
+        "what is the CPSU rule for faculty study privilege",
+        "what are the guidelines for faculty study privilege",
+        "where can I find the policy on faculty study privilege",
+        "does CPSU allow faculty study privilege",
+        "is there a CPSU policy for faculty study privilege"
+      ],
+      "keywords": [
+        "study privilege",
+        "free tuition",
+        "9 units",
+        "graduate school",
+        "Very Satisfactory"
+      ],
+      "aliases": [
+        "faculty study privilege",
+        "faculty tuition privilege"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Benefits"
+      },
+      "response": "Study Privileges for CPSU Faculty:\n- Regular teaching personnel may enroll in graduate and undergraduate programs of the University for not more than nine (9) units per semester.\n- Enrollment must be in courses beneficial to the University, subject to approval of the University President.\n- Permission is granted only to faculty with Very Satisfactory performance in the preceding period.\n\nTuition Privileges:\n- Undergraduate courses: Permanent faculty are entitled to free tuition for a maximum of 9 units.\n- Graduate courses: Any regular employee (permanent and temporary) enrolled in the CPSU Graduate School is entitled to 100% free tuition.\n- Non-plantilla personnel with at least one year of service and Very Satisfactory performance are also entitled to 100% free tuition in the CPSU Graduate School."
+    },
+    {
+      "intent": "tuition_for_dependents",
+      "category": "Faculty Benefits",
+      "patterns": [
+        "tuition privilege children cpsu",
+        "dependents tuition free cpsu",
+        "children of faculty free tuition",
+        "spouse free tuition cpsu",
+        "what is the dependent tuition",
+        "what are the rules for dependent tuition",
+        "what are the requirements for dependent tuition",
+        "how does dependent tuition work",
+        "how does CPSU handle dependent tuition",
+        "can you explain dependent tuition",
+        "please explain dependent tuition",
+        "tell me about dependent tuition",
+        "i want to know about dependent tuition",
+        "what should faculty know about dependent tuition",
+        "what does the faculty manual say about dependent tuition",
+        "what is CPSU policy on dependent tuition",
+        "what is the CPSU rule for dependent tuition",
+        "what are the guidelines for dependent tuition",
+        "where can I find the policy on dependent tuition",
+        "does CPSU allow dependent tuition",
+        "is there a CPSU policy for dependent tuition"
+      ],
+      "keywords": [
+        "dependents",
+        "spouse",
+        "children",
+        "free tuition",
+        "5 dependents",
+        "5 years service"
+      ],
+      "aliases": [
+        "dependent tuition",
+        "tuition privilege for children"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Benefits"
+      },
+      "response": "Tuition Privileges for Dependents of CPSU Faculty:\n- Legal spouse and children (or first-degree affinity – nephew/niece for those without children) for a maximum of five (5) dependents shall be entitled to full tuition privileges at any campus of the University.\n- Applicable to permanent faculty with at least five (5) years of continuous service.\n- The dependent must pass at least twelve (12) units or three-fourths (3/4) of total units enrolled in the last registration to maintain the privilege.\n- In the event the dependent fails to meet the required passing rate, he/she shall be enrolled in any non-board degree program within the 5% absorptive capacity set for each campus."
+    },
+    {
+      "intent": "housing_privilege",
+      "category": "Faculty Benefits",
+      "patterns": [
+        "housing benefit cpsu faculty",
+        "can faculty live in campus",
+        "housing privilege faculty cpsu",
+        "land use faculty cpsu",
+        "what is the faculty housing",
+        "what are the rules for faculty housing",
+        "what are the requirements for faculty housing",
+        "how does faculty housing work",
+        "how does CPSU handle faculty housing",
+        "can you explain faculty housing",
+        "please explain faculty housing",
+        "tell me about faculty housing",
+        "i want to know about faculty housing",
+        "what should faculty know about faculty housing",
+        "what does the faculty manual say about faculty housing",
+        "what is CPSU policy on faculty housing",
+        "what is the CPSU rule for faculty housing",
+        "what are the guidelines for faculty housing",
+        "where can I find the policy on faculty housing",
+        "does CPSU allow faculty housing",
+        "is there a CPSU policy for faculty housing"
+      ],
+      "keywords": [
+        "housing",
+        "land privilege",
+        "residential house",
+        "University President",
+        "RA 11396"
+      ],
+      "aliases": [
+        "faculty housing",
+        "housing privilege"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Benefits"
+      },
+      "response": "Housing and Land Privilege at CPSU:\n- A bonafide employee may, upon permission of the University President, build a residential house at his/her own expense at a designated campus area based on the Comprehensive Land Use Plan.\n- Priority in housing is afforded to permanent employees.\n- Governed by Board Resolution No. 51, s. 2019 and RA 11396 (SUCs Land Use Development and Infrastructure Plan Act)."
+    },
+    {
+      "intent": "service_loyalty_award",
+      "category": "Awards and Incentives",
+      "patterns": [
+        "service award cpsu",
+        "loyalty award faculty",
+        "long service recognition",
+        "teacher awards university",
+        "retirement award cpsu",
+        "award for years of service cpsu",
+        "what is the service award",
+        "what are the rules for service award",
+        "what are the requirements for service award",
+        "how does service award work",
+        "how does CPSU handle service award",
+        "can you explain service award",
+        "please explain service award",
+        "tell me about service award",
+        "i want to know about service award",
+        "what should faculty know about service award",
+        "what does the faculty manual say about service award",
+        "what is CPSU policy on service award",
+        "what is the CPSU rule for service award",
+        "what are the guidelines for service award",
+        "where can I find the policy on service award",
+        "does CPSU allow service award",
+        "is there a CPSU policy for service award"
+      ],
+      "keywords": [
+        "service award",
+        "loyalty award",
+        "retirement",
+        "15 years",
+        "10 years",
+        "5 years"
+      ],
+      "aliases": [
+        "service award",
+        "loyalty award"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Awards and Incentives"
+      },
+      "response": "Merits and Awards at CPSU:\n- Service Award: Given at the time of retirement for meritorious service of at least fifteen (15) years.\n- Loyalty Award: Given after ten (10) years of service and every five (5) years thereafter.\n- A committee on awards administers the merit and awards system."
+    },
+    {
+      "intent": "service_credit",
+      "category": "Faculty Benefits",
+      "patterns": [
+        "service credit cpsu",
+        "how to earn service credit faculty",
+        "service credit research extension cpsu",
+        "service credit summer cpsu",
+        "what is the service credit",
+        "what are the rules for service credit",
+        "what are the requirements for service credit",
+        "how does service credit work",
+        "how does CPSU handle service credit",
+        "can you explain service credit",
+        "please explain service credit",
+        "tell me about service credit",
+        "i want to know about service credit",
+        "what should faculty know about service credit",
+        "what does the faculty manual say about service credit",
+        "what is CPSU policy on service credit",
+        "what is the CPSU rule for service credit",
+        "what are the guidelines for service credit",
+        "where can I find the policy on service credit",
+        "does CPSU allow service credit",
+        "is there a CPSU policy for service credit"
+      ],
+      "keywords": [
+        "service credits",
+        "summer",
+        "Christmas vacation",
+        "research",
+        "extension",
+        "8 hours"
+      ],
+      "aliases": [
+        "service credit",
+        "faculty service credits"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Benefits"
+      },
+      "response": "Service Credits at CPSU:\n- Faculty involved in research, extension, and production activities during summer and Christmas vacation are entitled to overload pay (subject to availability of funds) and/or service credits.\n- A faculty on Teacher's Leave status who teaches during summer shall be compensated.\n- Faculty on Teacher's Leave who attend seminars/workshops during summer on official business shall be granted service credits equivalent to 1 day for every 8 hours of attendance."
+    },
+    {
+      "intent": "scholarship_program",
+      "category": "Faculty Scholarship and Development",
+      "patterns": [
+        "faculty scholarship cpsu",
+        "study grant teachers",
+        "education assistance faculty",
+        "scholarship program university",
+        "cpsu scholarship requirements",
+        "how to avail scholarship cpsu",
+        "what is the faculty scholarship",
+        "what are the rules for faculty scholarship",
+        "what are the requirements for faculty scholarship",
+        "how does faculty scholarship work",
+        "how does CPSU handle faculty scholarship",
+        "can you explain faculty scholarship",
+        "please explain faculty scholarship",
+        "tell me about faculty scholarship",
+        "i want to know about faculty scholarship",
+        "what should faculty know about faculty scholarship",
+        "what does the faculty manual say about faculty scholarship",
+        "what is CPSU policy on faculty scholarship",
+        "what is the CPSU rule for faculty scholarship",
+        "what are the guidelines for faculty scholarship",
+        "where can I find the policy on faculty scholarship",
+        "does CPSU allow faculty scholarship",
+        "is there a CPSU policy for faculty scholarship"
+      ],
+      "keywords": [
+        "scholarship",
+        "faculty development",
+        "2 years service",
+        "Very Satisfactory",
+        "50 years",
+        "training grant"
+      ],
+      "aliases": [
+        "faculty scholarship",
+        "scholarship requirements"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Scholarship and Development"
+      },
+      "response": "CPSU Faculty Development Program – Scholarship Requirements:\n\nEntry Requirements:\n1. At least two (2) years of continuous service in the University.\n2. Permanent/Regular status.\n3. At least Very Satisfactory (VS) performance rating for the past two (2) years.\n4. Good health and moral character with no pending administrative or criminal case.\n5. Must not have any current foreign or local scholarship grant.\n6. Age must not be more than 50 years old for Post Graduate, MA/MS, Ph.D., Ed.D., and Study Grant.\n\nTypes of Scholarship:\n- Full Scholarship: Completion of a higher degree with full benefits from the University or external agency.\n- Partial Scholarship: Completion of a higher degree with partial benefits.\n- Training Grant: Upgrading of not less than one (1) month.\n- Study Grant: Study leave on official time for thesis/dissertation writing stage."
+    },
+    {
+      "intent": "scholarship_benefits",
+      "category": "Faculty Scholarship and Development",
+      "patterns": [
+        "scholarship benefits cpsu",
+        "what does cpsu scholarship cover",
+        "stipend for faculty scholar cpsu",
+        "book allowance scholar cpsu",
+        "what is the scholarship benefits",
+        "what are the rules for scholarship benefits",
+        "what are the requirements for scholarship benefits",
+        "how does scholarship benefits work",
+        "how does CPSU handle scholarship benefits",
+        "can you explain scholarship benefits",
+        "please explain scholarship benefits",
+        "tell me about scholarship benefits",
+        "i want to know about scholarship benefits",
+        "what should faculty know about scholarship benefits",
+        "what does the faculty manual say about scholarship benefits",
+        "what is CPSU policy on scholarship benefits",
+        "what is the CPSU rule for scholarship benefits",
+        "what are the guidelines for scholarship benefits",
+        "where can I find the policy on scholarship benefits",
+        "does CPSU allow scholarship benefits",
+        "is there a CPSU policy for scholarship benefits"
+      ],
+      "keywords": [
+        "scholarship benefits",
+        "stipend",
+        "₱5,000",
+        "book allowance",
+        "₱2,000",
+        "tuition",
+        "travel"
+      ],
+      "aliases": [
+        "scholarship benefits",
+        "full scholarship benefits"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Scholarship and Development"
+      },
+      "response": "CPSU Full Scholarship Benefits:\n1. Payment of salaries.\n2. Tuition and other school fees (except tutorial services).\n3. Monthly stipend of ₱5,000.00.\n4. Book allowance of ₱2,000.00 per semester (liquidated by official receipts).\n5. Two-way travel expenses (transportation to and from the enrolling institution before and after the scholarship period).\n\nPartial Scholarship Benefits:\n1. Payment of salaries and other benefits.\n2. Training fees and other school fees.\n3. Stipend and other expenses per accounting and auditing rules.\n\nThesis/Dissertation Aid:\n- 50% upon submission of approved title; another 50% after the pre-oral defense."
+    },
+    {
+      "intent": "scholarship_obligations",
+      "category": "Faculty Scholarship and Development",
+      "patterns": [
+        "return service scholar cpsu",
+        "obligation after scholarship cpsu",
+        "service obligation faculty scholar",
+        "contract scholarship cpsu",
+        "what is the scholarship service obligation",
+        "what are the rules for scholarship service obligation",
+        "what are the requirements for scholarship service obligation",
+        "how does scholarship service obligation work",
+        "how does CPSU handle scholarship service obligation",
+        "can you explain scholarship service obligation",
+        "please explain scholarship service obligation",
+        "tell me about scholarship service obligation",
+        "i want to know about scholarship service obligation",
+        "what should faculty know about scholarship service obligation",
+        "what does the faculty manual say about scholarship service obligation",
+        "what is CPSU policy on scholarship service obligation",
+        "what is the CPSU rule for scholarship service obligation",
+        "what are the guidelines for scholarship service obligation",
+        "where can I find the policy on scholarship service obligation",
+        "does CPSU allow scholarship service obligation",
+        "is there a CPSU policy for scholarship service obligation"
+      ],
+      "keywords": [
+        "service obligation",
+        "return service",
+        "scholarship",
+        "2 years",
+        "terminal report",
+        "re-entry plan"
+      ],
+      "aliases": [
+        "scholarship service obligation",
+        "return service"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Scholarship and Development"
+      },
+      "response": "Service Obligations After CPSU Scholarship:\n- 1-year leave = 2 years of service obligation.\n- 6 months leave = 1 year of service obligation.\n- After completion: Serve the University for two (2) years for every year (or fraction thereof) for Ph.D./Ed.D. level and Master's level; one (1) year for partial scholarship and training grants of more than one (1) month.\n\nRequired submissions after scholarship:\n1. Photocopy of diploma and transcript of records (certified true copy).\n2. Two (2) copies of thesis/dissertation book for University Library and Campus Library.\n3. Terminal Report.\n4. Re-entry Plan."
+    },
+    {
+      "intent": "scholarship_duration_standards",
+      "category": "Faculty Scholarship and Development",
+      "patterns": [
+        "how long is master scholarship cpsu",
+        "phd scholarship duration cpsu",
+        "gpa requirement scholar cpsu",
+        "academic requirement scholarship cpsu",
+        "what is the scholarship duration",
+        "what are the rules for scholarship duration",
+        "what are the requirements for scholarship duration",
+        "how does scholarship duration work",
+        "how does CPSU handle scholarship duration",
+        "can you explain scholarship duration",
+        "please explain scholarship duration",
+        "tell me about scholarship duration",
+        "i want to know about scholarship duration",
+        "what should faculty know about scholarship duration",
+        "what does the faculty manual say about scholarship duration",
+        "what is CPSU policy on scholarship duration",
+        "what is the CPSU rule for scholarship duration",
+        "what are the guidelines for scholarship duration",
+        "where can I find the policy on scholarship duration",
+        "does CPSU allow scholarship duration",
+        "is there a CPSU policy for scholarship duration"
+      ],
+      "keywords": [
+        "scholarship duration",
+        "MS/MA",
+        "PhD",
+        "GPA",
+        "2.0",
+        "prohibitions"
+      ],
+      "aliases": [
+        "scholarship duration",
+        "scholarship GPA requirement"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Scholarship and Development"
+      },
+      "response": "CPSU Scholarship Duration and Academic Standards:\n\nDuration:\n- MS/MA: 2 school years with a 1-semester extension as approved by the BOR.\n- Ph.D./Ed.D.: 4 school years with a 1-semester extension as approved by the BOR.\n\nGPA Requirements:\n- MS/MA: 2.0\n- Ph.D./Ed.D.: 2.0\n\nProhibitions during scholarship:\n- Cannot enjoy another grant simultaneously (choose the one with better benefits).\n- Cannot engage in any work or lecture for pay.\n- Cannot attend seminars/conferences on official business unless funded by the sponsoring agency.\n- Cannot render part-time service to the University while on full scholarship (except as required by proper authorities)."
+    },
+    {
+      "intent": "scholarship_committee",
+      "category": "Faculty Scholarship and Development",
+      "patterns": [
+        "ufdc cpsu",
+        "university faculty development committee",
+        "who approves scholarship cpsu",
+        "scholarship committee cpsu",
+        "what is the scholarship committee",
+        "what are the rules for scholarship committee",
+        "what are the requirements for scholarship committee",
+        "how does scholarship committee work",
+        "how does CPSU handle scholarship committee",
+        "can you explain scholarship committee",
+        "please explain scholarship committee",
+        "tell me about scholarship committee",
+        "i want to know about scholarship committee",
+        "what should faculty know about scholarship committee",
+        "what does the faculty manual say about scholarship committee",
+        "what is CPSU policy on scholarship committee",
+        "what is the CPSU rule for scholarship committee",
+        "what are the guidelines for scholarship committee",
+        "where can I find the policy on scholarship committee",
+        "does CPSU allow scholarship committee",
+        "is there a CPSU policy for scholarship committee"
+      ],
+      "keywords": [
+        "UFDC",
+        "scholarship committee",
+        "screening",
+        "University President",
+        "applications"
+      ],
+      "aliases": [
+        "scholarship committee",
+        "UFDC"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Scholarship and Development"
+      },
+      "response": "University Faculty Development Committee (UFDC) – Scholarship Committee at CPSU:\n\nComposition:\n- Chairman: Vice President for Academic Affairs\n- Members: Deans, University Faculty Association President, HRM Officer, Campus Administrator, Planning Officer\n- Secretary: Faculty Association Secretary\n\nFunctions:\n1. Prepares university-wide priorities based on department plans.\n2. Disseminates scholarship opportunities.\n3. Conducts screening of all applications for scholarship and grants.\n4. Monitors status of scholars.\n5. Recommends actions on requests pertaining to scholarship.\n6. Recommends budget for the University scholarship program.\n\nApplication should be forwarded to the University President through the Scholarship Committee. Local scholarship applications are filed one (1) semester before the scholarship; foreign grants are filed as available."
+    },
+    {
+      "intent": "scholarship_termination",
+      "category": "Faculty Scholarship and Development",
+      "patterns": [
+        "scholarship cancellation cpsu",
+        "when can scholarship be terminated cpsu",
+        "grounds for termination scholarship",
+        "what is the scholarship termination",
+        "what are the rules for scholarship termination",
+        "what are the requirements for scholarship termination",
+        "how does scholarship termination work",
+        "how does CPSU handle scholarship termination",
+        "can you explain scholarship termination",
+        "please explain scholarship termination",
+        "tell me about scholarship termination",
+        "i want to know about scholarship termination",
+        "what should faculty know about scholarship termination",
+        "what does the faculty manual say about scholarship termination",
+        "what is CPSU policy on scholarship termination",
+        "what is the CPSU rule for scholarship termination",
+        "what are the guidelines for scholarship termination",
+        "where can I find the policy on scholarship termination",
+        "does CPSU allow scholarship termination",
+        "is there a CPSU policy for scholarship termination"
+      ],
+      "keywords": [
+        "scholarship termination",
+        "cancellation",
+        "academic standards",
+        "falsification",
+        "contract"
+      ],
+      "aliases": [
+        "scholarship termination",
+        "scholarship cancellation"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Scholarship and Development"
+      },
+      "response": "Grounds for Termination of CPSU Scholarship:\n1. Failure to meet the academic standards set by the University.\n2. Willful failure to enroll in or drop from the course without University approval.\n3. Violation of terms and conditions of the scholarship contract.\n4. Falsification of records (the scholar shall also be dealt with administratively).\n5. Violation of provisions stipulated in the scholarship guidelines."
+    },
+    {
+      "intent": "personnel_welfare",
+      "category": "Personnel Relations and Welfare",
+      "patterns": [
+        "welfare services faculty cpsu",
+        "employee welfare cpsu",
+        "faculty welfare programs cpsu",
+        "health services faculty cpsu",
+        "what is the faculty welfare",
+        "what are the rules for faculty welfare",
+        "what are the requirements for faculty welfare",
+        "how does faculty welfare work",
+        "how does CPSU handle faculty welfare",
+        "can you explain faculty welfare",
+        "please explain faculty welfare",
+        "tell me about faculty welfare",
+        "i want to know about faculty welfare",
+        "what should faculty know about faculty welfare",
+        "what does the faculty manual say about faculty welfare",
+        "what is CPSU policy on faculty welfare",
+        "what is the CPSU rule for faculty welfare",
+        "what are the guidelines for faculty welfare",
+        "where can I find the policy on faculty welfare",
+        "does CPSU allow faculty welfare",
+        "is there a CPSU policy for faculty welfare"
+      ],
+      "keywords": [
+        "welfare",
+        "medical",
+        "dental",
+        "counseling",
+        "legal services",
+        "employee organizations"
+      ],
+      "aliases": [
+        "faculty welfare",
+        "employee welfare"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Personnel Relations and Welfare"
+      },
+      "response": "CPSU Personnel Relations and Welfare Services (Section IV-G):\nThe University shall:\n- Create an atmosphere conducive to management-faculty relations for health, welfare, counseling, recreation, legal services, canteen, cooperatives, and transportation.\n- Arrange annual medical and dental services for faculty.\n- Provide a handbook informing faculty of their rights, privileges, and obligations.\n- Facilitate dissemination of information and encourage participation in developing plans, policies, and procedures.\n- Encourage voluntary athletic, social, recreational, or financial activities conducive to faculty well-being.\n- Encourage faculty to form, join, or assist employee organizations for the protection and furtherance of their interests."
+    },
+    {
+      "intent": "underload_policy",
+      "category": "Faculty Workload",
+      "patterns": [
+        "underload faculty cpsu",
+        "what if faculty has no enough load",
+        "less than required units faculty cpsu",
+        "what is the underloaded faculty",
+        "what are the rules for underloaded faculty",
+        "what are the requirements for underloaded faculty",
+        "how does underloaded faculty work",
+        "how does CPSU handle underloaded faculty",
+        "can you explain underloaded faculty",
+        "please explain underloaded faculty",
+        "tell me about underloaded faculty",
+        "i want to know about underloaded faculty",
+        "what should faculty know about underloaded faculty",
+        "what does the faculty manual say about underloaded faculty",
+        "what is CPSU policy on underloaded faculty",
+        "what is the CPSU rule for underloaded faculty",
+        "what are the guidelines for underloaded faculty",
+        "where can I find the policy on underloaded faculty",
+        "does CPSU allow underloaded faculty",
+        "is there a CPSU policy for underloaded faculty"
+      ],
+      "keywords": [
+        "underload",
+        "insufficient load",
+        "extension campus",
+        "service credits",
+        "Teacher's Leave"
+      ],
+      "aliases": [
+        "underloaded faculty",
+        "underload policy"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Workload"
+      },
+      "response": "Guidelines for Underloaded Faculty at CPSU:\n1. The faculty shall be given a load in any college/department within the University, approved by the VP for Academic Affairs.\n2. The faculty may be given a load in any extension campus without extra pay, approved by the President.\n3. Faculty on Teacher's Leave Basis shall be given commensurate service credits for assisting during enrollment, graduation, and other activities per Service Credit Guidelines.\n4. Regardless of workload units during summer, the faculty is automatically entitled to vacation/sick leave basis.\n5. Holders of non-academic rank who are qualified to teach may be tapped outside their official time and paid per existing guidelines."
+    },
+    {
+      "intent": "workload_definition",
+      "category": "Faculty Workload",
+      "patterns": [
+        "what is faculty workload",
+        "define workload cpsu",
+        "faculty duties workload",
+        "teaching and non teaching duties",
+        "workload meaning university faculty",
+        "what is the faculty workload",
+        "what are the rules for faculty workload",
+        "what are the requirements for faculty workload",
+        "how does faculty workload work",
+        "how does CPSU handle faculty workload",
+        "can you explain faculty workload",
+        "please explain faculty workload",
+        "tell me about faculty workload",
+        "i want to know about faculty workload",
+        "what should faculty know about faculty workload",
+        "what does the faculty manual say about faculty workload",
+        "what is CPSU policy on faculty workload",
+        "what is the CPSU rule for faculty workload",
+        "what are the guidelines for faculty workload",
+        "where can I find the policy on faculty workload",
+        "does CPSU allow faculty workload",
+        "is there a CPSU policy for faculty workload"
+      ],
+      "keywords": [
+        "workload",
+        "teaching",
+        "research",
+        "extension",
+        "administrative work",
+        "advising"
+      ],
+      "aliases": [
+        "faculty workload",
+        "workload definition"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Workload"
+      },
+      "response": "Workload at CPSU refers to units earned by teaching or a combination of teaching and other activities in connection with research, extension, administrative works, assistance, and advising to students.\n\nKey rules:\n1. All university personnel with academic rank must teach.\n2. Permanent faculty, if qualified, should be given priority in load assignments across colleges or departments."
+    },
+    {
+      "intent": "research_extension_load",
+      "category": "Faculty Workload",
+      "patterns": [
+        "research load faculty cpsu",
+        "extension activity load cpsu",
+        "etl research cpsu",
+        "equivalent teaching load research",
+        "what is the research load",
+        "what are the rules for research load",
+        "what are the requirements for research load",
+        "how does research load work",
+        "how does CPSU handle research load",
+        "can you explain research load",
+        "please explain research load",
+        "tell me about research load",
+        "i want to know about research load",
+        "what should faculty know about research load",
+        "what does the faculty manual say about research load",
+        "what is CPSU policy on research load",
+        "what is the CPSU rule for research load",
+        "what are the guidelines for research load",
+        "where can I find the policy on research load",
+        "does CPSU allow research load",
+        "is there a CPSU policy for research load"
+      ],
+      "keywords": [
+        "research",
+        "extension",
+        "ETL",
+        "Equivalent Teaching Load",
+        "project proposal",
+        "3 units"
+      ],
+      "aliases": [
+        "research load",
+        "extension load"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Workload"
+      },
+      "response": "Research and Extension Activities (REA) Workload at CPSU:\n\nResearch Activities:\n- Faculty from any college or office may get involved in research and development programs.\n- Involvement must be approved by the head of the mother unit to earn legitimate Equivalent Teaching Load (ETL).\n- Appropriate designation shall be issued to each faculty.\n\nExtension Activities:\n- Faculty must pass a project proposal to the Extension Director for approval by the University President.\n- Approved extension projects shall be given a credit of 1 subject load equivalent to three (3) units teaching load."
+    },
+    {
+      "intent": "fallback",
+      "category": "Fallback",
+      "patterns": [],
+      "keywords": [],
+      "aliases": [],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020"
+      },
+      "response": "I couldn't find a specific answer in the CPSU Faculty Manual (Board Resolution No. 101, s. 2020). Please try rephrasing your question or consult the HR Office or VP for Academic Affairs for further assistance."
+    }
+  ]
+}
