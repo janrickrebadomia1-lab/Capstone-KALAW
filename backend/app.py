@@ -220,40 +220,44 @@ def build_retrieval_query(question:str,history:list)->str:
 def json_match(query:str)->dict|None:
     q_norm=correct_common_typos(query)
     q_tokens=set(re.findall(r"[a-z0-9]+",q_norm))
-    if not q_tokens:
-        return None
+    if not q_tokens:return None
 
     best_score=0.0
     best_match=None
 
     for entry in _INTENT_INDEX:
-        entry_tokens=entry["tokens"]
-        if not entry_tokens:
-            continue
+        pattern=entry["pattern"]
+        tokens=entry["tokens"]
+        if not tokens:continue
 
-        overlap=len(q_tokens&entry_tokens)/max(1,len(q_tokens|entry_tokens))
-        if overlap<0.08:
-            continue
+        overlap=len(q_tokens&tokens)/max(1,len(q_tokens|tokens))
+        sequence=SequenceMatcher(None,q_norm,pattern).ratio()
 
-        sequence_score=SequenceMatcher(None,q_norm,entry["pattern"]).ratio()
         keyword_hits=0
-
         for keyword in entry["keywords"]:
-            keyword_norm=normalize_query(keyword)
-            if keyword_norm and keyword_norm in q_norm:
-                keyword_hits+=1
+            k=normalize_query(keyword)
+            if k and k in q_norm:keyword_hits+=1
 
-        keyword_score=min(keyword_hits*0.08,0.24)
-        score=overlap*0.45+sequence_score*0.40+keyword_score*0.15
-
-        if entry["pattern"] in q_norm:
-            score+=0.15
-
+        alias_hits=0
         for alias in entry["aliases"]:
-            alias_norm=normalize_query(alias)
-            if alias_norm and alias_norm in q_norm:
-                score+=0.08
-                break
+            a=normalize_query(alias)
+            if a and a in q_norm:alias_hits+=1
+
+        score=overlap*0.35+sequence*0.30
+        score+=min(keyword_hits*0.10,0.30)
+        score+=min(alias_hits*0.10,0.20)
+
+        if pattern in q_norm:score+=0.20
+
+        # Strong boost for important multi-word concepts.
+        q_text=f" {q_norm} "
+        for phrase in ("part time","teaching load","part-time",
+                       "faculty workload","overload","leave",
+                       "promotion","tenure","salary"):
+            if phrase in q_text and phrase in normalize_query(
+                " ".join(entry["keywords"]+entry["aliases"])
+            ):
+                score+=0.10
 
         score=min(score,1.0)
 

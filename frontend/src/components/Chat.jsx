@@ -258,7 +258,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
 
 try {
   const response = await fetch(
-  "https://strategic-amend-bone-elegant.trycloudflare.com/api/chat",
+  "https://roland-integration-hospitality-counting.trycloudflare.com/api/chat",
   {
     method: "POST",
     headers: {
