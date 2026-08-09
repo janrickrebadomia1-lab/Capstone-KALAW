@@ -1,3 +1,4 @@
+
 import os,json,asyncio,logging,pickle,hashlib,re,random,uuid
 from difflib import SequenceMatcher
 from fastapi import FastAPI,Request
@@ -12,12 +13,7 @@ logging.basicConfig(level=logging.INFO,format="%(levelname)s: %(message)s")
 log=logging.getLogger("kalaw")
 app=FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.add_middleware(CORSMiddleware,allow_origins=["*"],allow_methods=["*"],allow_headers=["*"])
 
 BASE_DIR=os.path.dirname(os.path.abspath(__file__))
 DATA_DIR=os.path.join(BASE_DIR,"data")
@@ -36,6 +32,7 @@ EMBED_CACHE_MAX=500
 HISTORY_WINDOW=4
 TYPO_MIN_WORD_LENGTH=4
 TYPO_THRESHOLD=0.84
+FOLLOWUP_HISTORY_MESSAGES=4
 
 # ============================================================
 # DATASET
@@ -68,6 +65,7 @@ for intent in INTENTS:
     aliases=intent.get("aliases",[]) or []
     response=intent.get("response","")
     source=intent.get("source",{}) or {}
+
     for phrase in patterns+aliases:
         if not isinstance(phrase,str):
             continue
@@ -84,6 +82,7 @@ for intent in INTENTS:
             "source":source
         })
         _VOCABULARY.update(tokens)
+
     for keyword in keywords:
         if isinstance(keyword,str):
             _VOCABULARY.update(re.findall(r"[a-z0-9]+",keyword.lower()))
@@ -154,6 +153,67 @@ def correct_common_typos(query:str)->str:
     return " ".join(corrected)
 
 # ============================================================
+# FOLLOW-UP QUESTION HANDLING
+# ============================================================
+
+_FOLLOWUP_TRIGGERS={
+    "what about","how about","what if","and what about","and how about",
+    "what are the requirements","what are the rules","what is the requirement",
+    "what is the rule","how does that work","how does this work",
+    "can you explain","explain more","tell me more","more details",
+    "what about that","how about that","what about this","how about this",
+    "and then","what else","is that allowed","is this allowed",
+    "how many","how much","when can","who can","who is eligible"
+}
+
+def is_followup_question(query:str)->bool:
+    q=normalize_query(query)
+    words=q.split()
+
+    if any(q.startswith(trigger) for trigger in _FOLLOWUP_TRIGGERS):
+        return True
+
+    if len(words)<=7:
+        followup_words={
+            "that","this","those","these","it","they","them",
+            "requirements","requirement","rules","rule","limit",
+            "limits","process","procedure","benefits","eligibility",
+            "eligible","allowed","allow","duration","amount","steps"
+        }
+        if any(w in followup_words for w in words):
+            return True
+
+    return False
+
+def build_retrieval_query(question:str,history:list)->str:
+    clean_question=correct_common_typos(question)
+
+    if not history or not is_followup_question(question):
+        return clean_question
+
+    previous=[]
+    for message in history[-FOLLOWUP_HISTORY_MESSAGES:]:
+        content=message.get("content","").strip()
+        if not content:
+            continue
+        previous.append(f"{message.get('role','user')}: {content}")
+
+    if not previous:
+        return clean_question
+
+    history_text=" ".join(previous)
+    combined=f"{history_text} {clean_question}"
+    combined=normalize_query(combined)
+
+    # Keep retrieval query reasonably small.
+    words=combined.split()
+    if len(words)>80:
+        combined=" ".join(words[-80:])
+
+    log.info("Follow-up retrieval query: %s",combined[:120])
+    return combined
+
+# ============================================================
 # JSON INTENT MATCHING
 # ============================================================
 
@@ -162,34 +222,45 @@ def json_match(query:str)->dict|None:
     q_tokens=set(re.findall(r"[a-z0-9]+",q_norm))
     if not q_tokens:
         return None
+
     best_score=0.0
     best_match=None
+
     for entry in _INTENT_INDEX:
         entry_tokens=entry["tokens"]
         if not entry_tokens:
             continue
+
         overlap=len(q_tokens&entry_tokens)/max(1,len(q_tokens|entry_tokens))
         if overlap<0.08:
             continue
+
         sequence_score=SequenceMatcher(None,q_norm,entry["pattern"]).ratio()
         keyword_hits=0
+
         for keyword in entry["keywords"]:
             keyword_norm=normalize_query(keyword)
             if keyword_norm and keyword_norm in q_norm:
                 keyword_hits+=1
+
         keyword_score=min(keyword_hits*0.08,0.24)
         score=overlap*0.45+sequence_score*0.40+keyword_score*0.15
+
         if entry["pattern"] in q_norm:
             score+=0.15
+
         for alias in entry["aliases"]:
             alias_norm=normalize_query(alias)
             if alias_norm and alias_norm in q_norm:
                 score+=0.08
                 break
+
         score=min(score,1.0)
+
         if score>best_score:
             best_score=score
             best_match=entry
+
     if best_match and best_score>=JSON_SCORE_THRESHOLD:
         return {
             "intent":best_match["intent"],
@@ -199,6 +270,7 @@ def json_match(query:str)->dict|None:
             "score":round(best_score,4),
             "corrected_query":q_norm
         }
+
     return None
 
 # ============================================================
@@ -276,6 +348,8 @@ RULES:
 - Preserve exact numbers, requirements, conditions, and limits from the context.
 - If source/article/section information is available, mention it.
 - Do not claim information is in the Faculty Manual if it is not in the context.
+- For follow-up questions, use the previous conversation only to resolve references such as "this", "that", "it", or "what about".
+- Do not copy unrelated information from the conversation history.
 
 CONTEXT:
 {context}
@@ -331,46 +405,62 @@ def semantic_search(query:str)->list:
 def fuse(semantic_docs:list,keyword_docs:list[dict],k:int=60)->list[dict]:
     scores={}
     store={}
+
     for i,doc in enumerate(semantic_docs):
         text=doc.page_content
         key=text[:200]
         scores[key]=scores.get(key,0)+1/(k+i+1)
         store[key]={"text":text,"metadata":doc.metadata}
+
     for i,doc in enumerate(keyword_docs):
         text=doc["text"]
         key=text[:200]
         scores[key]=scores.get(key,0)+1/(k+i+1)
         if key not in store:
             store[key]={"text":text,"metadata":doc.get("metadata",{})}
-    return sorted(store.values(),key=lambda x:scores.get(x["text"][:200],0),reverse=True)
+
+    return sorted(
+        store.values(),
+        key=lambda x:scores.get(x["text"][:200],0),
+        reverse=True
+    )
 
 _BAD_KEYWORDS={"table of contents","index","copyright","acknowledgement"}
 
 def format_context(docs:list[dict],max_chunks:int=MAX_CONTEXT_CHUNKS)->str:
     seen=set()
     out=[]
+
     for doc in docs:
         text=doc["text"].strip()
+
         if len(text)<100:
             continue
+
         if any(bad in text.lower() for bad in _BAD_KEYWORDS):
             continue
+
         key=text[:120]
         if key in seen:
             continue
+
         seen.add(key)
         metadata=doc.get("metadata") or {}
         parts=[]
+
         if metadata.get("page"):
             parts.append(f"Page {metadata['page']}")
         if metadata.get("article"):
             parts.append(f"Article {metadata['article']}")
         if metadata.get("section"):
             parts.append(f"Section {metadata['section']}")
+
         prefix=f"[{' | '.join(parts)}]\n" if parts else ""
         out.append(prefix+text[:MAX_CHUNK_CHARS])
+
         if len(out)>=max_chunks:
             break
+
     return "\n\n---\n\n".join(out)
 
 def sse(data:dict)->str:
@@ -396,9 +486,6 @@ async def chat(request:Request):
     question=str(data.get("question","")).strip()
     session_id=str(data.get("session_id") or data.get("chat_id") or "").strip()
 
-    # IMPORTANT:
-    # A missing session_id creates a NEW conversation.
-    # Existing session_id keeps its own conversation history.
     if not session_id:
         session_id=new_session_id()
 
@@ -410,21 +497,47 @@ async def chat(request:Request):
 
     history=session_store[session_id]
 
+    # --------------------------------------------------------
+    # GREETING
+    # --------------------------------------------------------
+
     greeting=greeting_match(question)
+
     if greeting:
         history.append({"role":"user","content":question})
         history.append({"role":"assistant","content":greeting})
+
         if len(history)>HISTORY_WINDOW*2:
             session_store[session_id]=history[-(HISTORY_WINDOW*2):]
 
         async def greeting_stream():
-            yield sse({"content":greeting,"source":"greeting","session_id":session_id})
-        return StreamingResponse(greeting_stream(),media_type="text/event-stream")
+            yield sse({
+                "content":greeting,
+                "source":"greeting",
+                "session_id":session_id
+            })
 
-    clean_query=correct_common_typos(question)
+        return StreamingResponse(
+            greeting_stream(),
+            media_type="text/event-stream"
+        )
 
-    if clean_query!=normalize_query(question):
-        log.info("Typo correction: '%s' -> '%s'",question[:80],clean_query[:80])
+    # --------------------------------------------------------
+    # TYPO CORRECTION
+    # --------------------------------------------------------
+
+    clean_question=correct_common_typos(question)
+
+    if clean_question!=normalize_query(question):
+        log.info(
+            "Typo correction: '%s' -> '%s'",
+            question[:80],
+            clean_question[:80]
+        )
+
+    # --------------------------------------------------------
+    # DIRECT JSON INTENT
+    # --------------------------------------------------------
 
     json_answer=json_match(question)
 
@@ -434,8 +547,16 @@ async def chat(request:Request):
             json_answer["intent"],
             json_answer["score"]
         )
-        history.append({"role":"user","content":question})
-        history.append({"role":"assistant","content":json_answer["response"]})
+
+        history.append({
+            "role":"user",
+            "content":question
+        })
+        history.append({
+            "role":"assistant",
+            "content":json_answer["response"]
+        })
+
         if len(history)>HISTORY_WINDOW*2:
             session_store[session_id]=history[-(HISTORY_WINDOW*2):]
 
@@ -450,40 +571,79 @@ async def chat(request:Request):
                 "corrected_query":json_answer["corrected_query"],
                 "session_id":session_id
             })
-        return StreamingResponse(fast_stream(),media_type="text/event-stream")
 
-    ck=cache_key(clean_query)
+        return StreamingResponse(
+            fast_stream(),
+            media_type="text/event-stream"
+        )
+
+    # --------------------------------------------------------
+    # FOLLOW-UP-AWARE RETRIEVAL QUERY
+    # --------------------------------------------------------
+
+    retrieval_query=build_retrieval_query(
+        clean_question,
+        history
+    )
+
+    followup=is_followup_question(question)
+
+    if followup:
+        log.info(
+            "Follow-up question detected | session=%s",
+            session_id
+        )
+
+    # --------------------------------------------------------
+    # CACHE
+    # --------------------------------------------------------
+
+    ck=cache_key(retrieval_query)
 
     if ck in _response_cache:
         cached=_response_cache[ck]
+
         async def cached_stream():
             yield sse({
                 "content":cached,
                 "source":"cache",
                 "session_id":session_id
             })
-        return StreamingResponse(cached_stream(),media_type="text/event-stream")
+
+        return StreamingResponse(
+            cached_stream(),
+            media_type="text/event-stream"
+        )
+
+    # --------------------------------------------------------
+    # HISTORY
+    # --------------------------------------------------------
 
     history_text="\n".join(
         f"{m['role']}: {m['content']}"
         for m in history[-HISTORY_WINDOW:]
     )
 
+    # --------------------------------------------------------
+    # HYBRID RETRIEVAL
+    # --------------------------------------------------------
+
     log.info(
         "Hybrid retrieval | session=%s | query=%s",
         session_id,
-        clean_query[:80]
+        retrieval_query[:120]
     )
 
     loop=asyncio.get_running_loop()
 
     semantic_task=loop.run_in_executor(
         None,
-        lambda:semantic_search(clean_query)
+        lambda:semantic_search(retrieval_query)
     )
+
     keyword_task=loop.run_in_executor(
         None,
-        lambda:keyword_search(clean_query)
+        lambda:keyword_search(retrieval_query)
     )
 
     semantic,keyword=await asyncio.gather(
@@ -495,7 +655,14 @@ async def chat(request:Request):
     context=format_context(fused,MAX_CONTEXT_CHUNKS)
 
     if not context:
-        log.warning("No context found for: %s",clean_query[:80])
+        log.warning(
+            "No context found for: %s",
+            retrieval_query[:100]
+        )
+
+    # --------------------------------------------------------
+    # LLM
+    # --------------------------------------------------------
 
     prompt_text=PROMPT.format(
         context=context or "No relevant context found.",
@@ -505,35 +672,62 @@ async def chat(request:Request):
 
     async def stream():
         full=""
+
         try:
             async for token in llm.astream(prompt_text):
                 full+=token
+
                 yield sse({
                     "content":token,
                     "source":"chroma",
-                    "session_id":session_id
+                    "session_id":session_id,
+                    "follow_up":followup
                 })
+
         except Exception as e:
-            log.exception("LLM generation failed: %s",e)
+            log.exception(
+                "LLM generation failed: %s",
+                e
+            )
+
             yield sse({
                 "content":"Sorry, I couldn't generate an answer right now. Please make sure Ollama is running.",
                 "source":"error",
                 "session_id":session_id
             })
+
             return
 
-        history.append({"role":"user","content":question})
-        history.append({"role":"assistant","content":full})
+        # ----------------------------------------------------
+        # SAVE CONVERSATION
+        # ----------------------------------------------------
+
+        history.append({
+            "role":"user",
+            "content":question
+        })
+
+        history.append({
+            "role":"assistant",
+            "content":full
+        })
 
         if len(history)>HISTORY_WINDOW*2:
             session_store[session_id]=history[-(HISTORY_WINDOW*2):]
+
+        # ----------------------------------------------------
+        # CACHE
+        # ----------------------------------------------------
 
         if len(_response_cache)>=CACHE_MAX:
             _response_cache.pop(next(iter(_response_cache)))
 
         _response_cache[ck]=full
 
-    return StreamingResponse(stream(),media_type="text/event-stream")
+    return StreamingResponse(
+        stream(),
+        media_type="text/event-stream"
+    )
 
 # ============================================================
 # CLEAR SESSION
@@ -543,7 +737,11 @@ async def chat(request:Request):
 def delete_session(session_id:str):
     if session_id in session_store:
         del session_store[session_id]
-    return {"status":"deleted","session_id":session_id}
+
+    return {
+        "status":"deleted",
+        "session_id":session_id
+    }
 
 # ============================================================
 # HEALTH
@@ -570,6 +768,5 @@ def health():
 
 if __name__=="__main__":
     import uvicorn
-    uvicorn.run("app:app",host="127.0.0.1",port=5000,reload=False
-)
+    uvicorn.run("app:app",host="127.0.0.1",port=5000,reload=False)
 
