@@ -242,7 +242,7 @@
   border-radius: 50%;
   background: var(--green-light);
   border: 1px solid rgba(72,130,67,0.25);
-  font-size: 0.95rem;
+  color: var(--green);
   margin-top: 2px;
 }
 
