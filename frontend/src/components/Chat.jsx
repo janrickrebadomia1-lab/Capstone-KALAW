@@ -258,7 +258,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
 
 try {
   const response = await fetch(
-  "https://dash-trailers-crimes-bluetooth.trycloudflare.com/api/chat",
+  "https://bon-ladder-addition-performer.trycloudflare.com/api/chat",
   {
     method: "POST",
     headers: {

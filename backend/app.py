@@ -22,11 +22,12 @@ HYBRID_PATH=os.path.join(DATA_DIR,"tfidf_embeddings.pkl")
 JSON_PATH=os.path.join(DATA_DIR,"faculty_manual.json")
 
 JSON_SCORE_THRESHOLD=0.65
-CHROMA_TOP_K=5
-CHROMA_FETCH_K=12
-KEYWORD_TOP_K=4
-MAX_CONTEXT_CHUNKS=4
-MAX_CHUNK_CHARS=1000
+CHROMA_TOP_K=6
+CHROMA_FETCH_K=16
+KEYWORD_TOP_K=6
+MAX_CONTEXT_CHUNKS=5
+MAX_CHUNK_CHARS=1200
+RERANK_MIN_SCORE=0.08
 CACHE_MAX=150
 EMBED_CACHE_MAX=500
 HISTORY_WINDOW=4
@@ -348,12 +349,16 @@ RULES:
 - Use conversation history only to understand what the user is referring to.
 - If the current question cannot be answered from the provided context, say exactly:
 "Not found in the Faculty Manual."
-- Answer directly and clearly.
-- Preserve exact numbers, requirements, conditions, and limits from the context.
-- If source/article/section information is available, mention it.
+- Answer directly, naturally, and conversationally.
+- If the user asks two or more things, answer every part separately and do not omit a part.
+- Use clear headings or bullets for multi-part questions.
+- Preserve exact numbers, requirements, conditions, dates, rates, units, and limits from the context.
+- If source/article/section/page information is available, mention it.
 - Do not claim information is in the Faculty Manual if it is not in the context.
-- For follow-up questions, use the previous conversation only to resolve references such as "this", "that", "it", or "what about".
+- For follow-up questions, use the previous conversation only to resolve references such as "this", "that", "it", "they", "them", "their", or "what about".
+- Rewrite short follow-up questions mentally into a complete retrieval question before answering.
 - Do not copy unrelated information from the conversation history.
+- If only part of a multi-part question is supported by the context, answer the supported part and say "Not found in the Faculty Manual." for the unsupported part.
 
 CONTEXT:
 {context}
@@ -428,6 +433,26 @@ def fuse(semantic_docs:list,keyword_docs:list[dict],k:int=60)->list[dict]:
         key=lambda x:scores.get(x["text"][:200],0),
         reverse=True
     )
+
+def rerank(query:str,docs:list[dict],top_k:int=MAX_CONTEXT_CHUNKS)->list[dict]:
+    q=normalize_query(query)
+    q_tokens=set(re.findall(r"[a-z0-9]+",q))
+    if not docs:return []
+    ranked=[]
+    for rank,doc in enumerate(docs):
+        text=normalize_query(doc.get("text",""))
+        if not text:continue
+        d_tokens=set(re.findall(r"[a-z0-9]+",text))
+        overlap=len(q_tokens&d_tokens)/max(1,len(q_tokens))
+        phrase_hits=sum(1 for t in q_tokens if len(t)>3 and t in text)
+        phrase_score=min(phrase_hits/max(1,len(q_tokens)),1.0)
+        rank_score=1/(rank+1)
+        score=overlap*0.55+phrase_score*0.25+rank_score*0.20
+        item=dict(doc); item["_rerank_score"]=score
+        if score>=RERANK_MIN_SCORE:ranked.append(item)
+    ranked.sort(key=lambda x:x["_rerank_score"],reverse=True)
+    log.info("Reranked %d candidates -> %d chunks",len(docs),min(len(ranked),top_k))
+    return ranked[:top_k]
 
 _BAD_KEYWORDS={"table of contents","index","copyright","acknowledgement"}
 
@@ -540,10 +565,20 @@ async def chat(request:Request):
         )
 
     # --------------------------------------------------------
-    # DIRECT JSON INTENT
+    # FOLLOW-UP DETECTION
     # --------------------------------------------------------
 
-    json_answer=json_match(question)
+    followup=is_followup_question(question)
+
+    if followup:
+        log.info("Follow-up question detected | session=%s",session_id)
+
+    # --------------------------------------------------------
+    # DIRECT JSON INTENT
+    # --------------------------------------------------------
+    # Do not let a generic JSON intent override a contextual follow-up.
+
+    json_answer=None if followup else json_match(question)
 
     if json_answer:
         log.info(
@@ -590,19 +625,20 @@ async def chat(request:Request):
         history
     )
 
-    followup=is_followup_question(question)
-
-    if followup:
-        log.info(
-            "Follow-up question detected | session=%s",
-            session_id
-        )
-
     # --------------------------------------------------------
     # CACHE
     # --------------------------------------------------------
+    # Follow-ups depend on conversation context, so include recent
+    # history in the cache key to prevent cross-conversation matches.
 
-    ck=cache_key(retrieval_query)
+    if followup:
+        history_key="|".join(
+            f"{m['role']}:{m['content']}"
+            for m in history[-FOLLOWUP_HISTORY_MESSAGES:]
+        )
+        ck=cache_key(history_key+"|"+retrieval_query)
+    else:
+        ck=cache_key(retrieval_query)
 
     if ck in _response_cache:
         cached=_response_cache[ck]
@@ -656,7 +692,8 @@ async def chat(request:Request):
     )
 
     fused=fuse(semantic,keyword)
-    context=format_context(fused,MAX_CONTEXT_CHUNKS)
+    reranked=rerank(retrieval_query,fused,MAX_CONTEXT_CHUNKS)
+    context=format_context(reranked,MAX_CONTEXT_CHUNKS)
 
     if not context:
         log.warning(
@@ -763,7 +800,7 @@ def health():
         "cache_size":len(_response_cache),
         "embed_cache":len(_embed_cache),
         "model":"llama3.2:latest",
-        "embedding_model":"mxbai-embed-large:latest"
+        "embedding_model":"mxbai-embed-large:latest","reranking":True
     }
 
 # ============================================================
