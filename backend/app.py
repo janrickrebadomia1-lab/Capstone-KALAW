@@ -21,13 +21,12 @@ CHROMA_PATH=os.path.join(DATA_DIR,"chroma_db")
 HYBRID_PATH=os.path.join(DATA_DIR,"tfidf_embeddings.pkl")
 JSON_PATH=os.path.join(DATA_DIR,"faculty_manual.json")
 
-JSON_SCORE_THRESHOLD=0.65
-CHROMA_TOP_K=6
-CHROMA_FETCH_K=16
-KEYWORD_TOP_K=6
-MAX_CONTEXT_CHUNKS=5
+JSON_SCORE_THRESHOLD=0.90
+CHROMA_TOP_K=8
+CHROMA_FETCH_K=20
+KEYWORD_TOP_K=8
+MAX_CONTEXT_CHUNKS=6
 MAX_CHUNK_CHARS=1200
-RERANK_MIN_SCORE=0.08
 CACHE_MAX=150
 EMBED_CACHE_MAX=500
 HISTORY_WINDOW=4
@@ -350,15 +349,17 @@ RULES:
 - If the current question cannot be answered from the provided context, say exactly:
 "Not found in the Faculty Manual."
 - Answer directly, naturally, and conversationally.
-- If the user asks two or more things, answer every part separately and do not omit a part.
-- Use clear headings or bullets for multi-part questions.
+- Treat every requested topic as a separate information request.
+- Answer EVERY part of a multi-part question; never answer only one topic.
+- Use clear headings or bullets when there are multiple requested topics.
+- Base each factual statement on the matching evidence in CONTEXT.
+- Do not use a generic faculty-definition passage to answer a specific question about duties, benefits, workload, compensation, qualifications, or requirements unless it directly answers that question.
 - Preserve exact numbers, requirements, conditions, dates, rates, units, and limits from the context.
 - If source/article/section/page information is available, mention it.
 - Do not claim information is in the Faculty Manual if it is not in the context.
-- For follow-up questions, use the previous conversation only to resolve references such as "this", "that", "it", "they", "them", "their", or "what about".
-- Rewrite short follow-up questions mentally into a complete retrieval question before answering.
-- Do not copy unrelated information from the conversation history.
-- If only part of a multi-part question is supported by the context, answer the supported part and say "Not found in the Faculty Manual." for the unsupported part.
+- For follow-up questions, use conversation history only to resolve references such as "this", "that", "it", "they", "them", "their", or "what about".
+- If only one part of a multi-part question is supported, answer that part and say "Not found in the Faculty Manual." for the unsupported part.
+- Do not copy unrelated information from conversation history.
 
 CONTEXT:
 {context}
@@ -434,25 +435,107 @@ def fuse(semantic_docs:list,keyword_docs:list[dict],k:int=60)->list[dict]:
         reverse=True
     )
 
-def rerank(query:str,docs:list[dict],top_k:int=MAX_CONTEXT_CHUNKS)->list[dict]:
-    q=normalize_query(query)
-    q_tokens=set(re.findall(r"[a-z0-9]+",q))
+_GENERIC_TERMS=set("""what is are the a an of for to in on and or how why who where when
+can could would should do does did tell me about please me faculty faculties
+member members university cpsu""".split())
+
+def _topic_words(text:str)->set[str]:
+    words=set(re.findall(r"[a-z0-9]+",normalize_query(text)))
+    return {w for w in words if len(w)>2 and w not in _GENERIC_TERMS}
+
+def _expand_topics(words:set[str])->set[str]:
+    expanded=set(words)
+    groups=[
+        {"benefit","benefits","incentive","incentives","allowance","allowances"},
+        {"duty","duties","responsibility","responsibilities"},
+        {"qualification","qualifications","requirement","requirements"},
+        {"mission"},
+        {"vision"},
+        {"compensation","salary","salaries","pay","rate","rates"},
+        {"teaching","load","workload","overload"},
+        {"leave","leaves"},
+        {"promotion","promotions","tenure"},
+    ]
+    for group in groups:
+        if expanded&group: expanded.update(group)
+    return expanded
+
+def split_question_parts(query:str)->list[str]:
+    q=correct_common_typos(query)
+    # Separate explicit multiple questions first.
+    parts=[x.strip() for x in re.split(r"\?\s*|\n+",q) if x.strip()]
+    if len(parts)>1:return parts
+
+    # Handle "What are X and Y of Z?" / "What is X and Y of Z?"
+    m=re.match(r"^(what\s+(?:is|are)|tell\s+me\s+about)\s+(.+?)\s+(?:of|for)\s+(.+)$",q)
+    if m:
+        prefix,topics,subject=m.groups()
+        pieces=[x.strip() for x in re.split(r"\s*,\s*|\s+and\s+|\s+or\s+",topics) if x.strip()]
+        if len(pieces)>1 and all(len(x.split())<=7 for x in pieces):
+            return [f"{pieces[0]} of {subject}"]+[f"{x} of {subject}" for x in pieces[1:]]
+
+    # Handle "What is the mission and vision of CPSU?" specifically and
+    # similar two-topic questions where "of/for" occurs after both topics.
+    m=re.match(r"^(what\s+(?:is|are)|tell\s+me\s+about)\s+(.+?)\s+(and|or)\s+(.+?)\s+(of|for)\s+(.+)$",q)
+    if m:
+        prefix,a,conj,b,prep,subject=m.groups()
+        if len(a.split())<=6 and len(b.split())<=6:
+            return [f"{a} {prep} {subject}",f"{b} {prep} {subject}"]
+
+    return [q]
+
+def rerank_candidates(query:str,docs:list[dict],limit:int=MAX_CONTEXT_CHUNKS)->list[dict]:
+    q_words=_expand_topics(_topic_words(query))
     if not docs:return []
     ranked=[]
-    for rank,doc in enumerate(docs):
-        text=normalize_query(doc.get("text",""))
-        if not text:continue
-        d_tokens=set(re.findall(r"[a-z0-9]+",text))
-        overlap=len(q_tokens&d_tokens)/max(1,len(q_tokens))
-        phrase_hits=sum(1 for t in q_tokens if len(t)>3 and t in text)
-        phrase_score=min(phrase_hits/max(1,len(q_tokens)),1.0)
-        rank_score=1/(rank+1)
-        score=overlap*0.55+phrase_score*0.25+rank_score*0.20
-        item=dict(doc); item["_rerank_score"]=score
-        if score>=RERANK_MIN_SCORE:ranked.append(item)
-    ranked.sort(key=lambda x:x["_rerank_score"],reverse=True)
-    log.info("Reranked %d candidates -> %d chunks",len(docs),min(len(ranked),top_k))
-    return ranked[:top_k]
+    for d in docs:
+        text=normalize_query(d.get("text",""))
+        meta=d.get("metadata") or {}
+        meta_text=normalize_query(" ".join(
+            str(meta.get(k,"")) for k in
+            ("heading","title","section","article","category","source")
+        ))
+        body_words=_topic_words(text)
+        head_words=_topic_words(meta_text)
+        body_overlap=len(q_words&body_words)/max(1,len(q_words))
+        head_overlap=len(q_words&head_words)/max(1,len(q_words))
+        exact_hits=sum(1 for w in q_words if w in text)
+        exact_score=min(exact_hits/max(1,len(q_words)),1.0)
+        # RRF rank is retained by fuse; use it as a weak prior only.
+        base=float(d.get("_rrf",0.0))
+        score=body_overlap*0.42+head_overlap*0.30+exact_score*0.23+min(base*10,0.05)
+        # A chunk that contains none of the actual topic words is almost
+        # certainly unrelated, even if it says "faculty" many times.
+        if q_words and not (q_words&body_words) and not (q_words&head_words):
+            score=0.0
+        item=dict(d); item["_relevance"]=score
+        ranked.append(item)
+    ranked.sort(key=lambda x:x["_relevance"],reverse=True)
+    return [x for x in ranked if x["_relevance"]>0][:limit]
+
+def retrieve_relevant(query:str)->list[dict]:
+    parts=split_question_parts(query)
+    all_selected=[]
+    for part in parts:
+        semantic=semantic_search(part)
+        keyword=keyword_search(part)
+        fused=fuse(semantic,keyword)
+        selected=rerank_candidates(part,fused,MAX_CONTEXT_CHUNKS)
+        log.info("Retrieval | part=%r | semantic=%d | keyword=%d | selected=%d",
+                 part,len(semantic),len(keyword),len(selected))
+        all_selected.extend(selected)
+
+    # Deduplicate while keeping the strongest evidence for each chunk.
+    best={}
+    for d in all_selected:
+        meta=d.get("metadata") or {}
+        key=str(meta.get("chunk_id") or meta.get("id") or
+                normalize_query(d.get("text",""))[:220])
+        if key not in best or d.get("_relevance",0)>best[key].get("_relevance",0):
+            best[key]=d
+    return sorted(best.values(),
+                  key=lambda x:x.get("_relevance",0),
+                  reverse=True)[:MAX_CONTEXT_CHUNKS]
 
 _BAD_KEYWORDS={"table of contents","index","copyright","acknowledgement"}
 
@@ -483,6 +566,8 @@ def format_context(docs:list[dict],max_chunks:int=MAX_CONTEXT_CHUNKS)->str:
             parts.append(f"Article {metadata['article']}")
         if metadata.get("section"):
             parts.append(f"Section {metadata['section']}")
+        if metadata.get("heading"):
+            parts.append(str(metadata["heading"]))
 
         prefix=f"[{' | '.join(parts)}]\n" if parts else ""
         out.append(prefix+text[:MAX_CHUNK_CHARS])
@@ -565,58 +650,6 @@ async def chat(request:Request):
         )
 
     # --------------------------------------------------------
-    # FOLLOW-UP DETECTION
-    # --------------------------------------------------------
-
-    followup=is_followup_question(question)
-
-    if followup:
-        log.info("Follow-up question detected | session=%s",session_id)
-
-    # --------------------------------------------------------
-    # DIRECT JSON INTENT
-    # --------------------------------------------------------
-    # Do not let a generic JSON intent override a contextual follow-up.
-
-    json_answer=None if followup else json_match(question)
-
-    if json_answer:
-        log.info(
-            "JSON intent hit: %s | score=%.3f",
-            json_answer["intent"],
-            json_answer["score"]
-        )
-
-        history.append({
-            "role":"user",
-            "content":question
-        })
-        history.append({
-            "role":"assistant",
-            "content":json_answer["response"]
-        })
-
-        if len(history)>HISTORY_WINDOW*2:
-            session_store[session_id]=history[-(HISTORY_WINDOW*2):]
-
-        async def fast_stream():
-            yield sse({
-                "content":json_answer["response"],
-                "source":"json",
-                "intent":json_answer["intent"],
-                "category":json_answer["category"],
-                "metadata":json_answer["source"],
-                "score":json_answer["score"],
-                "corrected_query":json_answer["corrected_query"],
-                "session_id":session_id
-            })
-
-        return StreamingResponse(
-            fast_stream(),
-            media_type="text/event-stream"
-        )
-
-    # --------------------------------------------------------
     # FOLLOW-UP-AWARE RETRIEVAL QUERY
     # --------------------------------------------------------
 
@@ -625,20 +658,19 @@ async def chat(request:Request):
         history
     )
 
+    followup=is_followup_question(question)
+
+    if followup:
+        log.info(
+            "Follow-up question detected | session=%s",
+            session_id
+        )
+
     # --------------------------------------------------------
     # CACHE
     # --------------------------------------------------------
-    # Follow-ups depend on conversation context, so include recent
-    # history in the cache key to prevent cross-conversation matches.
 
-    if followup:
-        history_key="|".join(
-            f"{m['role']}:{m['content']}"
-            for m in history[-FOLLOWUP_HISTORY_MESSAGES:]
-        )
-        ck=cache_key(history_key+"|"+retrieval_query)
-    else:
-        ck=cache_key(retrieval_query)
+    ck=cache_key(retrieval_query)
 
     if ck in _response_cache:
         cached=_response_cache[ck]
@@ -691,9 +723,8 @@ async def chat(request:Request):
         keyword_task
     )
 
-    fused=fuse(semantic,keyword)
-    reranked=rerank(retrieval_query,fused,MAX_CONTEXT_CHUNKS)
-    context=format_context(reranked,MAX_CONTEXT_CHUNKS)
+    selected=retrieve_relevant(retrieval_query)
+    context=format_context(selected,MAX_CONTEXT_CHUNKS)
 
     if not context:
         log.warning(
@@ -800,7 +831,7 @@ def health():
         "cache_size":len(_response_cache),
         "embed_cache":len(_embed_cache),
         "model":"llama3.2:latest",
-        "embedding_model":"mxbai-embed-large:latest","reranking":True
+        "embedding_model":"mxbai-embed-large:latest"
     }
 
 # ============================================================

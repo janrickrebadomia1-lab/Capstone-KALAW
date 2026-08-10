@@ -427,30 +427,33 @@ try {
               <div key={i} className={`message-wrapper ${msg.sender}`}>
 
                 {msg.sender === "bot" ? (
-                  <div className="bot-message">
+                  <div className="bot-row">
+                    <span className="bot-avatar">🐦</span>
+                    <div className="bot-message">
 
-                    {/* ── Dynamic citation bar (reads live from content) ── */}
-                    <CitationBar content={msg.content} />
+                      {/* ── Dynamic citation bar (reads live from content) ── */}
+                      <CitationBar content={msg.content} />
 
-                    {/* ── Intro label ── */}
-                    {msg.intro && (
-                      <p className="bot-intro-text">{msg.intro}</p>
-                    )}
+                      {/* ── Intro label ── */}
+                      {msg.intro && (
+                        <p className="bot-intro-text">{msg.intro}</p>
+                      )}
 
-                    {/* ── Formatted answer body ── */}
-                    {msg.content ? (
-                      <div className="response-body">
-                        {formatContent(msg.content)}
-                      </div>
-                    ) : (
-                      /* Show typing indicator while content is empty */
-                      !loading && (
-                        <p className="response-paragraph empty-response">
-                          No response received.
-                        </p>
-                      )
-                    )}
+                      {/* ── Formatted answer body ── */}
+                      {msg.content ? (
+                        <div className="response-body">
+                          {formatContent(msg.content)}
+                        </div>
+                      ) : (
+                        /* Show typing indicator while content is empty */
+                        !loading && (
+                          <p className="response-paragraph empty-response">
+                            No response received.
+                          </p>
+                        )
+                      )}
 
+                    </div>
                   </div>
                 ) : (
                   <div className="user-query-container">
@@ -464,11 +467,14 @@ try {
             {/* ── Loading indicator ── */}
             {loading && (
               <div className="message-wrapper bot">
-                <div className="loading-indicator">
-                  <div className="dot-pulse">
-                    <span /><span /><span />
+                <div className="bot-row">
+                  <span className="bot-avatar">🐦</span>
+                  <div className="loading-indicator">
+                    <div className="dot-pulse">
+                      <span /><span /><span />
+                    </div>
+                    <span>KALAW is reading the manual…</span>
                   </div>
-                  <span>KALAW is reading the manual…</span>
                 </div>
               </div>
             )}

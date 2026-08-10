@@ -225,6 +225,27 @@
   overflow: hidden;
 }
 
+/* ── Bot avatar row ── */
+.bot-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.bot-avatar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--green-light);
+  border: 1px solid rgba(72,130,67,0.25);
+  font-size: 0.95rem;
+  margin-top: 2px;
+}
+
 /* ── Metadata bar ── */
 .metadata-bar {
   display: flex;
