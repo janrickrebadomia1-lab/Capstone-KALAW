@@ -258,7 +258,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
 
 try {
   const response = await fetch(
-  "https://heater-rouge-machines-enquiry.trycloudflare.com/api/chat",
+  `${API_URL}/api/chat`,
   {
     method: "POST",
     headers: {
