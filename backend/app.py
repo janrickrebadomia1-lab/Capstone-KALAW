@@ -191,27 +191,51 @@ def build_retrieval_query(question:str,history:list)->str:
     if not history or not is_followup_question(question):
         return clean_question
 
-    previous=[]
-    for message in history[-FOLLOWUP_HISTORY_MESSAGES:]:
-        content=message.get("content","").strip()
-        if not content:
-            continue
-        previous.append(f"{message.get('role','user')}: {content}")
+    # Use only previous USER messages to establish the conversation subject.
+    # This prevents previous assistant wording (e.g. CES compensation) from
+    # contaminating a follow-up retrieval query.
+    user_messages=[
+        str(m.get("content","")).strip()
+        for m in history
+        if m.get("role")=="user" and str(m.get("content","")).strip()
+    ]
 
-    if not previous:
+    if not user_messages:
         return clean_question
 
-    history_text=" ".join(previous)
-    combined=f"{history_text} {clean_question}"
-    combined=normalize_query(combined)
+    previous=user_messages[-3:]
 
-    # Keep retrieval query reasonably small.
-    words=combined.split()
-    if len(words)>80:
-        combined=" ".join(words[-80:])
+    subject_terms=[
+        "part-time","part time","full-time","full time","faculty",
+        "scholar","partial scholar","full scholar","staff","employee",
+        "president","mission","vision"
+    ]
 
-    log.info("Follow-up retrieval query: %s",combined[:120])
-    return combined
+    subject=""
+    for msg in reversed(previous):
+        n=normalize_query(msg)
+        if any(term in n for term in subject_terms):
+            subject=msg
+            break
+
+    if not subject:
+        subject=previous[-1]
+
+    current=normalize_query(clean_question)
+
+    # Remove follow-up pronouns; retain the actual requested topic.
+    current=re.sub(
+        r"\b(their|them|they|it|this|that|those|these)\b",
+        " ",
+        current
+    )
+    current=re.sub(r"\s+"," ",current).strip()
+
+    resolved=normalize_query(f"{subject} {current}")
+
+    log.info("Follow-up retrieval query: %s",resolved[:180])
+    return resolved
+
 
 # ============================================================
 # JSON INTENT MATCHING
@@ -347,7 +371,7 @@ RULES:
 - Do NOT guess, invent, or hallucinate policies, numbers, requirements, dates, or benefits.
 - Use conversation history only to understand what the user is referring to.
 - If the current question cannot be answered from the provided context, say exactly:
-"Not found in the Faculty Manual."
+- If the context contains direct evidence for the requested topic, never say "Not found in the Faculty Manual."\n- When a source section contains a complete list or table for the requested topic, preserve every supported item and value; do not silently omit an entry.\n- Do not use evidence from an unrelated subject or section merely because it contains the same keyword.\n"Not found in the Faculty Manual."
 - Answer directly, naturally, and conversationally.
 - Treat every requested topic as a separate information request.
 - Answer EVERY part of a multi-part question; never answer only one topic.
@@ -485,8 +509,47 @@ def split_question_parts(query:str)->list[str]:
     return [q]
 
 def rerank_candidates(query:str,docs:list[dict],limit:int=MAX_CONTEXT_CHUNKS)->list[dict]:
+    q=normalize_query(query)
     q_words=_expand_topics(_topic_words(query))
-    if not docs:return []
+    if not docs:
+        return []
+
+    # Distinguish the conversational SUBJECT from the requested TOPIC.
+    # The subject is a constraint; the topic determines what information
+    # should be selected inside that subject.
+    subject_groups={
+        "part_time":{"part-time","part time","partial scholar"},
+        "full_time":{"full-time","full time"},
+        "faculty":{"faculty","faculty member","faculty members"},
+        "scholar":{"scholar","scholarship","partial scholar","full scholar"},
+        "employee":{"employee","employees","personnel","staff"},
+    }
+
+    topic_groups={
+        "benefits":{"benefit","benefits","privilege","privileges","allowance",
+                    "allowances","stipend","entitlement","entitlements",
+                    "leave"},
+        "compensation":{"compensation","salary","salaries","pay","payment",
+                        "rate","rates","per","unit"},
+        "teaching_load":{"teaching","load","workload","overload","units","unit"},
+        "mission":{"mission"},
+        "vision":{"vision"},
+        "promotion":{"promotion","promotions","tenure","rank","ranking"},
+        "qualification":{"qualification","qualifications","requirement",
+                         "requirements","eligibility"},
+        "duties":{"duty","duties","responsibility","responsibilities"},
+    }
+
+    active_subjects=[]
+    for name,terms in subject_groups.items():
+        if any(term in q for term in terms):
+            active_subjects.append(name)
+
+    active_topics=[]
+    for name,terms in topic_groups.items():
+        if any(term in q for term in terms):
+            active_topics.append(name)
+
     ranked=[]
     for d in docs:
         text=normalize_query(d.get("text",""))
@@ -495,49 +558,67 @@ def rerank_candidates(query:str,docs:list[dict],limit:int=MAX_CONTEXT_CHUNKS)->l
             str(meta.get(k,"")) for k in
             ("heading","title","section","article","category","source")
         ))
+
         body_words=_topic_words(text)
         head_words=_topic_words(meta_text)
+
         body_overlap=len(q_words&body_words)/max(1,len(q_words))
         head_overlap=len(q_words&head_words)/max(1,len(q_words))
         exact_hits=sum(1 for w in q_words if w in text)
         exact_score=min(exact_hits/max(1,len(q_words)),1.0)
-        # RRF rank is retained by fuse; use it as a weak prior only.
-        base=float(d.get("_rrf",0.0))
-        score=body_overlap*0.42+head_overlap*0.30+exact_score*0.23+min(base*10,0.05)
-        # A chunk that contains none of the actual topic words is almost
-        # certainly unrelated, even if it says "faculty" many times.
+
+        score=(
+            body_overlap*0.34+
+            head_overlap*0.24+
+            exact_score*0.17+
+            min(float(d.get("_rrf",0.0))*10,0.05)
+        )
+
+        # Subject match is stronger than generic semantic similarity.
+        subject_hits=0
+        subject_misses=0
+        for subject in active_subjects:
+            terms=subject_groups[subject]
+            hits=sum(1 for term in terms if term in text or term in meta_text)
+            subject_hits += hits
+            if hits == 0:
+                subject_misses += 1
+
+        # Requested topic is also explicitly rewarded.
+        topic_hits=0
+        for topic in active_topics:
+            terms=topic_groups[topic]
+            topic_hits += sum(1 for term in terms if term in text or term in meta_text)
+
+        if active_subjects:
+            score += min(0.30,subject_hits*0.10)
+
+        if active_topics:
+            score += min(0.30,topic_hits*0.08)
+
+        # Hard-ish penalty: if the conversation subject is part-time faculty,
+        # an unrelated section such as CES compensation should not outrank the
+        # correct part-time compensation section merely because "compensation"
+        # matches.
+        if active_subjects and subject_hits == 0:
+            score *= 0.28
+
+        # If both subject and requested topic are explicit, reward the
+        # intersection much more than either term alone.
+        if active_subjects and active_topics and subject_hits > 0 and topic_hits > 0:
+            score += 0.12
+
+        # Remove candidates with no meaningful evidence.
         if q_words and not (q_words&body_words) and not (q_words&head_words):
             score=0.0
-        item=dict(d); item["_relevance"]=score
+
+        item=dict(d)
+        item["_relevance"]=score
         ranked.append(item)
+
     ranked.sort(key=lambda x:x["_relevance"],reverse=True)
     return [x for x in ranked if x["_relevance"]>0][:limit]
 
-def retrieve_relevant(query:str)->list[dict]:
-    parts=split_question_parts(query)
-    all_selected=[]
-    for part in parts:
-        semantic=semantic_search(part)
-        keyword=keyword_search(part)
-        fused=fuse(semantic,keyword)
-        selected=rerank_candidates(part,fused,MAX_CONTEXT_CHUNKS)
-        log.info("Retrieval | part=%r | semantic=%d | keyword=%d | selected=%d",
-                 part,len(semantic),len(keyword),len(selected))
-        all_selected.extend(selected)
-
-    # Deduplicate while keeping the strongest evidence for each chunk.
-    best={}
-    for d in all_selected:
-        meta=d.get("metadata") or {}
-        key=str(meta.get("chunk_id") or meta.get("id") or
-                normalize_query(d.get("text",""))[:220])
-        if key not in best or d.get("_relevance",0)>best[key].get("_relevance",0):
-            best[key]=d
-    return sorted(best.values(),
-                  key=lambda x:x.get("_relevance",0),
-                  reverse=True)[:MAX_CONTEXT_CHUNKS]
-
-_BAD_KEYWORDS={"table of contents","index","copyright","acknowledgement"}
 
 def format_context(docs:list[dict],max_chunks:int=MAX_CONTEXT_CHUNKS)->str:
     seen=set()
