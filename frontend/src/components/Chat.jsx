@@ -258,7 +258,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
 
 try {
   const response = await fetch(
-  "https://mile-marijuana-labour-washington.trycloudflare.com/api/chat",
+  "https://path-introducing-change-airplane.trycloudflare.com/api/chat",
   {
     method: "POST",
     headers: {
