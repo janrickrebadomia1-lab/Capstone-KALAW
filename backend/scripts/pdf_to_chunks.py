@@ -1,4 +1,3 @@
-
 import os,shutil,re,pdfplumber
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
@@ -12,9 +11,9 @@ DATA_DIR=os.path.join(BASE_DIR,"data")
 PDF_PATH=os.path.join(DATA_DIR,"CPSU-Faculty-Manual.pdf")
 CHROMA_PATH=os.path.join(DATA_DIR,"chroma_db")
 
-CHUNK_SIZE=1000
-CHUNK_OVERLAP=150
-MIN_CHUNK_LEN=80
+CHUNK_SIZE=1100
+CHUNK_OVERLAP=180
+MIN_CHUNK_LEN=100
 
 def clean_text(text:str)->str:
     text=text.replace("ﬁ","fi").replace("ﬂ","fl").replace("ﬀ","ff")
@@ -60,41 +59,33 @@ def ingest_pdf():
     body=[]
     current_page=1
 
-    def flush(page_num:int):
+    def flush(page_end:int):
         nonlocal body,current_page
         if not body:return
 
         content=" ".join(body).strip()
-
         if len(content)<MIN_CHUNK_LEN:
             body=[]
+            current_page=page_end
             return
 
+        page_start=current_page
+        page_range=str(page_start) if page_start==page_end else f"{page_start}-{page_end}"
         formatted=(
             "DOCUMENT: CPSU Faculty Manual\n"
             f"CHAPTER: {current_chapter}\n"
             f"ARTICLE: {current_article}\n"
             f"SECTION: {current_section}\n"
-            f"HEADING: {current_heading}\n\n"
+            f"HEADING: {current_heading}\n"
+            f"PAGE: {page_range}\n\n"
             f"CONTENT:\n{content}"
         )
-
-        sections.append(
-            Document(
-                page_content=formatted,
-                metadata={
-                    "page":str(page_num),
-                    "chapter":current_chapter,
-                    "article":current_article,
-                    "section":current_section,
-                    "heading":current_heading,
-                    "source":"faculty_manual"
-                }
-            )
-        )
-
+        sections.append(Document(page_content=formatted,metadata={
+            "page_start":str(page_start),"page_end":str(page_end),"page_range":page_range,
+            "chapter":current_chapter,"article":current_article,"section":current_section,
+            "heading":current_heading,"source":"faculty_manual"}))
         body=[]
-        current_page=page_num
+        current_page=page_end
 
     for page_num,text in pages:
         current_page=page_num
@@ -155,10 +146,16 @@ def ingest_pdf():
         if len(text)<MIN_CHUNK_LEN:
             continue
 
-        chunk.metadata["chunk_index"]=len(final)
+        idx=len(final)
+        chunk.metadata["chunk_index"]=idx
+        chunk.metadata["chunk_id"]=f"faculty-{idx:04d}"
         chunk.metadata["chunk_length"]=len(text)
 
         final.append(chunk)
+
+    for i,chunk in enumerate(final):
+        chunk.metadata["prev_chunk_id"]=f"faculty-{i-1:04d}" if i>0 else ""
+        chunk.metadata["next_chunk_id"]=f"faculty-{i+1:04d}" if i<len(final)-1 else ""
 
     print(f"Created {len(final)} searchable chunks.")
 
@@ -178,4 +175,3 @@ def ingest_pdf():
 
 if __name__=="__main__":
     ingest_pdf()
-

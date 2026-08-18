@@ -1,10 +1,6 @@
-
-import os,pickle,numpy as np
-from scipy.sparse import csr_matrix
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import normalize
+import os,pickle,math,re
+from collections import Counter,defaultdict
 from langchain_chroma import Chroma
-from langchain_ollama import OllamaEmbeddings
 
 os.environ["ANONYMIZED_TELEMETRY"]="False"
 
@@ -13,32 +9,23 @@ DATA_DIR=os.path.join(BASE_DIR,"..","data")
 CHROMA_PATH=os.path.join(DATA_DIR,"chroma_db")
 OUT_PATH=os.path.join(DATA_DIR,"tfidf_embeddings.pkl")
 
-def build_bm25(tfidf_matrix:csr_matrix,texts:list[str],idf:np.ndarray,k1:float=1.5,b:float=.75)->csr_matrix:
-    lengths=np.array([len(t.split()) for t in texts],dtype=np.float32)
-    avg_len=lengths.mean() if lengths.size else 1.0
-    rows,cols,vals=[],[],[]
-    cx=tfidf_matrix.tocsr()
+def tokenize(text:str)->list[str]:
+    return re.findall(r"[a-z0-9]+", text.lower())
 
-    for i in range(cx.shape[0]):
-        start,end=cx.indptr[i],cx.indptr[i+1]
-        col_idx=cx.indices[start:end]
-        tf=cx.data[start:end].astype(np.float32)
-
-        length_norm=1-b+b*(lengths[i]/(avg_len+1e-6))
-        bm_score=(tf*(k1+1))/(tf+k1*length_norm+1e-6)
-        bm_score*=idf[col_idx]
-
-        rows.extend([i]*len(col_idx))
-        cols.extend(col_idx)
-        vals.extend(bm_score)
-
-    matrix=csr_matrix(
-        (vals,(rows,cols)),
-        shape=tfidf_matrix.shape,
-        dtype=np.float32
-    )
-
-    return normalize(matrix,norm="l2")
+def build_bm25_index(texts:list[str], k1:float=1.5, b:float=0.75)->dict:
+    n=len(texts)
+    lengths=[]
+    postings=defaultdict(dict)
+    df=Counter()
+    for doc_id,text in enumerate(texts):
+        counts=Counter(tokenize(text))
+        lengths.append(sum(counts.values()))
+        for term,tf in counts.items():
+            postings[term][doc_id]=tf
+            df[term]+=1
+    avg_len=(sum(lengths)/n) if n else 1.0
+    idf={term:math.log(1.0+(n-f+0.5)/(f+0.5)) for term,f in df.items()}
+    return {"postings":dict(postings),"doc_lengths":lengths,"idf":idf,"avg_doc_len":avg_len,"k1":k1,"b":b,"document_count":n}
 
 print("Loading documents from ChromaDB...")
 
@@ -48,14 +35,7 @@ if not os.path.exists(CHROMA_PATH):
         "Run pdf_to_chunks.py first."
     )
 
-embeddings=OllamaEmbeddings(
-    model="mxbai-embed-large:latest"
-)
-
-db=Chroma(
-    persist_directory=CHROMA_PATH,
-    embedding_function=embeddings
-)
+db=Chroma(persist_directory=CHROMA_PATH)
 
 data=db.get()
 
@@ -95,40 +75,9 @@ for text,metadata in zip(texts,meta):
         (prefix+" "+(text or "")).strip()
     )
 
-print("Fitting TF-IDF vectorizer...")
-
-vectorizer=TfidfVectorizer(
-    ngram_range=(1,2),
-    max_df=.90,
-    min_df=2,
-    sublinear_tf=True,
-    strip_accents="unicode",
-    analyzer="word"
-)
-
-tfidf_matrix=vectorizer.fit_transform(enriched)
-
-print(
-    f"Vocabulary size: "
-    f"{len(vectorizer.vocabulary_):,}"
-)
-
-print("Building BM25 matrix...")
-
-bm25_matrix=build_bm25(
-    tfidf_matrix,
-    enriched,
-    vectorizer.idf_
-)
-
-out={
-    "texts":texts,
-    "enriched":enriched,
-    "tfidf":bm25_matrix,
-    "vectorizer":vectorizer,
-    "metadatas":meta,
-    "version":"3.0"
-}
+print("Building true BM25 index...")
+bm25=build_bm25_index(enriched)
+out={"texts":texts,"enriched":enriched,"metadatas":meta,"bm25":bm25,"version":"4.0-bm25"}
 
 with open(OUT_PATH,"wb") as f:
     pickle.dump(
@@ -138,8 +87,4 @@ with open(OUT_PATH,"wb") as f:
     )
 
 print(f"Hybrid model saved -> {OUT_PATH}")
-print(
-    f"Chunks: {len(texts)} | "
-    f"Vocab: {len(vectorizer.vocabulary_):,} | "
-    f"Matrix: {bm25_matrix.shape}"
-)
+print(f"Chunks: {len(texts)} | Terms: {len(bm25["idf"]):,}")

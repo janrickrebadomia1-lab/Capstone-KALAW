@@ -1,4 +1,3 @@
-
 import os,json,asyncio,logging,pickle,hashlib,re,random,uuid
 from difflib import SequenceMatcher
 from fastapi import FastAPI,Request
@@ -17,6 +16,7 @@ app=FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "https://capstone-kalaw.vercel.app",
         "http://localhost:4173",
         "http://127.0.0.1:4173",
         "http://localhost:5173",
@@ -42,8 +42,8 @@ MAX_CHUNK_CHARS=1700
 CACHE_MAX=200
 EMBED_CACHE_MAX=750
 RETRIEVAL_CACHE_MAX=300
-KEYWORD_FAST_MIN_OVERLAP=0.55
-KEYWORD_FAST_MIN_TFIDF=0.18
+KEYWORD_FAST_MIN_OVERLAP=0.60
+KEYWORD_FAST_MIN_BM25=0.20
 HISTORY_WINDOW=4
 TYPO_MIN_WORD_LENGTH=4
 TYPO_THRESHOLD=0.84
@@ -445,63 +445,44 @@ ANSWER:"""
 # ============================================================
 
 def keyword_search(query:str,top_k:int=KEYWORD_TOP_K)->list[dict]:
-    if not hybrid_data:
+    if not hybrid_data or "bm25" not in hybrid_data:
         return []
     try:
-        vec=hybrid_data["vectorizer"].transform([query])
-        scores=(hybrid_data["tfidf"]*vec.T).toarray().flatten()
-        top_idx=scores.argsort()[-top_k:][::-1]
-        return [
-            {
-                "text":hybrid_data["texts"][i],
-                "metadata":hybrid_data["metadatas"][i],
-                "score":float(scores[i])
-            }
-            for i in top_idx if scores[i]>0.01
-        ]
+        bm25=hybrid_data["bm25"]
+        terms=set(re.findall(r"[a-z0-9]+",normalize_query(query)))
+        if not terms:return []
+        scores={}
+        lengths=bm25["doc_lengths"]; avg=float(bm25["avg_doc_len"] or 1.0); k1=float(bm25.get("k1",1.5)); b=float(bm25.get("b",0.75))
+        for term in terms:
+            posting=bm25["postings"].get(term)
+            if not posting: continue
+            term_idf=float(bm25["idf"].get(term,0.0))
+            for doc_id,tf in posting.items():
+                norm=(1-b)+b*(lengths[doc_id]/(avg+1e-9))
+                scores[doc_id]=scores.get(doc_id,0.0)+term_idf*((tf*(k1+1.0))/(tf+k1*norm+1e-9))
+        top_ids=sorted(scores,key=scores.get,reverse=True)[:top_k]
+        return [{"text":hybrid_data["texts"][i],"metadata":hybrid_data["metadatas"][i] or {},"score":float(scores[i])} for i in top_ids if scores[i]>0]
     except Exception as e:
-        log.warning("Keyword search failed: %s",e)
+        log.warning("BM25 search failed: %s",e)
         return []
 
 def keyword_confidence(query:str,docs:list[dict])->float:
-    """Estimate whether lexical retrieval is strong enough to skip embeddings."""
-    if not docs:
-        return 0.0
-
+    if not docs:return 0.0
     q_words=_expand_topics(_topic_words(query))
-    if not q_words:
-        return 0.0
-
+    if not q_words:return 0.0
+    top=float(docs[0].get("score",0.0)); second=float(docs[1].get("score",0.0)) if len(docs)>1 else 0.0
+    margin=min(max((top-second)/(top+1e-9),0.0),1.0)
     best=0.0
     for doc in docs[:3]:
-        text=normalize_query(doc.get("text",""))
-        meta=doc.get("metadata") or {}
-        meta_text=normalize_query(" ".join(str(meta.get(k,"")) for k in (
-            "heading","title","section","article","category","source"
-        )))
-        body=_topic_words(text)
-        head=_topic_words(meta_text)
-        overlap=max(
-            len(q_words & body)/max(1,len(q_words)),
-            len(q_words & head)/max(1,len(q_words))
-        )
-        tfidf=float(doc.get("score",0.0))
-
-        # Exact multi-word topic matches are especially trustworthy.
-        phrase_bonus=0.0
-        qn=normalize_query(query)
-        for phrase in (
-            "faculty workload","teaching load","part time faculty",
-            "research load","leave of absence","promotion",
-            "tenure","faculty benefits","salary"
-        ):
-            if phrase in qn and phrase in text:
-                phrase_bonus=0.25
-                break
-
-        confidence=min(1.0, overlap*0.65 + min(tfidf*1.5,0.30) + phrase_bonus)
-        best=max(best,confidence)
-
+        text=normalize_query(doc.get("text","")); meta=doc.get("metadata") or {}
+        meta_text=normalize_query(" ".join(str(meta.get(k,"")) for k in ("heading","section","article","chapter")))
+        body=_topic_words(text); head=_topic_words(meta_text)
+        overlap=max(len(q_words&body)/max(1,len(q_words)),len(q_words&head)/max(1,len(q_words)))
+        phrase=0.0; qn=normalize_query(query)
+        for p in ("faculty workload","teaching load","part time faculty","research load","leave of absence","promotion","tenure","faculty benefits","salary"):
+            if p in qn and p in text: phrase=0.20; break
+        score=min(1.0,overlap*0.60+min(top/8.0,1.0)*0.25+margin*0.15+phrase)
+        best=max(best,score)
     return best
 
 def semantic_search(query:str)->list:
@@ -616,59 +597,46 @@ def rerank_candidates(query:str,docs:list[dict],limit:int=MAX_CONTEXT_CHUNKS)->l
     ranked.sort(key=lambda x:x["_relevance"],reverse=True)
     return [x for x in ranked if x["_relevance"]>0][:limit]
 
+def fast_intent_match(query:str)->dict|None:
+    q=correct_common_typos(query); q_tokens=set(re.findall(r"[a-z0-9]+",q))
+    if not q_tokens:return None
+    best=None; best_score=0.0
+    for intent in INTENTS:
+        candidates=(intent.get("patterns",[]) or [])[:10]+(intent.get("aliases",[]) or [])[:6]
+        kws=intent.get("keywords",[]) or []
+        for phrase in candidates:
+            p=normalize_query(phrase); p_tokens=set(re.findall(r"[a-z0-9]+",p))
+            if not p_tokens: continue
+            overlap=len(q_tokens&p_tokens)/max(1,len(q_tokens|p_tokens))
+            score=overlap+min(sum(1 for k in kws if normalize_query(k) and normalize_query(k) in q)*0.05,0.15)
+            if p==q: score=1.0
+            if score>best_score: best_score=score; best={"intent":intent.get("intent",""),"category":intent.get("category",""),"response":intent.get("response",""),"source":intent.get("source",{}),"score":min(score,1.0)}
+    return best if best and best["score"]>=0.92 else None
+
 async def retrieve_fast_async(query:str)->dict:
-    """Async wrapper that keeps the fast lexical path non-blocking."""
     cache_id=cache_key(query)
     cached=_retrieval_cache.get(cache_id)
-    if cached is not None and cached.get("selected") is not None:
-        return cached
-
+    if cached is not None:return cached
     started=asyncio.get_running_loop().time()
-    keyword=keyword_search(query,KEYWORD_TOP_K)
-    confidence=keyword_confidence(query,keyword)
-
-    if keyword and confidence>=KEYWORD_FAST_MIN_OVERLAP:
-        docs=[{"text":d["text"],"metadata":d.get("metadata",{}),"_keyword_score":d.get("score",0.0)} for d in keyword]
-        selected=rerank_candidates(query,docs,MAX_CONTEXT_CHUNKS)
-        for item in selected:
-            item["_relevance"] += min(float(item.get("_keyword_score",0.0))*0.05,0.03)
-        selected=sorted(selected,key=lambda x:x.get("_relevance",0),reverse=True)[:MAX_CONTEXT_CHUNKS]
-        result={"selected":selected,"semantic":0,"keyword":len(keyword),"mode":"keyword-fast","confidence":round(confidence,4)}
+    intent=fast_intent_match(query)
+    if intent:
+        result={"selected":[],"semantic":0,"keyword":0,"mode":"intent-fast","confidence":intent["score"],"intent":intent}
     else:
-        semantic=await asyncio.get_running_loop().run_in_executor(None,lambda:semantic_search(query))
-        fused=fuse(semantic,keyword)
-        selected=rerank_candidates(query,fused,MAX_CONTEXT_CHUNKS)
-        result={"selected":selected,"semantic":len(semantic),"keyword":len(keyword),"mode":"hybrid-fallback","confidence":round(confidence,4)}
-
+        keyword=keyword_search(query,KEYWORD_TOP_K)
+        conf=keyword_confidence(query,keyword)
+        if keyword and conf>=KEYWORD_FAST_MIN_OVERLAP and float(keyword[0].get("score",0.0))>=KEYWORD_FAST_MIN_BM25:
+            docs=[{"text":d["text"],"metadata":d.get("metadata",{}),"_keyword_score":d.get("score",0.0)} for d in keyword[:MAX_CONTEXT_CHUNKS]]
+            selected=rerank_candidates(query,docs,MAX_CONTEXT_CHUNKS)
+            result={"selected":selected,"semantic":0,"keyword":len(keyword),"mode":"bm25-fast","confidence":round(conf,4)}
+        else:
+            semantic=await asyncio.get_running_loop().run_in_executor(None,lambda:semantic_search(query))
+            fused=fuse(semantic,keyword)
+            selected=rerank_candidates(query,fused,MAX_CONTEXT_CHUNKS)
+            result={"selected":selected,"semantic":len(semantic),"keyword":len(keyword),"mode":"semantic-fallback","confidence":round(conf,4)}
     result["elapsed"]=asyncio.get_running_loop().time()-started
     _retrieval_cache[cache_id]=result
-    if len(_retrieval_cache)>RETRIEVAL_CACHE_MAX:
-        _retrieval_cache.pop(next(iter(_retrieval_cache)))
+    if len(_retrieval_cache)>RETRIEVAL_CACHE_MAX:_retrieval_cache.pop(next(iter(_retrieval_cache)))
     return result
-
-def retrieve_relevant(query:str)->list[dict]:
-    parts=split_question_parts(query)
-    all_selected=[]
-    for part in parts:
-        semantic=semantic_search(part)
-        keyword=keyword_search(part)
-        fused=fuse(semantic,keyword)
-        selected=rerank_candidates(part,fused,MAX_CONTEXT_CHUNKS)
-        log.info("Retrieval | part=%r | semantic=%d | keyword=%d | selected=%d",
-                 part,len(semantic),len(keyword),len(selected))
-        all_selected.extend(selected)
-
-    # Deduplicate while keeping the strongest evidence for each chunk.
-    best={}
-    for d in all_selected:
-        meta=d.get("metadata") or {}
-        key=str(meta.get("chunk_id") or meta.get("id") or
-                normalize_query(d.get("text",""))[:220])
-        if key not in best or d.get("_relevance",0)>best[key].get("_relevance",0):
-            best[key]=d
-    return sorted(best.values(),
-                  key=lambda x:x.get("_relevance",0),
-                  reverse=True)[:MAX_CONTEXT_CHUNKS]
 
 _BAD_KEYWORDS={"table of contents","index","copyright","acknowledgement"}
 
@@ -917,13 +885,14 @@ def health():
         "embed_cache":len(_embed_cache),
         "model":"qwen3:8b",
         "embedding_model":"mxbai-embed-large:latest",
+        "index_version":hybrid_data.get("version","unknown") if hybrid_data else "none",
         "ollama_base_url":OLLAMA_BASE_URL,
         "chroma_top_k":CHROMA_TOP_K,
         "keyword_top_k":KEYWORD_TOP_K,
         "max_context_chunks":MAX_CONTEXT_CHUNKS,
         "retrieval_cache_size":len(_retrieval_cache),
         "keyword_fast_overlap":KEYWORD_FAST_MIN_OVERLAP,
-        "keyword_fast_tfidf":KEYWORD_FAST_MIN_TFIDF,
+        "keyword_fast_bm25":KEYWORD_FAST_MIN_BM25,
         "ollama_base_url":OLLAMA_BASE_URL,
         "ollama_model":OLLAMA_MODEL
     }
@@ -935,4 +904,3 @@ def health():
 if __name__=="__main__":
     import uvicorn
     uvicorn.run("app:app",host="0.0.0.0",port=5000,reload=False)
-
