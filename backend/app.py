@@ -314,11 +314,11 @@ def json_match(query:str)->dict|None:
 # ============================================================
 
 embeddings=OllamaEmbeddings(model="mxbai-embed-large:latest")
-llm=OllamaLLM(
-    model="llama3.2:latest",
+llm = OllamaLLM(
+    model="qwen3:8b",
     temperature=0,
-    num_ctx=2048,
-    num_predict=350,
+    num_ctx=4096,
+    num_predict=500,
     repeat_penalty=1.1,
     top_k=20,
     top_p=0.85
