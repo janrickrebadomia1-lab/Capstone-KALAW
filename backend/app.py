@@ -5,7 +5,8 @@ from fastapi import FastAPI,Request
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_chroma import Chroma
-from langchain_ollama import OllamaEmbeddings,OllamaLLM
+from langchain_ollama import OllamaEmbeddings
+import httpx
 from langchain_core.prompts import PromptTemplate
 
 os.environ["ANONYMIZED_TELEMETRY"]="False"
@@ -13,7 +14,18 @@ logging.basicConfig(level=logging.INFO,format="%(levelname)s: %(message)s")
 log=logging.getLogger("kalaw")
 app=FastAPI()
 
-app.add_middleware(CORSMiddleware,allow_origins=["*"],allow_methods=["*"],allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:4173",
+        "http://127.0.0.1:4173",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=False,
+)
 
 BASE_DIR=os.path.dirname(os.path.abspath(__file__))
 DATA_DIR=os.path.join(BASE_DIR,"data")
@@ -22,13 +34,16 @@ HYBRID_PATH=os.path.join(DATA_DIR,"tfidf_embeddings.pkl")
 JSON_PATH=os.path.join(DATA_DIR,"faculty_manual.json")
 
 JSON_SCORE_THRESHOLD=0.90
-CHROMA_TOP_K=8
-CHROMA_FETCH_K=20
-KEYWORD_TOP_K=8
-MAX_CONTEXT_CHUNKS=6
-MAX_CHUNK_CHARS=1200
-CACHE_MAX=150
-EMBED_CACHE_MAX=500
+CHROMA_TOP_K=4
+CHROMA_FETCH_K=8
+KEYWORD_TOP_K=6
+MAX_CONTEXT_CHUNKS=4
+MAX_CHUNK_CHARS=1700
+CACHE_MAX=200
+EMBED_CACHE_MAX=750
+RETRIEVAL_CACHE_MAX=300
+KEYWORD_FAST_MIN_OVERLAP=0.55
+KEYWORD_FAST_MIN_TFIDF=0.18
 HISTORY_WINDOW=4
 TYPO_MIN_WORD_LENGTH=4
 TYPO_THRESHOLD=0.84
@@ -314,15 +329,19 @@ def json_match(query:str)->dict|None:
 # ============================================================
 
 embeddings=OllamaEmbeddings(model="mxbai-embed-large:latest")
-llm = OllamaLLM(
-    model="qwen3:8b",
-    temperature=0,
-    num_ctx=4096,
-    num_predict=500,
-    repeat_penalty=1.1,
-    top_k=20,
-    top_p=0.85
-)
+
+OLLAMA_BASE_URL=os.getenv("OLLAMA_BASE_URL","http://127.0.0.1:11434")
+OLLAMA_MODEL="qwen3:8b"
+OLLAMA_TIMEOUT=None
+OLLAMA_OPTIONS={
+    "temperature":0,
+    "num_ctx":4096,
+    "num_predict":500,
+    "repeat_penalty":1.1,
+    "top_k":20,
+    "top_p":0.85
+}
+
 
 # ============================================================
 # CHROMA / TF-IDF
@@ -351,6 +370,7 @@ else:
 session_store={}
 _response_cache={}
 _embed_cache={}
+_retrieval_cache={}
 
 def new_session_id():
     return str(uuid.uuid4())
@@ -365,6 +385,10 @@ def get_or_embed(query:str)->list[float]:
         if len(_embed_cache)>EMBED_CACHE_MAX:
             _embed_cache.pop(next(iter(_embed_cache)))
     return _embed_cache[ck]
+
+def log_elapsed(label:str, started:float)->None:
+    elapsed=asyncio.get_running_loop().time()-started
+    log.info("%s: %.3fs", label, elapsed)
 
 # ============================================================
 # PROMPT
@@ -439,21 +463,57 @@ def keyword_search(query:str,top_k:int=KEYWORD_TOP_K)->list[dict]:
         log.warning("Keyword search failed: %s",e)
         return []
 
+def keyword_confidence(query:str,docs:list[dict])->float:
+    """Estimate whether lexical retrieval is strong enough to skip embeddings."""
+    if not docs:
+        return 0.0
+
+    q_words=_expand_topics(_topic_words(query))
+    if not q_words:
+        return 0.0
+
+    best=0.0
+    for doc in docs[:3]:
+        text=normalize_query(doc.get("text",""))
+        meta=doc.get("metadata") or {}
+        meta_text=normalize_query(" ".join(str(meta.get(k,"")) for k in (
+            "heading","title","section","article","category","source"
+        )))
+        body=_topic_words(text)
+        head=_topic_words(meta_text)
+        overlap=max(
+            len(q_words & body)/max(1,len(q_words)),
+            len(q_words & head)/max(1,len(q_words))
+        )
+        tfidf=float(doc.get("score",0.0))
+
+        # Exact multi-word topic matches are especially trustworthy.
+        phrase_bonus=0.0
+        qn=normalize_query(query)
+        for phrase in (
+            "faculty workload","teaching load","part time faculty",
+            "research load","leave of absence","promotion",
+            "tenure","faculty benefits","salary"
+        ):
+            if phrase in qn and phrase in text:
+                phrase_bonus=0.25
+                break
+
+        confidence=min(1.0, overlap*0.65 + min(tfidf*1.5,0.30) + phrase_bonus)
+        best=max(best,confidence)
+
+    return best
+
 def semantic_search(query:str)->list:
+    """Embedding retrieval is used only when lexical retrieval is insufficient."""
     try:
-        return vector_db.max_marginal_relevance_search_by_vector(
+        return vector_db.similarity_search_by_vector(
             get_or_embed(query),
-            k=CHROMA_TOP_K,
-            fetch_k=CHROMA_FETCH_K,
-            lambda_mult=0.6
+            k=CHROMA_TOP_K
         )
     except Exception as e:
-        log.warning("MMR search failed: %s",e)
-        try:
-            return vector_db.similarity_search(query,k=CHROMA_TOP_K)
-        except Exception as inner:
-            log.error("Chroma retrieval failed: %s",inner)
-            return []
+        log.error("Chroma retrieval failed: %s",e)
+        return []
 
 def fuse(semantic_docs:list,keyword_docs:list[dict],k:int=60)->list[dict]:
     scores={}
@@ -556,6 +616,36 @@ def rerank_candidates(query:str,docs:list[dict],limit:int=MAX_CONTEXT_CHUNKS)->l
     ranked.sort(key=lambda x:x["_relevance"],reverse=True)
     return [x for x in ranked if x["_relevance"]>0][:limit]
 
+async def retrieve_fast_async(query:str)->dict:
+    """Async wrapper that keeps the fast lexical path non-blocking."""
+    cache_id=cache_key(query)
+    cached=_retrieval_cache.get(cache_id)
+    if cached is not None and cached.get("selected") is not None:
+        return cached
+
+    started=asyncio.get_running_loop().time()
+    keyword=keyword_search(query,KEYWORD_TOP_K)
+    confidence=keyword_confidence(query,keyword)
+
+    if keyword and confidence>=KEYWORD_FAST_MIN_OVERLAP:
+        docs=[{"text":d["text"],"metadata":d.get("metadata",{}),"_keyword_score":d.get("score",0.0)} for d in keyword]
+        selected=rerank_candidates(query,docs,MAX_CONTEXT_CHUNKS)
+        for item in selected:
+            item["_relevance"] += min(float(item.get("_keyword_score",0.0))*0.05,0.03)
+        selected=sorted(selected,key=lambda x:x.get("_relevance",0),reverse=True)[:MAX_CONTEXT_CHUNKS]
+        result={"selected":selected,"semantic":0,"keyword":len(keyword),"mode":"keyword-fast","confidence":round(confidence,4)}
+    else:
+        semantic=await asyncio.get_running_loop().run_in_executor(None,lambda:semantic_search(query))
+        fused=fuse(semantic,keyword)
+        selected=rerank_candidates(query,fused,MAX_CONTEXT_CHUNKS)
+        result={"selected":selected,"semantic":len(semantic),"keyword":len(keyword),"mode":"hybrid-fallback","confidence":round(confidence,4)}
+
+    result["elapsed"]=asyncio.get_running_loop().time()-started
+    _retrieval_cache[cache_id]=result
+    if len(_retrieval_cache)>RETRIEVAL_CACHE_MAX:
+        _retrieval_cache.pop(next(iter(_retrieval_cache)))
+    return result
+
 def retrieve_relevant(query:str)->list[dict]:
     parts=split_question_parts(query)
     all_selected=[]
@@ -639,210 +729,162 @@ def create_session():
 
 @app.post("/api/chat")
 async def chat(request:Request):
-    data=await request.json()
-    question=str(data.get("question","")).strip()
-    session_id=str(data.get("session_id") or data.get("chat_id") or "").strip()
+    session_id=""
+    question=""
 
-    if not session_id:
-        session_id=new_session_id()
+    try:
+        data=await request.json()
+        question=str(data.get("question","")).strip()
+        session_id=str(data.get("session_id") or data.get("chat_id") or "").strip()
 
-    if not question:
-        return {"error":"Empty question","session_id":session_id}
+        if not session_id:
+            session_id=new_session_id()
+        if not question:
+            return {"error":"Empty question","session_id":session_id}
+        if session_id not in session_store:
+            session_store[session_id]=[]
 
-    if session_id not in session_store:
-        session_store[session_id]=[]
+        history=session_store[session_id]
 
-    history=session_store[session_id]
+        greeting=greeting_match(question)
+        if greeting:
+            history.append({"role":"user","content":question})
+            history.append({"role":"assistant","content":greeting})
+            if len(history)>HISTORY_WINDOW*2:
+                session_store[session_id]=history[-(HISTORY_WINDOW*2):]
+            async def greeting_stream():
+                yield sse({"content":greeting,"source":"greeting","session_id":session_id})
+            return StreamingResponse(greeting_stream(),media_type="text/event-stream",headers={
+                "Cache-Control":"no-cache","Connection":"keep-alive","X-Accel-Buffering":"no"})
 
-    # --------------------------------------------------------
-    # GREETING
-    # --------------------------------------------------------
+        clean_question=correct_common_typos(question)
+        retrieval_query=build_retrieval_query(clean_question,history)
+        followup=is_followup_question(question)
 
-    greeting=greeting_match(question)
+        ck=cache_key(retrieval_query)
+        if ck in _response_cache:
+            cached=_response_cache[ck]
+            async def cached_stream():
+                yield sse({"content":cached,"source":"cache","session_id":session_id,"follow_up":followup})
+            return StreamingResponse(cached_stream(),media_type="text/event-stream",headers={
+                "Cache-Control":"no-cache","Connection":"keep-alive","X-Accel-Buffering":"no"})
 
-    if greeting:
-        history.append({"role":"user","content":question})
-        history.append({"role":"assistant","content":greeting})
+        history_text="\n".join(f"{m['role']}: {m['content']}" for m in history[-HISTORY_WINDOW:])
 
-        if len(history)>HISTORY_WINDOW*2:
-            session_store[session_id]=history[-(HISTORY_WINDOW*2):]
+        retrieval_started=asyncio.get_running_loop().time()
 
-        async def greeting_stream():
-            yield sse({
-                "content":greeting,
-                "source":"greeting",
-                "session_id":session_id
-            })
+        # Split multi-part questions only when necessary; each part gets the
+        # same adaptive keyword-first/semantic-fallback strategy.
+        parts=split_question_parts(retrieval_query)
+        all_selected=[]
+        total_semantic=0
+        total_keyword=0
+        modes=[]
 
-        return StreamingResponse(
-            greeting_stream(),
-            media_type="text/event-stream"
-        )
+        for part in parts[:4]:
+            result=await retrieve_fast_async(part)
+            all_selected.extend(result.get("selected") or [])
+            total_semantic+=result.get("semantic",0)
+            total_keyword+=result.get("keyword",0)
+            modes.append(result.get("mode","unknown"))
 
-    # --------------------------------------------------------
-    # TYPO CORRECTION
-    # --------------------------------------------------------
+        # Deduplicate strongest evidence.
+        best={}
+        for doc in all_selected:
+            meta=doc.get("metadata") or {}
+            key=str(meta.get("chunk_id") or meta.get("id") or normalize_query(doc.get("text",""))[:220])
+            if key not in best or doc.get("_relevance",0)>best[key].get("_relevance",0):
+                best[key]=doc
+        selected=sorted(best.values(),key=lambda x:x.get("_relevance",0),reverse=True)[:MAX_CONTEXT_CHUNKS]
 
-    clean_question=correct_common_typos(question)
-
-    if clean_question!=normalize_query(question):
+        retrieval_elapsed=asyncio.get_running_loop().time()-retrieval_started
         log.info(
-            "Typo correction: '%s' -> '%s'",
-            question[:80],
-            clean_question[:80]
+            "Retrieval complete: %.3fs | parts=%d | semantic=%d | keyword=%d | selected=%d | modes=%s",
+            retrieval_elapsed,len(parts[:4]),total_semantic,total_keyword,len(selected),','.join(modes)
         )
 
-    # --------------------------------------------------------
-    # FOLLOW-UP-AWARE RETRIEVAL QUERY
-    # --------------------------------------------------------
+        context=format_context(selected,MAX_CONTEXT_CHUNKS)
+        prompt_text=PROMPT.format(context=context or "No relevant context found.",history=history_text or "No previous conversation.",question=question)
 
-    retrieval_query=build_retrieval_query(
-        clean_question,
-        history
-    )
-
-    followup=is_followup_question(question)
-
-    if followup:
-        log.info(
-            "Follow-up question detected | session=%s",
-            session_id
-        )
-
-    # --------------------------------------------------------
-    # CACHE
-    # --------------------------------------------------------
-
-    ck=cache_key(retrieval_query)
-
-    if ck in _response_cache:
-        cached=_response_cache[ck]
-
-        async def cached_stream():
-            yield sse({
-                "content":cached,
-                "source":"cache",
-                "session_id":session_id
-            })
-
-        return StreamingResponse(
-            cached_stream(),
-            media_type="text/event-stream"
-        )
-
-    # --------------------------------------------------------
-    # HISTORY
-    # --------------------------------------------------------
-
-    history_text="\n".join(
-        f"{m['role']}: {m['content']}"
-        for m in history[-HISTORY_WINDOW:]
-    )
-
-    # --------------------------------------------------------
-    # HYBRID RETRIEVAL
-    # --------------------------------------------------------
-
-    log.info(
-        "Hybrid retrieval | session=%s | query=%s",
-        session_id,
-        retrieval_query[:120]
-    )
-
-    loop=asyncio.get_running_loop()
-
-    semantic_task=loop.run_in_executor(
-        None,
-        lambda:semantic_search(retrieval_query)
-    )
-
-    keyword_task=loop.run_in_executor(
-        None,
-        lambda:keyword_search(retrieval_query)
-    )
-
-    semantic,keyword=await asyncio.gather(
-        semantic_task,
-        keyword_task
-    )
-
-    selected=retrieve_relevant(retrieval_query)
-    context=format_context(selected,MAX_CONTEXT_CHUNKS)
-
-    if not context:
-        log.warning(
-            "No context found for: %s",
-            retrieval_query[:100]
-        )
-
-    # --------------------------------------------------------
-    # LLM
-    # --------------------------------------------------------
-
-    prompt_text=PROMPT.format(
-        context=context or "No relevant context found.",
-        history=history_text or "No previous conversation.",
-        question=question
-    )
+    except Exception as e:
+        log.exception("CHAT PIPELINE FAILED before generation | session=%s | question=%s",session_id,question[:120])
+        async def pipeline_error():
+            yield sse({"content":f"KALAW backend error: {type(e).__name__}: {str(e)[:400]}","source":"backend_error","session_id":session_id})
+        return StreamingResponse(pipeline_error(),media_type="text/event-stream",headers={
+            "Cache-Control":"no-cache","Connection":"keep-alive","X-Accel-Buffering":"no"})
 
     async def stream():
         full=""
-
+        llm_started=asyncio.get_running_loop().time()
         try:
-            async for token in llm.astream(prompt_text):
-                full+=token
-
-                yield sse({
-                    "content":token,
-                    "source":"chroma",
-                    "session_id":session_id,
-                    "follow_up":followup
-                })
-
+            payload={"model":OLLAMA_MODEL,"prompt":prompt_text,"stream":True,"think":False,"options":OLLAMA_OPTIONS}
+            async with httpx.AsyncClient(timeout=OLLAMA_TIMEOUT) as client:
+                async with client.stream("POST",f"{OLLAMA_BASE_URL}/api/generate",json=payload) as response:
+                    if response.status_code!=200:
+                        body=await response.aread()
+                        raise RuntimeError(f"Ollama HTTP {response.status_code}: {body.decode('utf-8','ignore')[:500]}")
+                    async for line in response.aiter_lines():
+                        if not line:
+                            continue
+                        try:
+                            chunk=json.loads(line)
+                        except json.JSONDecodeError:
+                            continue
+                        if chunk.get("error"):
+                            raise RuntimeError(str(chunk["error"]))
+                        token=chunk.get("response","") or ""
+                        if token:
+                            full+=token
+                            yield sse({"content":token,"source":"qwen3","session_id":session_id,"follow_up":followup})
+                        if chunk.get("done") is True:
+                            break
+            log.info("LLM generation complete: %.3fs | chars=%d",asyncio.get_running_loop().time()-llm_started,len(full))
+            if not full.strip():
+                full="Not found in the Faculty Manual."
+                yield sse({"content":full,"source":"fallback","session_id":session_id,"follow_up":followup})
+            history.append({"role":"user","content":question})
+            history.append({"role":"assistant","content":full})
+            if len(history)>HISTORY_WINDOW*2:
+                session_store[session_id]=history[-(HISTORY_WINDOW*2):]
+            if len(_response_cache)>=CACHE_MAX:
+                _response_cache.pop(next(iter(_response_cache)))
+            _response_cache[ck]=full
         except Exception as e:
-            log.exception(
-                "LLM generation failed: %s",
-                e
-            )
+            log.exception("OLLAMA GENERATION FAILED | session=%s",session_id)
+            yield sse({"content":f"KALAW could not generate the answer: {type(e).__name__}: {str(e)[:400]}","source":"ollama_error","session_id":session_id,"follow_up":followup})
 
-            yield sse({
-                "content":"Sorry, I couldn't generate an answer right now. Please make sure Ollama is running.",
-                "source":"error",
-                "session_id":session_id
-            })
+    return StreamingResponse(stream(),media_type="text/event-stream",headers={
+        "Cache-Control":"no-cache","Connection":"keep-alive","X-Accel-Buffering":"no"})
 
-            return
+# ============================================================
+# RETRIEVAL DIAGNOSTIC
+# ============================================================
 
-        # ----------------------------------------------------
-        # SAVE CONVERSATION
-        # ----------------------------------------------------
+@app.get("/api/retrieval-test")
+async def retrieval_test(q:str):
+    q=str(q or "").strip()
+    if not q:
+        return {"error":"Missing query parameter: q"}
 
-        history.append({
-            "role":"user",
-            "content":question
-        })
-
-        history.append({
-            "role":"assistant",
-            "content":full
-        })
-
-        if len(history)>HISTORY_WINDOW*2:
-            session_store[session_id]=history[-(HISTORY_WINDOW*2):]
-
-        # ----------------------------------------------------
-        # CACHE
-        # ----------------------------------------------------
-
-        if len(_response_cache)>=CACHE_MAX:
-            _response_cache.pop(next(iter(_response_cache)))
-
-        _response_cache[ck]=full
-
-    return StreamingResponse(
-        stream(),
-        media_type="text/event-stream"
-    )
+    result=await retrieve_fast_async(q)
+    selected=result.get("selected") or []
+    return {
+        "query":q,
+        "elapsed_seconds":round(float(result.get("elapsed",0)),3),
+        "mode":result.get("mode"),
+        "confidence":result.get("confidence"),
+        "semantic_results":result.get("semantic",0),
+        "keyword_results":result.get("keyword",0),
+        "selected_results":len(selected),
+        "results":[
+            {
+                "relevance":round(float(d.get("_relevance",0)),4),
+                "metadata":d.get("metadata") or {},
+                "text":d.get("text","")[:500]
+            }
+            for d in selected
+        ]
+    }
 
 # ============================================================
 # CLEAR SESSION
@@ -873,8 +915,17 @@ def health():
         "chunks":len(hybrid_data["texts"]) if hybrid_data else 0,
         "cache_size":len(_response_cache),
         "embed_cache":len(_embed_cache),
-        "model":"llama3.2:latest",
-        "embedding_model":"mxbai-embed-large:latest"
+        "model":"qwen3:8b",
+        "embedding_model":"mxbai-embed-large:latest",
+        "ollama_base_url":OLLAMA_BASE_URL,
+        "chroma_top_k":CHROMA_TOP_K,
+        "keyword_top_k":KEYWORD_TOP_K,
+        "max_context_chunks":MAX_CONTEXT_CHUNKS,
+        "retrieval_cache_size":len(_retrieval_cache),
+        "keyword_fast_overlap":KEYWORD_FAST_MIN_OVERLAP,
+        "keyword_fast_tfidf":KEYWORD_FAST_MIN_TFIDF,
+        "ollama_base_url":OLLAMA_BASE_URL,
+        "ollama_model":OLLAMA_MODEL
     }
 
 # ============================================================
@@ -883,5 +934,5 @@ def health():
 
 if __name__=="__main__":
     import uvicorn
-    uvicorn.run("app:app",host="127.0.0.1",port=5000,reload=False)
+    uvicorn.run("app:app",host="0.0.0.0",port=5000,reload=False)
 
