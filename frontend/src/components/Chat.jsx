@@ -258,7 +258,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
 
 try {
   const response = await fetch(
-  "https://nearly-around-grid-final.trycloudflare.com/api/chat",
+  "https://gather-mainland-destinations-willow.trycloudflare.com/api/chat",
   {
     method: "POST",
     headers: {
