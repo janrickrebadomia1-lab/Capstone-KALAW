@@ -258,7 +258,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
 
 try {
   const response = await fetch(
-  "https://valve-marina-pottery-kenneth.trycloudflare.com/api/chat",
+  "https://nearly-around-grid-final.trycloudflare.com/api/chat",
   {
     method: "POST",
     headers: {

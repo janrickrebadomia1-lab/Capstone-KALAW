@@ -335,9 +335,9 @@ OLLAMA_MODEL="qwen3:8b"
 OLLAMA_TIMEOUT=None
 OLLAMA_OPTIONS={
     "temperature":0,
-    "num_ctx":4096,
-    "num_predict":500,
-    "repeat_penalty":1.1,
+    "num_ctx":3072,
+    "num_predict":220,
+    "repeat_penalty":1.05,
     "top_k":20,
     "top_p":0.85
 }
@@ -785,7 +785,7 @@ async def chat(request:Request):
         full=""
         llm_started=asyncio.get_running_loop().time()
         try:
-            payload={"model":OLLAMA_MODEL,"prompt":prompt_text,"stream":True,"think":False,"options":OLLAMA_OPTIONS}
+            payload={"model":OLLAMA_MODEL,"prompt":prompt_text,"stream":True,"think":False,"keep_alive":"10m","options":OLLAMA_OPTIONS}
             async with httpx.AsyncClient(timeout=OLLAMA_TIMEOUT) as client:
                 async with client.stream("POST",f"{OLLAMA_BASE_URL}/api/generate",json=payload) as response:
                     if response.status_code!=200:
