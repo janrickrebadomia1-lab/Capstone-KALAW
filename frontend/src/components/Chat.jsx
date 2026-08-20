@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } f
 import Kalaw from "../assets/kalaw.jpg";
 import "../styles/Chat.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const SUGGESTIONS = [
   { icon: "🎓", title: "Promotion Guidelines",  desc: "Requirements and process for faculty promotion",    question: "What are the guidelines for promotion?" },
   { icon: "📚", title: "Teaching Load",          desc: "Hours and workload for full-time faculty",          question: "How many hours is a full-time teaching load?" },
@@ -258,7 +260,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
 
 try {
   const response = await fetch(
-  "https://gather-mainland-destinations-willow.trycloudflare.com/api/chat",
+  `${API_URL}/api/chat`,
   {
     method: "POST",
     headers: {

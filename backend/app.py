@@ -71,6 +71,7 @@ else:
 
 _INTENT_INDEX=[]
 _VOCABULARY=set()
+_INTENT_FAST_INDEX=[]
 
 for intent in INTENTS:
     intent_name=intent.get("intent","")
@@ -80,6 +81,17 @@ for intent in INTENTS:
     aliases=intent.get("aliases",[]) or []
     response=intent.get("response","")
     source=intent.get("source",{}) or {}
+
+    # Compact intent-level index used for the fast JSON gate.
+    _INTENT_FAST_INDEX.append({
+        "intent": intent_name,
+        "category": category,
+        "keywords": keywords,
+        "aliases": aliases,
+        "response": response,
+        "source": source,
+        "patterns": [p for p in patterns[:20] if isinstance(p,str)],
+    })
 
     for phrase in patterns+aliases:
         if not isinstance(phrase,str):
@@ -342,8 +354,6 @@ OLLAMA_OPTIONS = {
 }
 
 OLLAMA_KEEP_ALIVE = "15m"
-OLLAMA_KEEP_ALIVE = "15m"
-
 
 # ============================================================
 # CHROMA / TF-IDF
@@ -441,6 +451,104 @@ QUESTION:
 
 ANSWER:"""
 )
+
+# ============================================================
+# FAST JSON INTENT GATE
+# ============================================================
+
+def fast_json_match(query:str)->dict|None:
+    """High-confidence JSON match for direct, curated answers.
+
+    This is intentionally conservative. A direct JSON response is only returned
+    when the intent evidence is substantially stronger than the alternatives.
+    Lower-confidence queries continue through BM25/Chroma.
+    """
+    q=correct_common_typos(query)
+    q_norm=normalize_query(q)
+    q_tokens=set(re.findall(r"[a-z0-9]+",q_norm))
+
+    if not q_tokens:
+        return None
+
+    best=None
+    second=0.0
+
+    for intent in _INTENT_FAST_INDEX:
+        keywords=intent["keywords"] or []
+        aliases=intent["aliases"] or []
+        patterns=intent["patterns"] or []
+
+        # Use representative patterns/aliases only for the fast gate.
+        candidates=patterns[:12] + aliases[:8]
+        if not candidates:
+            continue
+
+        best_entry_score=0.0
+        best_phrase=""
+
+        for phrase in candidates:
+            p=normalize_query(phrase)
+            if not p:
+                continue
+
+            p_tokens=set(re.findall(r"[a-z0-9]+",p))
+            if not p_tokens:
+                continue
+
+            overlap=len(q_tokens & p_tokens) / max(1,len(q_tokens | p_tokens))
+            sequence=SequenceMatcher(None,q_norm,p).ratio()
+
+            keyword_hits=sum(
+                1 for k in keywords
+                if isinstance(k,str)
+                and (normalize_query(k) in q_norm)
+            )
+
+            alias_hits=sum(
+                1 for a in aliases
+                if isinstance(a,str)
+                and (normalize_query(a) in q_norm)
+            )
+
+            score=(
+                overlap*0.42
+                + sequence*0.28
+                + min(keyword_hits*0.08,0.20)
+                + min(alias_hits*0.08,0.16)
+            )
+
+            if p==q_norm:
+                score=1.0
+
+            if score>best_entry_score:
+                best_entry_score=score
+                best_phrase=p
+
+        if best_entry_score>second:
+            second=best_entry_score
+
+        if best is None or best_entry_score>best["score"]:
+            best={
+                "intent":intent["intent"],
+                "category":intent["category"],
+                "response":intent["response"],
+                "source":intent["source"],
+                "score":min(best_entry_score,1.0),
+                "matched_phrase":best_phrase,
+                "corrected_query":q_norm,
+            }
+
+    if not best:
+        return None
+
+    margin=best["score"]-second
+
+    # Conservative threshold to protect retrieval accuracy.
+    if best["score"]>=0.94 and margin>=0.05:
+        return best
+
+    return None
+
 
 # ============================================================
 # RETRIEVAL
@@ -731,6 +839,55 @@ async def chat(request:Request):
         retrieval_query=build_retrieval_query(clean_question,history)
         followup=is_followup_question(question)
 
+        # --------------------------------------------------------
+        # JSON DIRECT-ANSWER FAST PATH
+        # --------------------------------------------------------
+        # Only use the curated JSON response for a high-confidence,
+        # non-follow-up, single-topic question. Follow-ups remain on the
+        # conversational retrieval path so context is preserved.
+        if not followup:
+            json_hit=fast_json_match(clean_question)
+            if json_hit:
+                history.append({
+                    "role":"user",
+                    "content":question
+                })
+                history.append({
+                    "role":"assistant",
+                    "content":json_hit["response"]
+                })
+
+                if len(history)>HISTORY_WINDOW*2:
+                    session_store[session_id]=history[-(HISTORY_WINDOW*2):]
+
+                log.info(
+                    "JSON direct answer | intent=%s | score=%.4f | session=%s",
+                    json_hit["intent"],
+                    json_hit["score"],
+                    session_id
+                )
+
+                async def json_stream():
+                    yield sse({
+                        "content":json_hit["response"],
+                        "source":"json-intent",
+                        "session_id":session_id,
+                        "follow_up":False,
+                        "intent":json_hit["intent"],
+                        "confidence":json_hit["score"],
+                        "source_metadata":json_hit["source"]
+                    })
+
+                return StreamingResponse(
+                    json_stream(),
+                    media_type="text/event-stream",
+                    headers={
+                        "Cache-Control":"no-cache",
+                        "Connection":"keep-alive",
+                        "X-Accel-Buffering":"no"
+                    }
+                )
+
         ck=cache_key(retrieval_query)
         if ck in _response_cache:
             cached=_response_cache[ck]
@@ -836,8 +993,27 @@ async def retrieval_test(q:str):
     if not q:
         return {"error":"Missing query parameter: q"}
 
+    json_hit=None
+    if not is_followup_question(q):
+        json_hit=fast_json_match(q)
+
     result=await retrieve_fast_async(q)
     selected=result.get("selected") or []
+
+    if json_hit:
+        return {
+            "query":q,
+            "elapsed_seconds":0.0,
+            "mode":"json-intent-fast",
+            "confidence":round(float(json_hit["score"]),4),
+            "semantic_results":0,
+            "keyword_results":0,
+            "selected_results":0,
+            "intent":json_hit["intent"],
+            "response":json_hit["response"],
+            "results":[]
+        }
+
     return {
         "query":q,
         "elapsed_seconds":round(float(result.get("elapsed",0)),3),
@@ -881,6 +1057,7 @@ def health():
         "active_sessions":len(session_store),
         "dataset_intents":len(INTENTS),
         "json_patterns":len(_INTENT_INDEX),
+        "json_fast_intents":len(_INTENT_FAST_INDEX),
         "vocabulary_words":len(_VOCABULARY),
         "chunks":len(hybrid_data["texts"]) if hybrid_data else 0,
         "cache_size":len(_response_cache),
