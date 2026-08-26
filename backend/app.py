@@ -1,4 +1,4 @@
-import os,json,asyncio,logging,pickle,hashlib,re,random,uuid
+import os,json,asyncio,logging,pickle,hashlib,re,uuid
 from difflib import SequenceMatcher
 from fastapi import FastAPI,Request
 from fastapi.responses import StreamingResponse
@@ -7,6 +7,7 @@ from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 import httpx
 from langchain_core.prompts import PromptTemplate
+from greetings import greeting_match
 
 os.environ["ANONYMIZED_TELEMETRY"]="False"
 logging.basicConfig(level=logging.INFO,format="%(levelname)s: %(message)s")
@@ -118,8 +119,6 @@ log.info("JSON intents loaded: %d",len(INTENTS))
 log.info("JSON patterns/aliases indexed: %d",len(_INTENT_INDEX))
 log.info("Typo vocabulary loaded: %d",len(_VOCABULARY))
 
-# ============================================================
-# GREETINGS
 # ============================================================
 
 _GREETING_TRIGGERS={
