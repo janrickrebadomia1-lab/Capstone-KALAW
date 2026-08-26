@@ -87,10 +87,10 @@ for intent in INTENTS:
         "intent": intent_name,
         "category": category,
         "keywords": keywords,
-        "aliases": aliases,
+        "aliases": aliases, 
         "response": response,
         "source": source,
-        "patterns": [p for p in patterns[:20] if isinstance(p,str)],
+        "patterns": [p for p in patterns if isinstance(p,str)],
     })
 
     for phrase in patterns+aliases:

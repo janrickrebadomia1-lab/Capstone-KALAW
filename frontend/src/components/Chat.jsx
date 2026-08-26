@@ -259,7 +259,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
     ]);
 
 try {
-  const response = await fetch(
+  const response = await fetch( 
   `${API_URL}/api/chat`,
   {
     method: "POST",
