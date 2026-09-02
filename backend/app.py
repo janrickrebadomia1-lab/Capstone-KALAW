@@ -41,6 +41,7 @@ CHROMA_FETCH_K=8
 KEYWORD_TOP_K=6
 MAX_CONTEXT_CHUNKS=4
 MAX_CHUNK_CHARS=1700
+MIN_EVIDENCE_RELEVANCE=0.15
 CACHE_MAX=200
 EMBED_CACHE_MAX=750
 RETRIEVAL_CACHE_MAX=300
@@ -122,6 +123,31 @@ log.info("Typo vocabulary loaded: %d",len(_VOCABULARY))
 
 # ============================================================
 
+_GREETING_TRIGGERS={
+    "hi","hello","hey","goodmorning","goodafternoon","goodevening",
+    "good day","howdy","greetings","hi there","hello there","hey there",
+    "what's up","sup","yo","kamusta","kumusta","musta",
+    "magandang umaga","magandang hapon","magandang gabi","magandang araw",
+    "maayong buntag","maayong udto","maayong hapon","maayong gabii","kumusta ka"
+}
+
+_GREETING_RESPONSES=[
+    "Hello! I'm **KALAW**, your CPSU Faculty Manual assistant.\n\nI can help you with policies, procedures, leave benefits, faculty ranks, and anything covered in the Faculty Manual. What would you like to know?",
+    "Hi there! Welcome — I'm **KALAW**, the CPSU Faculty Manual chatbot.\n\nFeel free to ask me about faculty policies, duties, benefits, or any section of the manual. How can I assist you today?",
+    "Good day! I'm **KALAW**, here to help you navigate the CPSU Faculty Manual.\n\nAsk me anything about faculty rules, leave entitlements, promotions, or academic procedures. What's your question?",
+    "Hey! I'm **KALAW** — your go-to guide for the CPSU Faculty Manual.\n\nWhether it's about teaching loads, leave policies, or faculty obligations, I'm ready to help. What do you need?"
+]
+
+def greeting_match(query:str)->str|None:
+    q=re.sub(r"[^a-z0-9\s']"," ",query.lower()).strip()
+    q=re.sub(r"\s+"," ",q)
+    if q in _GREETING_TRIGGERS:
+        return random.choice(_GREETING_RESPONSES)
+    for trigger in _GREETING_TRIGGERS:
+        if q.startswith(trigger+" "):
+            return random.choice(_GREETING_RESPONSES)
+    return None
+
 # ============================================================
 # NORMALIZATION / TYPO CORRECTION
 # ============================================================
@@ -131,8 +157,41 @@ def normalize_query(q:str)->str:
     q=re.sub(r"[^a-z0-9\s']"," ",q)
     return re.sub(r"\s+"," ",q).strip()
 
+
+# Common Cebuano/Bisaya and Filipino query words used only to improve
+# retrieval against the English Faculty Manual. The final answer remains English.
+_LOCAL_QUERY_MAP={
+    "unsa":"what", "unsay":"what", "unsaon":"how", "pila":"how many",
+    "kanus-a":"when", "kanus a":"when", "kinsa":"who",
+    "ngano":"why", "asa":"where", "adlaw":"day", "oras":"hours",
+    "semana":"week", "buwan":"month", "tuig":"year",
+    "benepisyo":"benefits", "benepisyos":"benefits",
+    "kinahanglan":"requirements", "kinahanglanon":"requirements",
+    "mga kinahanglanon":"requirements", "sahod":"salary",
+    "sweldo":"salary", "bayad":"payment", "bakasyon":"leave",
+    "pahulay":"leave", "pagbiya":"leave", "promosyon":"promotion",
+    "grado":"rank", "trabaho":"work", "buluhaton":"duties",
+    "guro":"faculty", "magtutudlo":"faculty", "mga guro":"faculty",
+    "mga magtutudlo":"faculty", "oras sa pagtudlo":"teaching load",
+    "pagtudlo":"teaching", "load":"load",
+    "ano":"what", "ilang":"how many", "ilang oras":"how many hours",
+    "mga benepisyo":"benefits", "mga requirement":"requirements",
+    "kailangan":"requirements", "guro":"faculty"
+}
+
+def expand_local_query(query:str)->str:
+    """Convert common local-language query terms to English retrieval terms only."""
+    q=normalize_query(query)
+    if not q:
+        return q
+
+    # Phrase replacements first so multi-word concepts remain intact.
+    for source,target in sorted(_LOCAL_QUERY_MAP.items(), key=lambda x:len(x[0]), reverse=True):
+        q=re.sub(rf"\b{re.escape(source)}\b", target, q)
+    return re.sub(r"\s+"," ",q).strip()
+
 def correct_common_typos(query:str)->str:
-    normalized=normalize_query(query)
+    normalized=expand_local_query(query)
     if not normalized:
         return normalized
     corrected=[]
@@ -216,7 +275,7 @@ def build_retrieval_query(question:str,history:list)->str:
     }
 
     for text in reversed(previous_user):
-        n=normalize_query(text)
+        n=expand_local_query(text)
         if any(term in n for term in topic_words):
             subject=text
             break
@@ -386,12 +445,11 @@ PROMPT=PromptTemplate(
     template="""You are KALAW, a strict CPSU Faculty Manual assistant.
 
 RULES:
-- Understand the user's question regardless of whether it is written in English, Cebuano/Bisaya, Filipino, or a natural mixture of these languages.
-- ALWAYS provide the final answer in ENGLISH. Never answer factual Faculty Manual questions in Cebuano/Bisaya, Filipino, Waray, or another language.
-- The user's language/dialect affects understanding and retrieval only; it does not determine the final response language.
+- Understand English, Filipino, Cebuano/Bisaya, and mixed-language questions.
+- ALWAYS answer in ENGLISH. Never answer CPSU policy questions in Cebuano/Bisaya or Filipino.
 - Use ONLY the provided CPSU Faculty Manual context.
-- Do NOT guess, invent, or hallucinate policies, numbers, requirements, dates, or benefits.
-- Use conversation history only to understand what the user is referring to.
+- Do NOT guess, invent, or hallucinate policies, numbers, requirements, dates, benefits, or procedures.
+- Use conversation history only to resolve the subject of a follow-up question; history is NOT a factual source.
 - If the current question cannot be answered from the provided context, say exactly:
 "Not found in the Faculty Manual."
 - If the context contains a direct statement that answers the question, use that
@@ -400,7 +458,9 @@ statement even if another retrieved passage is less specific.
 evidence for the requested topic.
 - Do not turn a specific benefit (such as leave benefits) into a claim that it is
 the complete list of all benefits.
-- Answer directly, naturally, and conversationally.
+- Answer the exact question first. Keep the answer concise and specific.
+- Do not add unrelated policies, benefits, compensation, workload, or procedures.
+- Be conversational in wording, but remain a knowledge-based Faculty Manual assistant.
 - Treat every requested topic as a separate information request.
 - Answer EVERY part of a multi-part question; never answer only one topic.
 - Retrieve and answer each distinct topic from its matching evidence.
@@ -706,21 +766,20 @@ async def retrieve_fast_async(query:str)->dict:
     cached=_retrieval_cache.get(cache_id)
     if cached is not None:return cached
     started=asyncio.get_running_loop().time()
-    intent=fast_intent_match(query)
-    if intent:
-        result={"selected":[],"semantic":0,"keyword":0,"mode":"intent-fast","confidence":intent["score"],"intent":intent}
+    # The JSON fast path is handled in /api/chat. If it does not match with high
+    # confidence, retrieval must always provide actual Manual evidence rather
+    # than returning an empty intent result to the LLM.
+    keyword=keyword_search(query,KEYWORD_TOP_K)
+    conf=keyword_confidence(query,keyword)
+    if keyword and conf>=KEYWORD_FAST_MIN_OVERLAP and float(keyword[0].get("score",0.0))>=KEYWORD_FAST_MIN_BM25:
+        docs=[{"text":d["text"],"metadata":d.get("metadata",{}),"_keyword_score":d.get("score",0.0)} for d in keyword[:MAX_CONTEXT_CHUNKS]]
+        selected=rerank_candidates(query,docs,MAX_CONTEXT_CHUNKS)
+        result={"selected":selected,"semantic":0,"keyword":len(keyword),"mode":"bm25-fast","confidence":round(conf,4)}
     else:
-        keyword=keyword_search(query,KEYWORD_TOP_K)
-        conf=keyword_confidence(query,keyword)
-        if keyword and conf>=KEYWORD_FAST_MIN_OVERLAP and float(keyword[0].get("score",0.0))>=KEYWORD_FAST_MIN_BM25:
-            docs=[{"text":d["text"],"metadata":d.get("metadata",{}),"_keyword_score":d.get("score",0.0)} for d in keyword[:MAX_CONTEXT_CHUNKS]]
-            selected=rerank_candidates(query,docs,MAX_CONTEXT_CHUNKS)
-            result={"selected":selected,"semantic":0,"keyword":len(keyword),"mode":"bm25-fast","confidence":round(conf,4)}
-        else:
-            semantic=await asyncio.get_running_loop().run_in_executor(None,lambda:semantic_search(query))
-            fused=fuse(semantic,keyword)
-            selected=rerank_candidates(query,fused,MAX_CONTEXT_CHUNKS)
-            result={"selected":selected,"semantic":len(semantic),"keyword":len(keyword),"mode":"semantic-fallback","confidence":round(conf,4)}
+        semantic=await asyncio.get_running_loop().run_in_executor(None,lambda:semantic_search(query))
+        fused=fuse(semantic,keyword)
+        selected=rerank_candidates(query,fused,MAX_CONTEXT_CHUNKS)
+        result={"selected":selected,"semantic":len(semantic),"keyword":len(keyword),"mode":"hybrid-bm25-chroma","confidence":round(conf,4)}
     result["elapsed"]=asyncio.get_running_loop().time()-started
     _retrieval_cache[cache_id]=result
     if len(_retrieval_cache)>RETRIEVAL_CACHE_MAX:_retrieval_cache.pop(next(iter(_retrieval_cache)))
@@ -902,6 +961,11 @@ async def chat(request:Request):
                 best[key]=doc
         selected=sorted(best.values(),key=lambda x:x.get("_relevance",0),reverse=True)[:MAX_CONTEXT_CHUNKS]
 
+        # Do not send weak/unrelated retrieval results to the generator. This
+        # is the final guard against confident answers without Manual evidence.
+        if selected and float(selected[0].get("_relevance",0.0)) < MIN_EVIDENCE_RELEVANCE:
+            selected=[]
+
         retrieval_elapsed=asyncio.get_running_loop().time()-retrieval_started
         log.info(
             "Retrieval complete: %.3fs | parts=%d | semantic=%d | keyword=%d | selected=%d | modes=%s",
@@ -975,7 +1039,7 @@ async def retrieval_test(q:str):
     if not is_followup_question(q):
         json_hit=fast_json_match(q)
 
-    result=await retrieve_fast_async(q)
+    result=await retrieve_fast_async(correct_common_typos(q))
     selected=result.get("selected") or []
 
     if json_hit:
@@ -1008,6 +1072,33 @@ async def retrieval_test(q:str):
             }
             for d in selected
         ]
+    }
+
+# ============================================================
+# HUMAN ESCALATION
+# ============================================================
+
+@app.post("/api/escalate")
+async def escalate(request:Request):
+    """Record a request for human assistance.
+
+    This does not make KALAW impersonate a human. It simply acknowledges that
+    the user requested escalation; an external human-agent workflow can consume
+    this request later without changing the knowledge-base pipeline.
+    """
+    try:
+        data=await request.json()
+    except Exception:
+        data={}
+
+    session_id=str(data.get("session_id","")).strip()
+    question=str(data.get("question","")).strip()
+    log.info("Human escalation requested | session=%s | question=%s",session_id,question[:160])
+
+    return {
+        "status":"requested",
+        "session_id":session_id,
+        "message":"Human assistance has been requested."
     }
 
 # ============================================================
