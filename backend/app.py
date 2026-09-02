@@ -8,6 +8,7 @@ from langchain_ollama import OllamaEmbeddings
 import httpx
 from langchain_core.prompts import PromptTemplate
 from greetings import greeting_match
+import random
 
 os.environ["ANONYMIZED_TELEMETRY"]="False"
 logging.basicConfig(level=logging.INFO,format="%(levelname)s: %(message)s")
@@ -385,6 +386,9 @@ PROMPT=PromptTemplate(
     template="""You are KALAW, a strict CPSU Faculty Manual assistant.
 
 RULES:
+- Understand the user's question regardless of whether it is written in English, Cebuano/Bisaya, Filipino, or a natural mixture of these languages.
+- ALWAYS provide the final answer in ENGLISH. Never answer factual Faculty Manual questions in Cebuano/Bisaya, Filipino, Waray, or another language.
+- The user's language/dialect affects understanding and retrieval only; it does not determine the final response language.
 - Use ONLY the provided CPSU Faculty Manual context.
 - Do NOT guess, invent, or hallucinate policies, numbers, requirements, dates, or benefits.
 - Use conversation history only to understand what the user is referring to.

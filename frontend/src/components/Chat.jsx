@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } f
 import Kalaw from "../assets/kalaw.jpg";
 import "../styles/Chat.css";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
 
 const SUGGESTIONS = [
   { icon: "🎓", title: "Promotion Guidelines",  desc: "Requirements and process for faculty promotion",    question: "What are the guidelines for promotion?" },
@@ -194,6 +194,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
   const [input,       setInput]       = useState("");
   const [loading,     setLoading]     = useState(false);
   const [hasMessages, setHasMessages] = useState(false);
+  const [statusText, setStatusText] = useState("");
 
   const inputRef          = useRef("");
   const loadingRef        = useRef(false);
@@ -241,6 +242,7 @@ const Chat = forwardRef(({ sidebarInput, setSidebarInput, setChatHistory, setAct
     setMessages(prev => [...prev, userMsg, botMsg]);
     setHasMessages(true);
     setLoading(true);
+    setStatusText("KALAW is reading the Faculty Manual…");
     loadingRef.current = true;
     setInput("");
     inputRef.current = "";
@@ -278,6 +280,11 @@ try {
     throw new Error(`Server error: ${response.status}`);
   }
 
+  if (!response.body) {
+    throw new Error("The server returned no response stream.");
+  }
+
+  setStatusText("KALAW is preparing the answer…");
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
 
@@ -303,6 +310,7 @@ try {
 
     if (tokens.length) {
       accumulated += tokens.join("");
+      setStatusText("KALAW is responding…");
 
       updateBotMessage(
         chatId,
@@ -318,6 +326,7 @@ try {
 
     if (tokens.length) {
       accumulated += tokens.join("");
+      setStatusText("KALAW is responding…");
 
       updateBotMessage(
         chatId,
@@ -328,9 +337,11 @@ try {
   }
 } catch (err) {
   if (err.name === "AbortError") {
+    setStatusText("");
     return;
   }
 
+  setStatusText("KALAW could not complete the request.");
   const errMsg =
     "❌ Could not connect to KALAW. Please check if the server is running.";
 
@@ -353,7 +364,48 @@ try {
 } finally {
   setLoading(false);
   loadingRef.current = false;
+  setStatusText("");
 }
+  };
+
+  const escalateToHuman = async () => {
+    const lastUser = [...messages].reverse().find(m => m.sender === "user");
+    const question = lastUser?.text || inputRef.current || "";
+
+    try {
+      setStatusText("Requesting human assistance…");
+
+      const response = await fetch(`${API_URL}/api/escalate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionIdRef.current,
+          question,
+        }),
+      });
+
+      if (!response.ok) throw new Error(`Escalation error: ${response.status}`);
+
+      setMessages(prev => [
+        ...prev,
+        {
+          sender: "bot",
+          intro: "",
+          content: "Human assistance has been requested. KALAW does not impersonate a human agent."
+        }
+      ]);
+    } catch (err) {
+      setMessages(prev => [
+        ...prev,
+        {
+          sender: "bot",
+          intro: "",
+          content: "Unable to submit the human-assistance request. Please try again."
+        }
+      ]);
+    } finally {
+      setStatusText("");
+    }
   };
 
   const doSendRef = useRef(doSend);
@@ -368,6 +420,7 @@ try {
       setHasMessages(false);
       setLoading(false);
       loadingRef.current = false;
+      setStatusText("");
       setInput("");
       inputRef.current = "";
       sessionIdRef.current = crypto.randomUUID();
@@ -477,7 +530,7 @@ try {
                   <div className="dot-pulse">
                     <span /><span /><span />
                   </div>
-                  <span>KALAW is reading the manual…</span>
+                  <span>{statusText || "KALAW is reading the Faculty Manual…"}</span>
                 </div>
               </div>
             )}
@@ -508,6 +561,17 @@ try {
             {loading ? "…" : "➤"}
           </button>
         </div>
+        {hasMessages && (
+          <button
+            type="button"
+            className="human-escalation-btn"
+            onClick={escalateToHuman}
+            disabled={loading}
+            aria-label="Request human assistance"
+          >
+            Talk to a Human
+          </button>
+        )}
         <p className="input-footnote">Responses are based on the official CPSU Faculty Manual</p>
       </div>
     </div>
