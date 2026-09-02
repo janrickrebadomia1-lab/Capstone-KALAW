@@ -500,11 +500,29 @@ try {
 
                       {/* ── Formatted answer body ── */}
                       {msg.content ? (
-                        <div className="response-body">
-                          {formatContent(msg.content)}
-                        </div>
+                        <>
+                          <div className="response-body">
+                            {formatContent(msg.content)}
+                          </div>
+
+                          {/* Talk to Human Agent - shown after completed response */}
+                          {!loading && i === messages.length - 1 && (
+                            <div className="human-agent-container">
+                              <button
+                                type="button"
+                                className="talk-human-btn"
+                                onClick={() => {
+                                  // Add your human-agent action here
+                                  console.log("User requested human agent assistance");
+                                }}
+                              >
+                                <span className="talk-human-icon">💬</span>
+                                <span>Talk to a Human Agent</span>
+                              </button>
+                            </div>
+                          )}
+                        </>
                       ) : (
-                        /* Show typing indicator while content is empty */
                         !loading && (
                           <p className="response-paragraph empty-response">
                             No response received.
