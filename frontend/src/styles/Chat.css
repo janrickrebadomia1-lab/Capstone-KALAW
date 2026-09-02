@@ -614,35 +614,41 @@
 .human-agent-container {
   display: flex;
   justify-content: flex-start;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid #e5e7eb;
+  margin-top: 8px;
 }
 
-.talk-human-btn {
+.human-escalation-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 15px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #374151;
-  font-size: 13px;
+  justify-content: center;
+
+  padding: 6px 12px;
+
+  background: var(--bg-card);
+  color: var(--text-sub);
+
+  border: 1px solid var(--border);
+  border-radius: 7px;
+
+  font-family: var(--font);
+  font-size: 0.75rem;
   font-weight: 600;
+
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
 }
 
-.talk-human-btn:hover {
-  background: #f3f4f6;
-  border-color: #9ca3af;
+.human-escalation-btn:hover {
+  background: var(--green-light);
+  color: var(--green-dark);
+  border-color: rgba(72, 130, 67, 0.3);
 }
 
-.talk-human-btn:active {
-  transform: translateY(1px);
+.human-escalation-btn:active {
+  transform: scale(0.98);
 }
 
-.talk-human-icon {
-  font-size: 15px;
+.human-escalation-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
