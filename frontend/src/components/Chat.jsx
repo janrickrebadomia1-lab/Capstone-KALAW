@@ -370,7 +370,16 @@ try {
 
   const escalateToHuman = async () => {
     const lastUser = [...messages].reverse().find(m => m.sender === "user");
-    const question = lastUser?.text || inputRef.current || "";
+    const question = lastUser?.text || "";
+
+    if (!API_URL) {
+      setMessages(prev => [...prev, {
+        sender: "bot",
+        intro: "",
+        content: "Human assistance is unavailable because the backend is not configured."
+      }]);
+      return;
+    }
 
     try {
       setStatusText("Requesting human assistance…");
@@ -384,25 +393,26 @@ try {
         }),
       });
 
-      if (!response.ok) throw new Error(`Escalation error: ${response.status}`);
+      if (!response.ok) {
+        let detail = "";
+        try {
+          const data = await response.json();
+          detail = data?.detail || data?.message || "";
+        } catch {}
+        throw new Error(detail || `Escalation error: ${response.status}`);
+      }
 
-      setMessages(prev => [
-        ...prev,
-        {
-          sender: "bot",
-          intro: "",
-          content: "Human assistance has been requested. KALAW does not impersonate a human agent."
-        }
-      ]);
+      setMessages(prev => [...prev, {
+        sender: "bot",
+        intro: "",
+        content: "Your request for human assistance has been submitted."
+      }]);
     } catch (err) {
-      setMessages(prev => [
-        ...prev,
-        {
-          sender: "bot",
-          intro: "",
-          content: "Unable to submit the human-assistance request. Please try again."
-        }
-      ]);
+      setMessages(prev => [...prev, {
+        sender: "bot",
+        intro: "",
+        content: "Unable to submit the human-assistance request. Please try again."
+      }]);
     } finally {
       setStatusText("");
     }
@@ -500,29 +510,11 @@ try {
 
                       {/* ── Formatted answer body ── */}
                       {msg.content ? (
-                        <>
-                          <div className="response-body">
-                            {formatContent(msg.content)}
-                          </div>
-
-                          {/* Talk to Human Agent - shown after completed response */}
-                          {!loading && i === messages.length - 1 && (
-                            <div className="human-agent-container">
-                              <button
-                                type="button"
-                                className="talk-human-btn"
-                                onClick={() => {
-                                  // Add your human-agent action here
-                                  console.log("User requested human agent assistance");
-                                }}
-                              >
-                                <span className="talk-human-icon">💬</span>
-                                <span>Talk to a Human Agent</span>
-                              </button>
-                            </div>
-                          )}
-                        </>
+                        <div className="response-body">
+                          {formatContent(msg.content)}
+                        </div>
                       ) : (
+                        /* Show typing indicator while content is empty */
                         !loading && (
                           <p className="response-paragraph empty-response">
                             No response received.
