@@ -121,31 +121,6 @@ log.info("Typo vocabulary loaded: %d",len(_VOCABULARY))
 
 # ============================================================
 
-_GREETING_TRIGGERS={
-    "hi","hello","hey","goodmorning","goodafternoon","goodevening",
-    "good day","howdy","greetings","hi there","hello there","hey there",
-    "what's up","sup","yo","kamusta","kumusta","musta",
-    "magandang umaga","magandang hapon","magandang gabi","magandang araw",
-    "maayong buntag","maayong udto","maayong hapon","maayong gabii","kumusta ka"
-}
-
-_GREETING_RESPONSES=[
-    "Hello! I'm **KALAW**, your CPSU Faculty Manual assistant.\n\nI can help you with policies, procedures, leave benefits, faculty ranks, and anything covered in the Faculty Manual. What would you like to know?",
-    "Hi there! Welcome — I'm **KALAW**, the CPSU Faculty Manual chatbot.\n\nFeel free to ask me about faculty policies, duties, benefits, or any section of the manual. How can I assist you today?",
-    "Good day! I'm **KALAW**, here to help you navigate the CPSU Faculty Manual.\n\nAsk me anything about faculty rules, leave entitlements, promotions, or academic procedures. What's your question?",
-    "Hey! I'm **KALAW** — your go-to guide for the CPSU Faculty Manual.\n\nWhether it's about teaching loads, leave policies, or faculty obligations, I'm ready to help. What do you need?"
-]
-
-def greeting_match(query:str)->str|None:
-    q=re.sub(r"[^a-z0-9\s']"," ",query.lower()).strip()
-    q=re.sub(r"\s+"," ",q)
-    if q in _GREETING_TRIGGERS:
-        return random.choice(_GREETING_RESPONSES)
-    for trigger in _GREETING_TRIGGERS:
-        if q.startswith(trigger+" "):
-            return random.choice(_GREETING_RESPONSES)
-    return None
-
 # ============================================================
 # NORMALIZATION / TYPO CORRECTION
 # ============================================================
