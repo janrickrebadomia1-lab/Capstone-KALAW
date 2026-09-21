@@ -1,0 +1,270 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Matching Chatbot Design Tokens */
+  --adm-green-dark:   #3a6936;
+  --adm-green-main:   #488243;
+  --adm-green-light:  #eaf2e7;
+  --adm-green-xlight: #f3f8f2;
+  
+  --adm-bg:           #edeee3;
+  --adm-sidebar-bg:   #e1e5d7;
+  --adm-sidebar-border: #cbcfc1;
+  --adm-card-bg:      #ffffff;
+  --adm-border:       #dddbd3;
+  
+  --adm-text-main:    #1c1c1a;
+  --adm-text-sub:     #55554f;
+  --adm-text-muted:   #8a8980;
+  
+  --adm-radius:       12px;
+  --adm-shadow-sm:    0 1px 3px rgba(0, 0, 0, 0.05);
+  --adm-shadow-md:    0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--adm-bg);
+}
+
+.adm-shell {
+  display: flex;
+  min-height: 100vh;
+  height: 100vh;
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--adm-text-main);
+  background: var(--adm-bg);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Sidebar Styling */
+.adm-sidebar {
+  width: 250px;
+  height: 100%;
+  background: var(--adm-sidebar-bg);
+  border-right: 1px solid var(--adm-sidebar-border);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  z-index: 100;
+  transition: transform 0.25s ease-in-out;
+  flex-shrink: 0;
+}
+
+.adm-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 8px 18px;
+  border-bottom: 1px solid var(--adm-sidebar-border);
+}
+
+.adm-brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--adm-green-light);
+  border: 1px solid var(--adm-sidebar-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 3px;
+  box-shadow: var(--adm-shadow-sm);
+}
+
+.adm-brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.adm-brand-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.adm-brand-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--adm-text-main);
+  line-height: 1.2;
+}
+
+.adm-brand-sub {
+  font-size: 11px;
+  color: var(--adm-green-dark);
+  font-weight: 700;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.adm-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 20px;
+  flex: 1;
+}
+
+.adm-nav-header {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--adm-text-sub);
+  padding: 0 10px 8px;
+}
+
+.adm-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--adm-text-sub);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.adm-nav-item:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--adm-text-main);
+}
+
+.adm-nav-active {
+  background: var(--adm-green-dark) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(58, 105, 54, 0.25);
+}
+
+.adm-nav-icon {
+  display: flex;
+  align-items: center;
+}
+
+.adm-sidebar-footer {
+  padding-top: 14px;
+  border-top: 1px solid var(--adm-sidebar-border);
+}
+
+.adm-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--adm-text-sub);
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.adm-back-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--adm-green-dark);
+}
+
+/* Mobile Header Bar */
+.adm-mobile-header {
+  display: none;
+  height: 56px;
+  background: var(--adm-green-dark);
+  color: #ffffff;
+  padding: 0 16px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 110;
+}
+
+.adm-brand-compact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.adm-brand-logo {
+  width: 30px;
+  height: 30px;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adm-brand-name {
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.adm-hamburger {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.adm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 28, 26, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 90;
+}
+
+/* Content Frame */
+.adm-content {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 36px 40px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .adm-shell {
+    flex-direction: column;
+    padding-top: 56px;
+    height: 100vh;
+  }
+
+  .adm-mobile-header {
+    display: flex;
+  }
+
+  .adm-sidebar {
+    position: fixed;
+    top: 56px;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    box-shadow: var(--adm-shadow-md);
+  }
+
+  .adm-sidebar-open {
+    transform: translateX(0);
+  }
+
+  .adm-content {
+    padding: 20px 16px;
+    height: calc(100vh - 56px);
+  }
+}

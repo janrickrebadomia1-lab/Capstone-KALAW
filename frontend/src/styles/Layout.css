@@ -4,8 +4,10 @@
    TOKENS / VARIABLES
 ========================================================= */
 :root {
-  --green:         #488243;
-  --green-dark:    #3a6936;
+
+  --red: #dc2626;
+  --red-dark: #b91c1c;
+
   --green-mid:     #4f704c;
   --green-light:   #eaf2e7;
 
@@ -373,8 +375,8 @@ img { max-width: 100%; display: block; }
 
 .alert-btn.cancel  { background: var(--border); color: var(--text-main); }
 .alert-btn.cancel:hover  { background: #ccc; }
-.alert-btn.confirm { background: var(--green); color: #fff; }
-.alert-btn.confirm:hover { background: var(--green-dark); }
+.alert-btn.confirm { background: var(--red); color: #fff; }
+.alert-btn.confirm:hover { background: var(--red-dark); }
 
 /* =========================================================
    MAIN CONTENT

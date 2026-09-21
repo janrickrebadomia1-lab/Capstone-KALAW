@@ -602,7 +602,8 @@
 
 /* ============================================================
    TALK TO HUMAN
-   ============================================================ */
+============================================================ */
+
 .chat-actions {
   display: flex;
   align-items: center;
@@ -614,7 +615,8 @@
 .human-agent-container {
   display: flex;
   justify-content: flex-start;
-  margin-top: 8px;
+  width: 100%;
+  margin-top: 10px;
 }
 
 .human-escalation-btn {
@@ -622,33 +624,59 @@
   align-items: center;
   justify-content: center;
 
-  padding: 6px 12px;
+  min-height: 34px;
+  padding: 7px 14px;
 
   background: var(--bg-card);
   color: var(--text-sub);
 
   border: 1px solid var(--border);
-  border-radius: 7px;
+  border-radius: 8px;
 
   font-family: var(--font);
   font-size: 0.75rem;
   font-weight: 600;
+  line-height: 1;
 
   cursor: pointer;
-  transition: all 0.18s ease;
+  user-select: none;
+
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.1s ease,
+    opacity 0.18s ease;
 }
 
 .human-escalation-btn:hover {
   background: var(--green-light);
   color: var(--green-dark);
-  border-color: rgba(72, 130, 67, 0.3);
+  border-color: rgba(72, 130, 67, 0.35);
 }
 
 .human-escalation-btn:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
+}
+
+.human-escalation-btn:focus-visible {
+  outline: 2px solid var(--green-dark);
+  outline-offset: 2px;
 }
 
 .human-escalation-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .human-agent-container {
+    margin-top: 8px;
+  }
+
+  .human-escalation-btn {
+    min-height: 36px;
+    padding: 8px 13px;
+    font-size: 0.74rem;
+  }
 }
