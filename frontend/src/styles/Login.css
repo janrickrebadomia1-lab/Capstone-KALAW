@@ -1,0 +1,213 @@
+/*
+  Reuses the same :root tokens already defined in AdminLayout.css
+  (--adm-green-dark, --adm-bg, --adm-card-bg, --adm-radius, etc).
+  Fallback values included in case this page ever loads before
+  AdminLayout.css has been imported.
+*/
+
+.log-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--adm-bg, #edeee3);
+  background-image: radial-gradient(circle at 50% 0%, rgba(72,130,67,0.07), transparent 60%);
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  padding: 24px;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+.log-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--adm-card-bg, #ffffff);
+  border: 1px solid var(--adm-border, #dddbd3);
+  border-radius: 18px;
+  padding: 36px 32px 28px;
+  box-shadow: 0 8px 30px rgba(28,28,26,0.09), 0 2px 8px rgba(28,28,26,0.05);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* ---- brand block ---- */
+.log-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.log-brand-logo {
+  width: 68px;
+  height: 68px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: var(--adm-shadow-md, 0 4px 10px rgba(0,0,0,0.06));
+  border: 2px solid rgba(72,130,67,0.2);
+  margin-bottom: 14px;
+}
+
+.log-brand-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--adm-text-main, #1c1c1a);
+  letter-spacing: 0.04em;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.log-brand-tagline {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--adm-green-dark, #3a6936);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 5px 0 0;
+}
+
+.log-divider {
+  width: 40px;
+  height: 3px;
+  background: var(--adm-green-main, #488243);
+  border-radius: 99px;
+  opacity: 0.55;
+  margin: 16px 0 12px;
+}
+
+.log-pill {
+  display: inline-block;
+  background: var(--adm-green-light, #eaf2e7);
+  color: var(--adm-green-dark, #3a6936);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 99px;
+  border: 1px solid rgba(72,130,67,0.2);
+}
+
+/* ---- alert ---- */
+.log-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f3e6e3;
+  border-left: 4px solid #9c3b3b;
+  color: #9c3b3b;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  margin-bottom: 16px;
+  box-shadow: var(--adm-shadow-sm, 0 1px 3px rgba(0,0,0,0.05));
+}
+
+.log-alert-icon {
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* ---- fields ---- */
+.log-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 18px;
+}
+
+.log-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--adm-text-sub, #55554f);
+}
+
+.log-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.log-input-icon {
+  position: absolute;
+  left: 13px;
+  color: var(--adm-text-muted, #9a9990);
+  pointer-events: none;
+}
+
+.log-input {
+  width: 100%;
+  padding: 11px 14px 11px 38px;
+  border: 1px solid var(--adm-border, #dddbd3);
+  border-radius: 10px;
+  font-size: 13.5px;
+  color: var(--adm-text-main, #1c1c1a);
+  background: var(--adm-bg, #edeee3);
+  font-family: 'Nunito', sans-serif;
+  box-sizing: border-box;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.log-input:focus {
+  outline: none;
+  border-color: var(--adm-green-main, #488243);
+  box-shadow: 0 0 0 3px rgba(72, 130, 67, 0.14);
+  background: #ffffff;
+}
+
+.log-input:focus ~ .log-input-icon,
+.log-input-wrap:focus-within .log-input-icon {
+  color: var(--adm-green-dark, #3a6936);
+}
+
+/* ---- submit ---- */
+.log-btn-primary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--adm-green-main, #488243);
+  color: #ffffff;
+  border: none;
+  border-radius: 24px;
+  padding: 13px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(72, 130, 67, 0.3);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  margin-top: 2px;
+}
+
+.log-btn-primary:hover:not(:disabled) {
+  background: var(--adm-green-dark, #3a6936);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(72, 130, 67, 0.35);
+}
+
+.log-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.log-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.log-footnote {
+  text-align: center;
+  font-size: 11px;
+  color: var(--adm-text-muted, #9a9990);
+  margin: 20px 0 0;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 420px) {
+  .log-card { padding: 30px 22px 24px; }
+  .log-brand-logo { width: 58px; height: 58px; }
+  .log-brand-title { font-size: 22px; }
+}

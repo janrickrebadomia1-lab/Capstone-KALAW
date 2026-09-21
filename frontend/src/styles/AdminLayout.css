@@ -154,6 +154,22 @@ body {
 .adm-sidebar-footer {
   padding-top: 14px;
   border-top: 1px solid var(--adm-sidebar-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adm-logout-btn {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+}
+
+.adm-logout-btn:hover {
+  color: #9c3b3b;
 }
 
 .adm-back-btn {

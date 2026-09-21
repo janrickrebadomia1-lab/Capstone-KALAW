@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png"; 
 import "../styles/AdminLayout.css";
 
@@ -20,6 +20,12 @@ const NAV_ITEMS = [
 
 export default function AdminLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    sessionStorage.removeItem("adminLoggedIn");
+    navigate("/admin/login");
+  }
 
   return (
     <div className="adm-shell">
@@ -81,6 +87,14 @@ export default function AdminLayout({ children }) {
         </nav>
 
         <div className="adm-sidebar-footer">
+          <button className="adm-back-btn adm-logout-btn" onClick={handleLogout} type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span>Log Out</span>
+          </button>
           <NavLink to="/" className="adm-back-btn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="19" y1="12" x2="5" y2="12" />
