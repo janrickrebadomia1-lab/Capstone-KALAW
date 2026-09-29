@@ -8,7 +8,6 @@ from langchain_ollama import OllamaEmbeddings
 import httpx
 from langchain_core.prompts import PromptTemplate
 from greetings import greeting_match
-import random
 
 os.environ["ANONYMIZED_TELEMETRY"]="False"
 logging.basicConfig(level=logging.INFO,format="%(levelname)s: %(message)s")
@@ -38,7 +37,7 @@ JSON_PATH=os.path.join(DATA_DIR,"faculty_manual.json")
 JSON_SCORE_THRESHOLD=0.90
 CHROMA_TOP_K=4
 CHROMA_FETCH_K=8
-KEYWORD_TOP_K=6
+KEYWORD_TOP_K=8
 MAX_CONTEXT_CHUNKS=4
 MAX_CHUNK_CHARS=1700
 MIN_EVIDENCE_RELEVANCE=0.15
@@ -122,33 +121,6 @@ log.info("JSON patterns/aliases indexed: %d",len(_INTENT_INDEX))
 log.info("Typo vocabulary loaded: %d",len(_VOCABULARY))
 
 # ============================================================
-
-_GREETING_TRIGGERS={
-    "hi","hello","hey","goodmorning","goodafternoon","goodevening",
-    "good day","howdy","greetings","hi there","hello there","hey there",
-    "what's up","sup","yo","kamusta","kumusta","musta",
-    "magandang umaga","magandang hapon","magandang gabi","magandang araw",
-    "maayong buntag","maayong udto","maayong hapon","maayong gabii","kumusta ka"
-}
-
-_GREETING_RESPONSES=[
-    "Hello! I'm **KALAW**, your CPSU Faculty Manual assistant.\n\nI can help you with policies, procedures, leave benefits, faculty ranks, and anything covered in the Faculty Manual. What would you like to know?",
-    "Hi there! Welcome — I'm **KALAW**, the CPSU Faculty Manual chatbot.\n\nFeel free to ask me about faculty policies, duties, benefits, or any section of the manual. How can I assist you today?",
-    "Good day! I'm **KALAW**, here to help you navigate the CPSU Faculty Manual.\n\nAsk me anything about faculty rules, leave entitlements, promotions, or academic procedures. What's your question?",
-    "Hey! I'm **KALAW** — your go-to guide for the CPSU Faculty Manual.\n\nWhether it's about teaching loads, leave policies, or faculty obligations, I'm ready to help. What do you need?"
-]
-
-def greeting_match(query:str)->str|None:
-    q=re.sub(r"[^a-z0-9\s']"," ",query.lower()).strip()
-    q=re.sub(r"\s+"," ",q)
-    if q in _GREETING_TRIGGERS:
-        return random.choice(_GREETING_RESPONSES)
-    for trigger in _GREETING_TRIGGERS:
-        if q.startswith(trigger+" "):
-            return random.choice(_GREETING_RESPONSES)
-    return None
-
-# ============================================================
 # NORMALIZATION / TYPO CORRECTION
 # ============================================================
 
@@ -176,7 +148,7 @@ _LOCAL_QUERY_MAP={
     "pagtudlo":"teaching", "load":"load",
     "ano":"what", "ilang":"how many", "ilang oras":"how many hours",
     "mga benepisyo":"benefits", "mga requirement":"requirements",
-    "kailangan":"requirements", "guro":"faculty"
+    "kailangan":"requirements"
 }
 
 def expand_local_query(query:str)->str:
@@ -219,12 +191,11 @@ def correct_common_typos(query:str)->str:
 
 _FOLLOWUP_TRIGGERS={
     "what about","how about","what if","and what about","and how about",
-    "what are the requirements","what are the rules","what is the requirement",
-    "what is the rule","how does that work","how does this work",
+    "what is the requirement","what is the rule",
+    "how does that work","how does this work",
     "can you explain","explain more","tell me more","more details",
     "what about that","how about that","what about this","how about this",
-    "and then","what else","is that allowed","is this allowed",
-    "how many","how much","when can","who can","who is eligible"
+    "and then","what else","is that allowed","is this allowed"
 }
 
 def is_followup_question(query:str)->bool:
@@ -236,15 +207,51 @@ def is_followup_question(query:str)->bool:
 
     if len(words)<=7:
         followup_words={
-            "that","this","those","these","it","they","them",
+            "that","this","those","these","it","they","them","their",
+            "more","another","same","also","then",
             "requirements","requirement","rules","rule","limit",
             "limits","process","procedure","benefits","eligibility",
-            "eligible","allowed","allow","duration","amount","steps"
+            "eligible","allowed","allow","duration","amount","steps",
+            "units","rate","rates","qualification","qualifications"
         }
         if any(w in followup_words for w in words):
             return True
 
     return False
+
+_RETRIEVAL_ANCHORS={
+    "vision": "university vision CPSU leading technology-driven multi-disciplinary University by 2030",
+    "mission": "university mission CPSU committed produce competent graduates generate extend technologies multi-disciplinary areas beneficial community",
+    "duties": "faculty duties responsibilities every faculty philosophy goals objectives learning outcomes reports professional growth scholarship social economic moral intellectual cultural political change",
+    "responsibilities": "faculty duties responsibilities every faculty philosophy goals objectives learning outcomes reports professional growth scholarship social economic moral intellectual cultural political change",
+    "performance": "faculty performance evaluation Strategic Performance-Based Management System SPMS effectiveness quality efficiency timeliness performance rating",
+    "evaluation": "faculty performance evaluation Strategic Performance-Based Management System SPMS effectiveness quality efficiency timeliness performance rating",
+    "qualification": "faculty minimum qualification educational qualification Memorandum Circular No. 10 series 2012 master's degree area specialization",
+    "qualifications": "faculty minimum qualification educational qualification Memorandum Circular No. 10 series 2012 master's degree area specialization",
+    "requirements": "faculty qualification requirements appointment eligibility educational qualification civil service",
+    "promotion": "faculty promotion career advancement performance educational qualification professional development achievement honors psycho-social attributes potential",
+    "teaching load": "faculty workload regular teaching load permanent regular faculty preparations units lecture laboratory contact hour",
+    "workload": "faculty workload regular teaching load permanent regular faculty preparations units lecture laboratory contact hour",
+    "part time": "part-time faculty teaching load benefits vacation leave sick leave compensation",
+    "overload": "faculty overload extra teaching maximum hours per week very satisfactory official load honorarium remuneration",
+    "leave": "faculty leave privileges vacation sick sabbatical maternity paternity leave without pay rehabilitation adoption parental special leave",
+    "benefits": "faculty benefits incentives privileges awards leave tuition housing service credits",
+}
+
+def expand_retrieval_terms(query:str)->str:
+    q=normalize_query(correct_common_typos(query))
+    if not q:
+        return query
+    additions=[]
+    for trigger,anchor in _RETRIEVAL_ANCHORS.items():
+        if trigger in q:
+            additions.append(anchor)
+    # Keep the original question first so lexical retrieval still respects the
+    # user's exact wording. Anchors only add source vocabulary; they do not
+    # create or alter answers.
+    if additions:
+        return (query.strip()+" "+" ".join(dict.fromkeys(additions))).strip()
+    return query
 
 def build_retrieval_query(question:str,history:list)->str:
     clean_question=correct_common_typos(question)
@@ -381,7 +388,7 @@ OLLAMA_TIMEOUT=None
 OLLAMA_OPTIONS = {
     "temperature": 0,
     "num_ctx": 3072,
-    "num_predict": 220,
+    "num_predict": 512,
     "repeat_penalty": 1.1,
     "top_k": 20,
     "top_p": 0.85
@@ -446,37 +453,57 @@ PROMPT=PromptTemplate(
 
 RULES:
 - Understand English, Filipino, Cebuano/Bisaya, and mixed-language questions.
-- ALWAYS answer in ENGLISH. Never answer CPSU policy questions in Cebuano/Bisaya or Filipino.
+- ALWAYS answer CPSU policy questions in ENGLISH.
 - Use ONLY the provided CPSU Faculty Manual context.
 - Do NOT guess, invent, or hallucinate policies, numbers, requirements, dates, benefits, or procedures.
 - Use conversation history only to resolve the subject of a follow-up question; history is NOT a factual source.
 - If the current question cannot be answered from the provided context, say exactly:
-"Not found in the Faculty Manual."
-- If the context contains a direct statement that answers the question, use that
-statement even if another retrieved passage is less specific.
-- Never say "Not found in the Faculty Manual" when the context contains direct
-evidence for the requested topic.
-- Do not turn a specific benefit (such as leave benefits) into a claim that it is
-the complete list of all benefits.
-- Answer the exact question first. Keep the answer concise and specific.
+"Not found in the Faculty Manual, Talk to Human Agent."
+- If the context contains direct evidence for the requested topic, use it. Never claim
+"Not found" when direct evidence is available.
+- Answer the exact question first. The wording of the user's question defines the
+answer scope.
+- Retrieved context may contain related information. Do NOT include related information
+unless it is necessary to answer the question.
 - Do not add unrelated policies, benefits, compensation, workload, or procedures.
-- Be conversational in wording, but remain a knowledge-based Faculty Manual assistant.
+- Be conversational, but remain a knowledge-based Faculty Manual assistant.
 - Treat every requested topic as a separate information request.
 - Answer EVERY part of a multi-part question; never answer only one topic.
-- Retrieve and answer each distinct topic from its matching evidence.
-- Do not use evidence for one topic (for example, compensation) as evidence for
-a different topic (for example, benefits).
+- Do not use evidence for one topic (for example, compensation) as evidence for a
+different topic (for example, benefits).
+- For "requirements" questions, prioritize direct qualifications, eligibility, and
+conditions required for the requested item. Do not turn procedures, appointment types,
+replacement rules, duration limits, or general policy descriptions into extra
+requirements unless they directly answer the question.
+- For "types of X" questions, list only items explicitly belonging to that type.
+Do not promote adjacent or related provisions into list items.
+- For "benefits" questions, distinguish benefits from compensation, salary, rates,
+or payment. Include compensation only when the question also asks for it.
+- For broad topic questions, give the core answer plus only directly necessary details.
+Do not dump every related Faculty Manual provision.
+- For specific questions about units, hours, rates, dates, duration, limits, or amounts,
+give the exact value first and avoid unrelated details.
 - Use clear headings or bullets when there are multiple requested topics.
-- Base each factual statement on the matching evidence in CONTEXT.
-- Do not use a generic faculty-definition passage to answer a specific question about duties, benefits, workload, compensation, qualifications, or requirements unless it directly answers that question.
-- Preserve exact numbers, requirements, conditions, dates, rates, units, and limits from the context.
-- When the context contains a complete list of items for the requested topic,
-include all supported items rather than silently dropping an entry.
-- If source/article/section/page information is available, mention it.
-- Do not claim information is in the Faculty Manual if it is not in the context.
-- For follow-up questions, use conversation history only to resolve references such as "this", "that", "it", "they", "them", "their", or "what about".
-- If only one part of a multi-part question is supported, answer that part and say "Not found in the Faculty Manual." for the unsupported part.
+- Use one consistent Markdown bullet style: use "-" for bullets and do not mix "-" and "*".
+- Base every factual statement on matching evidence in CONTEXT.
+- Do not use a generic faculty-definition passage to answer a specific question about
+duties, benefits, workload, compensation, qualifications, or requirements unless it
+directly answers that question.
+- Preserve exact numbers, requirements, conditions, dates, rates, units, and limits.
+- When the question asks for a list, include the complete list only for the exact
+category requested; do not silently add adjacent provisions.
+- If source/article/section/page information is available, mention it briefly.
+- Do not claim information is in the Faculty Manual if it is not in CONTEXT.
+- For follow-up questions, use history only to resolve references such as "this", "that",
+"it", "they", "them", "their", or "what about".
+- If only one part of a multi-part question is supported, answer that part and say
+"Not found in the Faculty Manual." for the unsupported part.
 - Do not copy unrelated information from conversation history.
+- Before finalizing, silently check every sentence:
+  1. Does it answer the user's exact question?
+  2. Is it directly supported by CONTEXT?
+  3. Is it necessary?
+  Remove any sentence that fails any check.
 
 CONTEXT:
 {context}
@@ -517,7 +544,19 @@ def fast_json_match(query:str)->dict|None:
         patterns=intent["patterns"] or []
 
         # Use representative patterns/aliases only for the fast gate.
-        candidates=patterns[:12] + aliases[:8]
+        # Keep coverage across the full cleaned dataset instead of only the
+        # first entries, which can miss useful patterns later in an intent.
+        def _representative(items, limit):
+            items=[x for x in items if isinstance(x,str)]
+            if len(items)<=limit:
+                return items
+            if limit<=2:
+                return items[:limit]
+            head=max(1,limit//2)
+            tail=limit-head
+            return items[:head]+items[-tail:]
+
+        candidates=_representative(patterns,12) + _representative(aliases,8)
         if not candidates:
             continue
 
@@ -562,10 +601,7 @@ def fast_json_match(query:str)->dict|None:
                 best_entry_score=score
                 best_phrase=p
 
-        if best_entry_score>second:
-            second=best_entry_score
-
-        if best is None or best_entry_score>best["score"]:
+        if best is None:
             best={
                 "intent":intent["intent"],
                 "category":intent["category"],
@@ -575,6 +611,19 @@ def fast_json_match(query:str)->dict|None:
                 "matched_phrase":best_phrase,
                 "corrected_query":q_norm,
             }
+        elif best_entry_score>best["score"]:
+            second=best["score"]
+            best={
+                "intent":intent["intent"],
+                "category":intent["category"],
+                "response":intent["response"],
+                "source":intent["source"],
+                "score":min(best_entry_score,1.0),
+                "matched_phrase":best_phrase,
+                "corrected_query":q_norm,
+            }
+        elif best_entry_score>second:
+            second=best_entry_score
 
     if not best:
         return None
@@ -585,6 +634,29 @@ def fast_json_match(query:str)->dict|None:
     if best["score"]>=0.94 and margin>=0.05:
         return best
 
+    # Strong intent-keyword evidence can safely accept a natural-language
+    # variation even when its wording differs from the curated patterns.
+    # This is especially important for questions such as:
+    # "What is the teaching load of part-time faculty?"
+    best_intent=next(
+        (x for x in _INTENT_FAST_INDEX if x["intent"]==best["intent"]),
+        None
+    )
+    if best_intent:
+        evidence=[]
+        for item in (best_intent["keywords"] or []) + (best_intent["aliases"] or []):
+            if not isinstance(item,str):
+                continue
+            item_norm=normalize_query(item)
+            if not item_norm or item_norm in _GENERIC_TERMS:
+                continue
+            if item_norm in q_norm:
+                evidence.append(item_norm)
+
+        if len(set(evidence))>=2 and margin>=0.02:
+            best["score"]=max(best["score"],0.95)
+            return best
+
     return None
 
 
@@ -593,6 +665,7 @@ def fast_json_match(query:str)->dict|None:
 # ============================================================
 
 def keyword_search(query:str,top_k:int=KEYWORD_TOP_K)->list[dict]:
+    query=expand_retrieval_terms(query)
     if not hybrid_data or "bm25" not in hybrid_data:
         return []
     try:
@@ -661,9 +734,12 @@ def fuse(semantic_docs:list,keyword_docs:list[dict],k:int=60)->list[dict]:
         if key not in store:
             store[key]={"text":text,"metadata":doc.get("metadata",{})}
 
+    for key,item in store.items():
+        item["_rrf"]=scores.get(key,0.0)
+
     return sorted(
         store.values(),
-        key=lambda x:scores.get(x["text"][:200],0),
+        key=lambda x:x.get("_rrf",0.0),
         reverse=True
     )
 
@@ -717,31 +793,75 @@ def split_question_parts(query:str)->list[str]:
     return [q]
 
 def rerank_candidates(query:str,docs:list[dict],limit:int=MAX_CONTEXT_CHUNKS)->list[dict]:
-    q_words=_expand_topics(_topic_words(query))
     if not docs:return []
+    original=normalize_query(query)
+    q_words=_expand_topics(_topic_words(query))
+    expanded=normalize_query(expand_retrieval_terms(query))
     ranked=[]
+
     for d in docs:
         text=normalize_query(d.get("text",""))
         meta=d.get("metadata") or {}
         meta_text=normalize_query(" ".join(
             str(meta.get(k,"")) for k in
-            ("heading","title","section","article","category","source")
+            ("heading","title","section","article","chapter","category","source")
         ))
         body_words=_topic_words(text)
         head_words=_topic_words(meta_text)
+
         body_overlap=len(q_words&body_words)/max(1,len(q_words))
         head_overlap=len(q_words&head_words)/max(1,len(q_words))
-        exact_hits=sum(1 for w in q_words if w in text)
-        exact_score=min(exact_hits/max(1,len(q_words)),1.0)
-        # RRF rank is retained by fuse; use it as a weak prior only.
-        base=float(d.get("_rrf",0.0))
-        score=body_overlap*0.42+head_overlap*0.30+exact_score*0.23+min(base*10,0.05)
-        # A chunk that contains none of the actual topic words is almost
-        # certainly unrelated, even if it says "faculty" many times.
+        anchor_words=_topic_words(expanded)
+        anchor_overlap=len(anchor_words&body_words)/max(1,len(anchor_words))
+
+        # Exact user phrases are stronger evidence than generic word overlap.
+        phrase_hits=0
+        for phrase in (
+            "faculty duties and responsibilities", "duties and responsibilities of faculty",
+            "performance evaluation", "performance management team",
+            "strategic performance based management system",
+            "minimum qualification for faculty", "minimum educational qualification",
+            "university mission", "university vision",
+            "regular teaching load", "part time faculty", "overload teaching",
+            "leave privileges"
+        ):
+            if phrase in original and phrase in (text+" "+meta_text):
+                phrase_hits+=1
+        phrase_score=min(phrase_hits*0.12,0.24)
+
+        # Section metadata is especially useful when several chunks contain the
+        # generic word "faculty".
+        section_bonus=0.0
+        qn=original
+        if any(x in qn for x in ("duties", "responsibilities")) and any(x in meta_text for x in ("duties", "responsibilities")):
+            section_bonus+=0.20
+        if any(x in qn for x in ("performance", "evaluation")) and any(x in meta_text for x in ("performance", "evaluation", "spms")):
+            section_bonus+=0.20
+        if any(x in qn for x in ("qualification", "qualifications")) and any(x in meta_text for x in ("qualification", "appointment", "recruitment")):
+            section_bonus+=0.18
+        if "mission" in qn and "mission" in meta_text: section_bonus+=0.22
+        if "vision" in qn and "vision" in meta_text: section_bonus+=0.22
+        if "teaching load" in qn and any(x in meta_text for x in ("workload", "teaching load")): section_bonus+=0.20
+        if "leave" in qn and "leave" in meta_text: section_bonus+=0.16
+
+        score=(
+            body_overlap*0.34
+            +head_overlap*0.28
+            +anchor_overlap*0.18
+            +phrase_score
+            +section_bonus
+            +min(float(d.get("_rrf",0.0))*10,0.05)
+        )
+
+        # A result with no overlap with either the question or its source-vocabulary
+        # anchor is not useful evidence even if BM25/semantic rank placed it high.
         if q_words and not (q_words&body_words) and not (q_words&head_words):
-            score=0.0
+            if not (anchor_words&body_words):
+                score=0.0
+
         item=dict(d); item["_relevance"]=score
         ranked.append(item)
+
     ranked.sort(key=lambda x:x["_relevance"],reverse=True)
     return [x for x in ranked if x["_relevance"]>0][:limit]
 
@@ -769,14 +889,15 @@ async def retrieve_fast_async(query:str)->dict:
     # The JSON fast path is handled in /api/chat. If it does not match with high
     # confidence, retrieval must always provide actual Manual evidence rather
     # than returning an empty intent result to the LLM.
-    keyword=keyword_search(query,KEYWORD_TOP_K)
+    retrieval_query=expand_retrieval_terms(query)
+    keyword=keyword_search(retrieval_query,KEYWORD_TOP_K)
     conf=keyword_confidence(query,keyword)
     if keyword and conf>=KEYWORD_FAST_MIN_OVERLAP and float(keyword[0].get("score",0.0))>=KEYWORD_FAST_MIN_BM25:
         docs=[{"text":d["text"],"metadata":d.get("metadata",{}),"_keyword_score":d.get("score",0.0)} for d in keyword[:MAX_CONTEXT_CHUNKS]]
         selected=rerank_candidates(query,docs,MAX_CONTEXT_CHUNKS)
         result={"selected":selected,"semantic":0,"keyword":len(keyword),"mode":"bm25-fast","confidence":round(conf,4)}
     else:
-        semantic=await asyncio.get_running_loop().run_in_executor(None,lambda:semantic_search(query))
+        semantic=await asyncio.get_running_loop().run_in_executor(None,lambda:semantic_search(retrieval_query))
         fused=fuse(semantic,keyword)
         selected=rerank_candidates(query,fused,MAX_CONTEXT_CHUNKS)
         result={"selected":selected,"semantic":len(semantic),"keyword":len(keyword),"mode":"hybrid-bm25-chroma","confidence":round(conf,4)}
@@ -928,6 +1049,10 @@ async def chat(request:Request):
         ck=cache_key(retrieval_query)
         if ck in _response_cache:
             cached=_response_cache[ck]
+            history.append({"role":"user","content":question})
+            history.append({"role":"assistant","content":cached})
+            if len(history)>HISTORY_WINDOW*2:
+                session_store[session_id]=history[-(HISTORY_WINDOW*2):]
             async def cached_stream():
                 yield sse({"content":cached,"source":"cache","session_id":session_id,"follow_up":followup})
             return StreamingResponse(cached_stream(),media_type="text/event-stream",headers={
@@ -977,8 +1102,9 @@ async def chat(request:Request):
 
     except Exception as e:
         log.exception("CHAT PIPELINE FAILED before generation | session=%s | question=%s",session_id,question[:120])
+        error_message=f"KALAW backend error: {type(e).__name__}: {str(e)[:400]}"
         async def pipeline_error():
-            yield sse({"content":f"KALAW backend error: {type(e).__name__}: {str(e)[:400]}","source":"backend_error","session_id":session_id})
+            yield sse({"content":error_message,"source":"backend_error","session_id":session_id})
         return StreamingResponse(pipeline_error(),media_type="text/event-stream",headers={
             "Cache-Control":"no-cache","Connection":"keep-alive","X-Accel-Buffering":"no"})
 
@@ -1141,7 +1267,6 @@ def health():
         "retrieval_cache_size":len(_retrieval_cache),
         "keyword_fast_overlap":KEYWORD_FAST_MIN_OVERLAP,
         "keyword_fast_bm25":KEYWORD_FAST_MIN_BM25,
-        "ollama_base_url":OLLAMA_BASE_URL,
         "ollama_model":OLLAMA_MODEL
     }
 
