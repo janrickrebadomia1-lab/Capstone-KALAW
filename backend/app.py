@@ -1,6 +1,6 @@
 import os,json,asyncio,logging,pickle,hashlib,re,uuid
 from difflib import SequenceMatcher
-from fastapi import FastAPI, Request, Body
+from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_chroma import Chroma
@@ -18,7 +18,6 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://kalaw-chatbot.vercel.app",
-        "https://kalaw-chatbot-dt6iopi6m-janrickrebadomia1-gmailcoms-projects.vercel.app",
         "http://localhost:4173",
         "http://127.0.0.1:4173",
         "http://localhost:5173",
@@ -1150,11 +1149,12 @@ def create_session():
 # ============================================================
 
 @app.post("/api/chat")
-async def chat(data: dict = Body(...)):
+async def chat(request:Request):
     session_id=""
     question=""
 
     try:
+        data=await request.json()
         question=str(data.get("question","")).strip()
         session_id=str(data.get("session_id") or data.get("chat_id") or "").strip()
 
