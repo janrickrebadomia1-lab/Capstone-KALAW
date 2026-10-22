@@ -456,21 +456,26 @@
         "reference": "Board Resolution No. 101, s. 2020",
         "topic": "Promotion and Reclassification"
       },
-      "response": "Requirements and criteria for faculty promotion at CPSU include:\n- **Performance:** At least Very Satisfactory ratings during the last two (2) rating periods.\n- **Educational Qualification:** Based on NBC 461 and Memorandum Circular No. 10, s. 2012.\n- **Professional Development, Achievement, and Honors:** These may include published works, consultancy, research awards, and training.\n- **Psycho-Social Attributes and Personality Traits.**\n- **Potential to perform higher responsibilities.**"
+      "response": "Requirements and criteria for faculty promotion at CPSU include:\n- **Performance:** At least Very Satisfactory ratings during the last two (2) rating periods.\n- **Educational Qualification:** Based on NBC 461 and Memorandum Circular No. 10, s. 2012.\n- **Professional Development, Achievement, and Honors:** These may include published works, consultancy, research awards, and training.\n- **Psycho-Social Attributes and Personality Traits.**\n- **Potential to perform higher responsibilities.**",
+      "answer_mode": "authoritative"
     },
     {
       "intent": "promotion_policies",
       "category": "Promotion and Reclassification",
       "patterns": [
-        "What are the requirements for faculty promotion at CPSU?",
-        "What are the criteria for promotion at CPSU?",
         "What factors are considered for faculty promotion?",
         "what is requirements for promotion teacher",
         "what are requirements for promotion teacher",
         "what is promotion criteria university",
         "what are promotion criteria university",
         "promotion criteria university policy",
-        "promotion criteria university"
+        "promotion criteria university",
+        "What is the promotion policy at CPSU?",
+        "What are the promotion policies at CPSU?",
+        "What is the policy on upgrading or reclassification?",
+        "How often can faculty rank be upgraded or reclassified?",
+        "What policy applies to faculty reclassification?",
+        "Does an administrative complaint disqualify a faculty member from promotion?"
       ],
       "keywords": [
         "reclassification",
@@ -478,7 +483,12 @@
         "performance",
         "professional development"
       ],
-      "aliases": [],
+      "aliases": [
+        "promotion policy",
+        "upgrading policy",
+        "reclassification policy",
+        "faculty reclassification"
+      ],
       "source": {
         "document": "CPSU Faculty Manual",
         "reference": "Board Resolution No. 101, s. 2020",
@@ -807,7 +817,8 @@
         "reference": "Board Resolution No. 101, s. 2020",
         "topic": "Faculty Workload"
       },
-      "response": "Regular Teaching Load for Permanent Faculty (CPSU Faculty Workload Guidelines):\n\n- Faculty with 1 preparation: 24 units\n- Faculty with 2 preparations: 21 units\n- Faculty with 3–4 preparations: 18 units\n\nAdditional rules:\n- 1 unit = 1 contact hour/week for lecture; Laboratory = 0.75 units per contact hour/week.\n- Load assignments are limited to three (3) preparations.\n- Every additional subject preparation is equivalent to one 3-unit subject load.\n- For undergraduate thesis advising: 0.05 ETU per student, maximum of five (5) advisees only."
+      "response": "Regular Teaching Load for Permanent Faculty (CPSU Faculty Workload Guidelines):\n\n- Faculty with 1 preparation: 24 units\n- Faculty with 2 preparations: 21 units\n- Faculty with 3–4 preparations: 18 units\n\nAdditional rules:\n- 1 unit = 1 contact hour/week for lecture; Laboratory = 0.75 units per contact hour/week.\n- Load assignments are limited to three (3) preparations.\n- Every additional subject preparation is equivalent to one 3-unit subject load.\n- For undergraduate thesis advising: 0.05 ETU per student, maximum of five (5) advisees only.",
+      "answer_mode": "authoritative"
     },
     {
       "intent": "part_time_teaching_load",
@@ -847,7 +858,8 @@
         "reference": "Board Resolution No. 101, s. 2020",
         "topic": "Faculty Workload"
       },
-      "response": "Part-time Faculty Teaching Load at CPSU:\n- Teaching load: 30 units\n- Total compensation shall not exceed the existing salary rate of an Instructor I.\n- Pay rates based on qualifications (Approved by Administrative and Academic Council, 2019):\n  - Full-fledged Masters/Ph.D.: ₱160.00/unit\n  - CAR (Masters): ₱150.00/unit\n  - With a License or 50% units or more (Masters): ₱140.00/unit\n  - Bachelor's Degree: ₱130.00/unit"
+      "response": "Part-time Faculty Teaching Load at CPSU:\n- Teaching load: 30 units\n- Total compensation shall not exceed the existing salary rate of an Instructor I.\n- Pay rates based on qualifications (Approved by Administrative and Academic Council, 2019):\n  - Full-fledged Masters/Ph.D.: ₱160.00/unit\n  - CAR (Masters): ₱150.00/unit\n  - With a License or 50% units or more (Masters): ₱140.00/unit\n  - Bachelor's Degree: ₱130.00/unit",
+      "answer_mode": "authoritative"
     },
     {
       "intent": "overload_policy",
@@ -1069,7 +1081,8 @@
         "reference": "Board Resolution No. 101, s. 2020",
         "topic": "Leave and Benefits"
       },
-      "response": "The CPSU Faculty Manual identifies these leave privileges and leave-related provisions for teaching personnel:\n- **Vacation Leave**\n- **Sick Leave**\n- **Sabbatical Leave**\n- **Cumulative Leave**\n- **Maternity Leave**\n- **Paternity Leave**\n- **Leave Without Pay**\n- **Secondment (Special Service Leave)**\n- **Rehabilitation Leave**\n- **Adoption Leave**\n- **Parental Leave for Solo Parents**\n- **Special Leaves**\n- **Terminal Leave**"
+      "response": "The CPSU Faculty Manual identifies these leave privileges and leave-related provisions for teaching personnel:\n- **Vacation Leave**\n- **Sick Leave**\n- **Sabbatical Leave**\n- **Cumulative Leave**\n- **Maternity Leave**\n- **Paternity Leave**\n- **Leave Without Pay**\n- **Secondment (Special Service Leave)**\n- **Rehabilitation Leave**\n- **Adoption Leave**\n- **Parental Leave for Solo Parents**\n- **Special Leaves**\n- **Terminal Leave**",
+      "answer_mode": "authoritative"
     },
     {
       "intent": "vacation_sick_leave",
@@ -2019,6 +2032,39 @@
         "reference": "Board Resolution No. 101, s. 2020"
       },
       "response": "I couldn't find a specific answer in the CPSU Faculty Manual (Board Resolution No. 101, s. 2020). Please try rephrasing your question or consult the HR Office or VP for Academic Affairs for further assistance."
+    },
+    {
+      "intent": "part_time_benefits",
+      "category": "Faculty Workload and Benefits",
+      "patterns": [
+        "What are the benefits of part-time faculty?",
+        "What benefits do part-time faculty receive?",
+        "What benefits are provided to part-time faculty?",
+        "Are there benefits for part-time faculty?",
+        "What are the benefits of part-time faculty at CPSU?",
+        "Unsa ang benefits sa part-time faculty?",
+        "Unsa ang mga benepisyo sa part-time faculty?",
+        "What benefits are available to part-time faculty at CPSU?"
+      ],
+      "keywords": [
+        "part-time faculty",
+        "part time faculty",
+        "benefits",
+        "benefit"
+      ],
+      "aliases": [
+        "part-time faculty benefits",
+        "part time faculty benefits",
+        "benefits of part-time faculty",
+        "part-time benefits"
+      ],
+      "source": {
+        "document": "CPSU Faculty Manual",
+        "reference": "Board Resolution No. 101, s. 2020",
+        "topic": "Faculty Workload and Benefits"
+      },
+      "response": "The CPSU Faculty Manual’s Part-Time Faculty section specifies the teaching load and compensation of part-time faculty, but it does not provide a separate list of benefits specifically under that section. General leave and benefit provisions in the Faculty Manual depend on the personnel category and applicable rules.",
+      "answer_mode": "authoritative"
     }
   ]
 }

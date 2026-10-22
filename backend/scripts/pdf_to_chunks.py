@@ -57,20 +57,40 @@ def ingest_pdf():
     current_section=""
     current_heading="General"
     body=[]
-    current_page=1
 
-    def flush(page_end:int):
-        nonlocal body,current_page
-        if not body:return
+    # Track the actual first and last pages containing body text.
+    # This prevents page_start from being overwritten as the PDF
+    # moves from one page to the next.
+    section_start_page=None
+    section_end_page=None
 
-        content=" ".join(body).strip()
-        if len(content)<MIN_CHUNK_LEN:
-            body=[]
-            current_page=page_end
+    def flush():
+        nonlocal body,section_start_page,section_end_page
+
+        if not body:
             return
 
-        page_start=current_page
-        page_range=str(page_start) if page_start==page_end else f"{page_start}-{page_end}"
+        content=" ".join(
+            part.strip()
+            for part in body
+            if part and part.strip()
+        ).strip()
+
+        if len(content)<MIN_CHUNK_LEN:
+            body=[]
+            section_start_page=None
+            section_end_page=None
+            return
+
+        page_start=section_start_page or section_end_page or 1
+        page_end=section_end_page or page_start
+
+        page_range=(
+            str(page_start)
+            if page_start==page_end
+            else f"{page_start}-{page_end}"
+        )
+
         formatted=(
             "DOCUMENT: CPSU Faculty Manual\n"
             f"CHAPTER: {current_chapter}\n"
@@ -80,17 +100,34 @@ def ingest_pdf():
             f"PAGE: {page_range}\n\n"
             f"CONTENT:\n{content}"
         )
-        sections.append(Document(page_content=formatted,metadata={
-            "page_start":str(page_start),"page_end":str(page_end),"page_range":page_range,
-            "chapter":current_chapter,"article":current_article,"section":current_section,
-            "heading":current_heading,"source":"faculty_manual"}))
+
+        sections.append(
+            Document(
+                page_content=formatted,
+                metadata={
+                    "page_start":str(page_start),
+                    "page_end":str(page_end),
+                    "page_range":page_range,
+                    "chapter":current_chapter,
+                    "article":current_article,
+                    "section":current_section,
+                    "heading":current_heading,
+                    "source":"faculty_manual"
+                }
+            )
+        )
+
         body=[]
-        current_page=page_end
+        section_start_page=None
+        section_end_page=None
 
     for page_num,text in pages:
-        current_page=page_num
+
+        if not text:
+            continue
 
         for raw_line in text.split("\n"):
+
             line=raw_line.strip()
 
             if not line:
@@ -99,34 +136,48 @@ def ingest_pdf():
             kind,value=classify_line(line)
 
             if kind=="chapter":
-                flush(page_num)
+
+                flush()
+
                 current_chapter=value
                 current_article=""
                 current_section=""
                 current_heading=line
 
             elif kind=="article":
-                flush(page_num)
+
+                flush()
+
                 current_article=value
                 current_section=""
                 current_heading=line
 
             elif kind=="section":
-                flush(page_num)
+
+                flush()
+
                 current_section=value
                 current_heading=line
 
             elif kind=="heading":
-                flush(page_num)
+
+                flush()
+
                 current_heading=value
 
             else:
+
+                if not value:
+                    continue
+
+                if section_start_page is None:
+                    section_start_page=page_num
+
+                section_end_page=page_num
                 body.append(value)
 
-        if body:
-            body.append("")
-
-    flush(current_page)
+    # Flush the final logical section.
+    flush()
 
     print(f"Parsed {len(sections)} logical sections.")
 
@@ -150,6 +201,7 @@ def ingest_pdf():
         chunk.metadata["chunk_index"]=idx
         chunk.metadata["chunk_id"]=f"faculty-{idx:04d}"
         chunk.metadata["chunk_length"]=len(text)
+        chunk.metadata["source"]="faculty_manual"
 
         final.append(chunk)
 
@@ -172,6 +224,30 @@ def ingest_pdf():
     print("ChromaDB successfully created.")
     print(f"Chunks stored: {len(final)}")
     print(f"Database: {CHROMA_PATH}")
+
+    # Basic sanity checks for the newly generated index.
+    if not final:
+        raise RuntimeError("No searchable chunks were created.")
+
+    invalid_pages=0
+    for chunk in final:
+        start=chunk.metadata.get("page_start","")
+        end=chunk.metadata.get("page_end","")
+
+        try:
+            if int(start) > int(end):
+                invalid_pages += 1
+        except (TypeError,ValueError):
+            invalid_pages += 1
+
+    if invalid_pages:
+        print(
+            f"WARNING: {invalid_pages} chunks have invalid page metadata."
+        )
+    else:
+        print("Page metadata check: OK")
+
+    print("Chunk metadata check: OK")
 
 if __name__=="__main__":
     ingest_pdf()
