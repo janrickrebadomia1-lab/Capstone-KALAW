@@ -8,7 +8,6 @@ const SUGGESTIONS = [
   { icon: "🎓", title: "Promotion Guidelines",  desc: "Requirements and process for faculty promotion",    question: "What are the guidelines for promotion?" },
   { icon: "📚", title: "Teaching Load",          desc: "Hours and workload for full-time faculty",          question: "How many hours is a full-time teaching load?" },
   { icon: "🗓️", title: "Leave Benefits",         desc: "Vacation, sick leave, and other policies",         question: "How is leave of absence applied for?" },
-  { icon: "⚖️", title: "Tenure Process",         desc: "Understand tenure requirements and evaluation",    question: "What is the tenure process for faculty?" },
   { icon: "📝", title: "Evaluation Criteria",    desc: "Learn how faculty performance is evaluated",       question: "What criteria are used for faculty evaluation?" }
 ];
 
@@ -561,17 +560,6 @@ try {
             {loading ? "…" : "➤"}
           </button>
         </div>
-        {hasMessages && (
-          <button
-            type="button"
-            className="human-escalation-btn"
-            onClick={escalateToHuman}
-            disabled={loading}
-            aria-label="Request human assistance"
-          >
-            Talk to a Human
-          </button>
-        )}
         <p className="input-footnote">Responses are based on the official CPSU Faculty Manual</p>
       </div>
     </div>

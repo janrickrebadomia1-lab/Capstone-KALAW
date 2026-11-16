@@ -1,6 +1,6 @@
 import os,json,asyncio,logging,pickle,hashlib,re,uuid
 from difflib import SequenceMatcher
-from fastapi import FastAPI, Request
+from fastapi import FastAPI,Request
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_chroma import Chroma
@@ -461,7 +461,7 @@ RULES:
 - Do NOT guess, invent, or hallucinate policies, numbers, requirements, dates, benefits, or procedures.
 - Use conversation history only to resolve the subject of a follow-up question; history is NOT a factual source.
 - If the current question cannot be answered from the provided context, say exactly:
-"Not found in the Faculty Manual, Talk to Human Agent."
+"I'm sorry, but I couldn't find information related to your question in the CPSU Faculty Manual. For further clarification or assistance, I recommend visiting the HR Office, where the appropriate personnel can assist you."
 - If the context contains direct evidence for the requested topic, use it. Never claim
 "Not found" when direct evidence is available.
 - Answer the exact question first. The wording of the user's question defines the
