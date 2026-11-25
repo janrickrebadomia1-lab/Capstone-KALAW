@@ -367,46 +367,6 @@ try {
 }
   };
 
-  const escalateToHuman = async () => {
-    const lastUser = [...messages].reverse().find(m => m.sender === "user");
-    const question = lastUser?.text || inputRef.current || "";
-
-    try {
-      setStatusText("Requesting human assistance…");
-
-      const response = await fetch(`${API_URL}/api/escalate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          session_id: sessionIdRef.current,
-          question,
-        }),
-      });
-
-      if (!response.ok) throw new Error(`Escalation error: ${response.status}`);
-
-      setMessages(prev => [
-        ...prev,
-        {
-          sender: "bot",
-          intro: "",
-          content: "Human assistance has been requested. KALAW does not impersonate a human agent."
-        }
-      ]);
-    } catch (err) {
-      setMessages(prev => [
-        ...prev,
-        {
-          sender: "bot",
-          intro: "",
-          content: "Unable to submit the human-assistance request. Please try again."
-        }
-      ]);
-    } finally {
-      setStatusText("");
-    }
-  };
-
   const doSendRef = useRef(doSend);
   useEffect(() => { doSendRef.current = doSend; });
 
